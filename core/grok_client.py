@@ -1,10 +1,7 @@
 import requests
 import json
 
-
 class GrokClient:
-    """Wrapper for xAI Grok API calls."""
-
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.base_url = "https://api.x.ai/v1/chat/completions"

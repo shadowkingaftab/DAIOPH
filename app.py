@@ -34,10 +34,6 @@ st.markdown("""
         font-size: 1.2rem; color: #484848; margin-bottom: 2rem;
         text-align: center;
     }
-    .metric-card {
-        background: #f0f2f6; padding: 1rem; border-radius: 0.5rem;
-        border-left: 4px solid #4CC9F0;
-    }
     .stButton>button {
         background-color: #4CC9F0; color: white; border: none;
         border-radius: 0.5rem; padding: 0.5rem 2rem; font-weight: 600;
@@ -53,10 +49,10 @@ logger = Logger()
 grok_api_key = st.secrets.get("GROK_API_KEY", None)
 orchestrator = HybridOrchestrator(
     distilbert_path="distilbert-base-uncased",
-    qwen_path="qwen2-0_5b-instruct-q4_k_m.gguf",  # adjusted name for fallback handling
+    qwen_path="qwen2-0_5b-chat-q4_k_m.gguf",
     grok_api_key=grok_api_key
 )
-prompt_generator = PromptGenerator("qwen2-0_5b-instruct-q4_k_m.gguf")
+prompt_generator = PromptGenerator("qwen2-0_5b-chat-q4_k_m.gguf")
 
 # --- Title ---
 st.markdown('<p class="main-header">🤖 Edge AI Orchestrator</p>', unsafe_allow_html=True)
@@ -93,7 +89,6 @@ with tab1:
     st.markdown("### Classify & Execute a Prompt")
     st.info("DistilBERT splits prompts into tasks, then executes them using the selected route (ODA/Hybrid/Cloud).")
 
-    # Route selection
     route = st.selectbox(
         "Select execution route:",
         ["ODA (Qwen2-0.5B only)", "Hybrid (Qwen + Grok)", "Cloud LLM (Grok + Qwen fallback)"],
@@ -124,13 +119,12 @@ with tab1:
                 log_entry = {
                     "timestamp": start_time.strftime("%Y-%m-%d %H:%M:%S.%f"),
                     "prompt": user_prompt,
-                    "route": route.split(" ")[0],  # Extract "ODA", "Hybrid", or "Cloud"
+                    "route": route.split(" ")[0],
                     "status": "started",
                     "model": f"{route} (DistilBERT + Qwen/Grok)"
                 }
                 logger.log(log_entry)
 
-                # Map route to internal format
                 route_map = {
                     "ODA (Qwen2-0.5B only)": "ODA",
                     "Hybrid (Qwen + Grok)": "Hybrid",
@@ -148,7 +142,6 @@ with tab1:
                 })
                 logger.log(log_entry)
 
-                # Display DAG
                 st.markdown("#### 🔗 Task Bifurcation DAG")
                 graph = graphviz.Digraph(graph_attr={"rankdir": "LR"})
                 for node in dag["dag"]["nodes"]:
@@ -159,7 +152,6 @@ with tab1:
                             graph.edge(dep, node["id"])
                 st.graphviz_chart(graph)
 
-                # Display Results
                 st.markdown("#### 💡 Execution Results")
                 for task_id, result in results.items():
                     if isinstance(result, dict) and "error" in result:
@@ -175,7 +167,6 @@ with tab2:
     if not logs:
         st.warning("No execution data yet. Run some prompts first!")
     else:
-        # Metrics
         col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.metric("Total Prompts", len(logs))
@@ -193,7 +184,6 @@ with tab2:
             route_counts = pd.Series([log["route"] for log in logs]).value_counts()
             st.metric("Most Used Route", route_counts.index[0] if len(route_counts) > 0 else "None")
 
-        # Charts
         st.markdown("#### ⏱️ Execution Time Over Time")
         data = []
         for log in logs:
@@ -215,7 +205,6 @@ with tab3:
     if not logs:
         st.warning("No logs yet. Execute some prompts first!")
     else:
-        # Filter by route
         route_filter = st.selectbox("Filter by route:", ["All", "ODA", "Hybrid", "Cloud"])
         filtered_logs = [log for log in logs if route_filter == "All" or log["route"] == route_filter]
 
@@ -263,7 +252,7 @@ with tab4:
 # --- Tab 5: Generate Prompts ---
 with tab5:
     st.markdown("### ✨ Generate Test Prompts")
-    st.info("Use Qwen2-0.5B (on-device) to generate random prompts showcasing orchestration capabilities.")
+    st.info("Use Qwen2-0.5B (on-device) to generate prompts showcasing orchestration.")
 
     col1, col2 = st.columns([3, 1])
     with col1:
