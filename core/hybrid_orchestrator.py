@@ -5,6 +5,7 @@ from core.task_executor import TaskExecutor
 import re
 import json
 import nltk
+import copy
 from nltk.tokenize import sent_tokenize
 from functools import lru_cache
 import numpy as np
@@ -92,11 +93,11 @@ class HybridOrchestrator:
         ]
 
     def _apply_template(self, template: Dict, prompt: str) -> Dict:
-        dag = template["dag"]
+        dag = copy.deepcopy(template["dag"])
         # Replace placeholders if needed
         for node in dag["nodes"]:
             node["task"] = node["task"].replace("{input}", prompt)
-        return dag
+        return {"dag": dag}
 
     def _hierarchical_decompose(self, prompt: str, pdf_text: Optional[str] = None) -> Dict:
         sentences = sent_tokenize(prompt)
@@ -120,7 +121,7 @@ class HybridOrchestrator:
         if len(sentences) > 2:
             dag = self._cluster_tasks(dag)
 
-        return dag
+        return {"dag": dag}
 
     def _has_coreference(self, sentence1: str, sentence2: str) -> bool:
         words1 = set(word.lower() for word in nltk.word_tokenize(sentence1) if word.isalnum())
