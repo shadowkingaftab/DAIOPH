@@ -163,33 +163,30 @@ class HybridOrchestrator:
 
     def _execute_parallel(self, dag: Dict, pdf_text: Optional[str] = None, route: str = "Hybrid") -> Dict:
         results = {}
+        futures = {}
+        
         with ThreadPoolExecutor(max_workers=4) as executor:
-            futures = {}
-            for node in dag["dag"]["nodes"]:
-                if "depends_on" in node:
-                    for dep in node["depends_on"]:
-                        if dep not in results:
-                            raise ValueError(f"Dependency {dep} not executed yet")
-                    context = "\n\n".join(results[dep] for dep in node["depends_on"])
-                    future = executor.submit(
-                        self.executor.execute,
-                        node,
-                        context,
-                        pdf_text,
-                        route
-                    )
-                else:
-                    future = executor.submit(
-                        self.executor.execute,
-                        node,
-                        None,
-                        pdf_text,
-                        route
-                    )
-                futures[future] = node["id"]
+            # Submit in topological order so parent futures exist when children are submitted
+            sorted_tasks = self._topological_sort(dag["dag"]["nodes"])
+            
+            for task_id in sorted_tasks:
+                node = next(t for t in dag["dag"]["nodes"] if t["id"] == task_id)
+                
+                def run_node(n, deps):
+                    # Wait for dependencies to finish and gather context
+                    context_parts = []
+                    for d in deps:
+                        res = futures[d].result()  # Wait for parent to finish
+                        if isinstance(res, str):
+                            context_parts.append(res)
+                    
+                    context = "\n\n".join(context_parts) if context_parts else None
+                    return self.executor.execute(n, context, pdf_text, route)
+                
+                deps = node.get("depends_on", [])
+                futures[task_id] = executor.submit(run_node, node, deps)
 
-            for future in as_completed(futures):
-                task_id = futures[future]
+            for task_id, future in futures.items():
                 try:
                     results[task_id] = future.result()
                 except Exception as e:
