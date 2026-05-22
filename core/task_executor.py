@@ -17,9 +17,10 @@ class TaskExecutor:
             self.HAS_QWEN = True
             self.qwen_error = None
         except Exception as e:
+            import traceback
             self.HAS_QWEN = False
-            self.qwen_error = str(e)
-            print(f"Qwen2-0.5B disabled: {str(e)}")
+            self.qwen_error = f"{type(e).__name__}: {str(e)} | Details: {traceback.format_exc()}"
+            print(f"Qwen2-0.5B disabled: {self.qwen_error}")
 
         self.grok = GrokClient(grok_api_key) if grok_api_key else None
         self.HAS_GROK = grok_api_key is not None
