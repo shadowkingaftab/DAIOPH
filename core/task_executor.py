@@ -5,10 +5,13 @@ from core.grok_client import GrokClient
 class TaskExecutor:
     def __init__(self, qwen_path: str, grok_api_key: Optional[str] = None):
         try:
+            import gc
+            gc.collect()  # Force garbage collection before allocating massive Llama KV cache memory
             self.qwen = Llama(
                 model_path=qwen_path,
-                n_ctx=2048,
-                n_threads=2,  # Reduced for Streamlit Cloud
+                n_ctx=512,   # Drastically reduced from 2048 to save KV cache RAM
+                n_threads=1, # Reduced to 1 to minimize thread stack memory
+                n_batch=128, # Lower batch size to reduce allocation spikes
                 n_gpu_layers=0
             )
             self.HAS_QWEN = True
