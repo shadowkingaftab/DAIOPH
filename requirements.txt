@@ -1,10 +1,12 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+torchvision
 streamlit
 llama-cpp-python
 graphviz
 pandas
 PyPDF2
 transformers
-torch
 requests
 huggingface_hub
 python-dotenv
