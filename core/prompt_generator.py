@@ -1,19 +1,29 @@
-from llama_cpp import Llama
 from core.task_executor import _resolve_model_path
 
+try:
+    from llama_cpp import Llama
+    HAS_LLAMA = True
+except ImportError:
+    HAS_LLAMA = False
 
 class PromptGenerator:
     def __init__(self, model_path: str):
-        resolved_path = _resolve_model_path(model_path)
-        self.llm = Llama(
-            model_path=resolved_path,
-            n_ctx=2048,
-            n_threads=4,
-            n_gpu_layers=0
-        )
+        if HAS_LLAMA:
+            resolved_path = _resolve_model_path(model_path)
+            self.llm = Llama(
+                model_path=resolved_path,
+                n_ctx=2048,
+                n_threads=4,
+                n_gpu_layers=0
+            )
+        else:
+            self.llm = None
 
     def generate(self) -> str:
         """Generate a random test prompt."""
+        if not HAS_LLAMA:
+            return "First, summarize the key benefits of Edge AI. Then, provide a real-world use case where hybrid cloud-edge architectures outshine pure cloud."
+            
         prompt = """
         Generate a unique, complex prompt for testing an AI orchestration system.
         Requirements:

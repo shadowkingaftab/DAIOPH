@@ -45,14 +45,19 @@ if _CUSTOM_PATH and not os.path.isdir(_CUSTOM_PATH):
     print(f"[classifier] WARNING: CLASSIFIER_MODEL_PATH='{_CUSTOM_PATH}' not found, using default.",
           file=sys.stderr)
 
-print(f"Loading classifier: {_MODEL_ID}", file=sys.stderr)
+_classifier = None
 
-classifier = pipeline(
-    "zero-shot-classification",
-    model=_MODEL_ID
-)
+def get_classifier():
+    global _classifier
+    if _classifier is None:
+        print(f"Loading classifier: {_MODEL_ID}", file=sys.stderr)
+        _classifier = pipeline(
+            "zero-shot-classification",
+            model=_MODEL_ID
+        )
+        print("Classifier loaded successfully!", file=sys.stderr)
+    return _classifier
 
-print("Classifier loaded successfully!", file=sys.stderr)
 
 # ── Define your intent labels ────────────────────────────────────────────────
 INTENT_LABELS = [
@@ -84,7 +89,8 @@ def classify_prompt(prompt: str) -> dict:
 
     # ── The actual classification ────────────────────────────────────────────
     # The model reads the prompt and scores it against each label.
-    result = classifier(prompt.strip(), INTENT_LABELS)
+    clf = get_classifier()
+    result = clf(prompt.strip(), INTENT_LABELS)
     
     intent_probs = {label: score for label, score in zip(result["labels"], result["scores"])}
 
