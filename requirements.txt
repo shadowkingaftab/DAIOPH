@@ -7,7 +7,8 @@ requests==2.31.0
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.1.2+cpu
 # Pre-compiled llama-cpp with Metal (M1/M2) or CPU fallback
-llama-cpp-python>=0.2.77
+--extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+llama-cpp-python==0.2.79
 # DistilBERT (lightweight, no compilation)
 transformers==4.38.2
 sentence-transformers==2.2.2
