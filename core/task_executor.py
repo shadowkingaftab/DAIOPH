@@ -7,13 +7,15 @@ class TaskExecutor:
         try:
             self.qwen = Llama(
                 model_path=qwen_path,
-                n_ctx=4096,
-                n_threads=4,  # Reduced for Streamlit Cloud
+                n_ctx=2048,
+                n_threads=2,  # Reduced for Streamlit Cloud
                 n_gpu_layers=0
             )
             self.HAS_QWEN = True
+            self.qwen_error = None
         except Exception as e:
             self.HAS_QWEN = False
+            self.qwen_error = str(e)
             print(f"Qwen2-0.5B disabled: {str(e)}")
 
         self.grok = GrokClient(grok_api_key) if grok_api_key else None

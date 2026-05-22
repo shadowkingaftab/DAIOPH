@@ -61,7 +61,8 @@ if not os.path.exists(MODEL_PATH):
         hf_hub_download(
             repo_id="Qwen/Qwen2-0.5B-Instruct-GGUF",
             filename=MODEL_FILE,
-            local_dir=MODEL_DIR
+            local_dir=MODEL_DIR,
+            local_dir_use_symlinks=False
         )
 
 orchestrator = HybridOrchestrator(
@@ -74,6 +75,10 @@ prompt_generator = PromptGenerator("models/qwen2-0_5b-instruct-q4_k_m.gguf")
 # --- Title ---
 st.markdown('<p class="main-header">🤖 Edge AI Orchestrator</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">DistilBERT Orchestrator • Qwen2-0.5B Execution • Grok Cloud Fallback</p>', unsafe_allow_html=True)
+
+if getattr(orchestrator, 'executor', None) and not getattr(orchestrator.executor, 'HAS_QWEN', True):
+    st.error(f"⚠️ **Qwen2-0.5B failed to load!** Reason: `{getattr(orchestrator.executor, 'qwen_error', 'Unknown Error')}`")
+    st.info("💡 You can still use the Cloud LLM route if you provide a Grok API Key in the sidebar.")
 
 # --- Sidebar: Model Routes ---
 with st.sidebar:
