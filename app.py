@@ -6,6 +6,8 @@ from utils.logger import Logger
 import graphviz
 import pandas as pd
 from datetime import datetime
+import os
+from huggingface_hub import hf_hub_download
 
 # --- Setup ---
 st.set_page_config(
@@ -47,6 +49,21 @@ st.markdown("""
 # Initialize components
 logger = Logger()
 grok_api_key = st.secrets.get("GROK_API_KEY", None)
+
+# Auto-download Qwen model if it doesn't exist
+MODEL_DIR = "models"
+MODEL_FILE = "qwen2-0_5b-instruct-q4_k_m.gguf"
+MODEL_PATH = os.path.join(MODEL_DIR, MODEL_FILE)
+
+os.makedirs(MODEL_DIR, exist_ok=True)
+if not os.path.exists(MODEL_PATH):
+    with st.spinner(f"Downloading {MODEL_FILE} (approx 400MB). This happens only once..."):
+        hf_hub_download(
+            repo_id="Qwen/Qwen2-0.5B-Instruct-GGUF",
+            filename=MODEL_FILE,
+            local_dir=MODEL_DIR
+        )
+
 orchestrator = HybridOrchestrator(
     distilbert_path="distilbert-base-uncased",
     qwen_path="models/qwen2-0_5b-instruct-q4_k_m.gguf",
