@@ -49,10 +49,10 @@ logger = Logger()
 grok_api_key = st.secrets.get("GROK_API_KEY", None)
 orchestrator = HybridOrchestrator(
     distilbert_path="distilbert-base-uncased",
-    qwen_path="qwen2-0_5b-chat-q4_k_m.gguf",
+    qwen_path="models/qwen2-0_5b-instruct-q4_k_m.gguf",
     grok_api_key=grok_api_key
 )
-prompt_generator = PromptGenerator("qwen2-0_5b-chat-q4_k_m.gguf")
+prompt_generator = PromptGenerator("models/qwen2-0_5b-instruct-q4_k_m.gguf")
 
 # --- Title ---
 st.markdown('<p class="main-header">🤖 Edge AI Orchestrator</p>', unsafe_allow_html=True)
