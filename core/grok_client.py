@@ -12,22 +12,15 @@ class GrokClient:
 
     def generate(self, prompt: str, max_tokens: int = 512, temperature: float = 0.3) -> str:
         """Call Grok API with automatic model failover."""
-        # PRIORITIZE MODELS THAT ARE MOST LIKELY TO WORK
-        models_to_try = [
-            "grok-2-1212",
-            "grok-2",
-            "grok-beta",
-            "grok-1",
-            "grok-3-mini",
-            "grok-2-latest"
-        ]
+        # Standard production model names - EXACT NAMES FROM X.AI CONSOLE
+        models_to_try = ["grok-2-1212", "grok-2-latest", "grok-beta", "grok-vision-beta"]
         last_error = ""
 
         for model in models_to_try:
             payload = {
                 "model": model,
                 "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": max_tokens,
+                "stream": False,
                 "temperature": temperature
             }
             try:
@@ -47,4 +40,4 @@ class GrokClient:
             except Exception as e:
                 last_error = str(e)
         
-        return f"Error calling Grok API (tried {', '.join(models_to_try)}): {last_error}"
+        return f"Error calling Grok API: {last_error}"

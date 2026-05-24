@@ -45,20 +45,28 @@ class TaskExecutor:
                 with self.lock:
                     return self.qwen.create_chat_completion(messages=[{"role": "user", "content": prompt}], max_tokens=512, temperature=0.7)["choices"][0]["message"]["content"].strip()
             elif route == "Cloud":
+                # Try Grok first
                 if self.HAS_GROK:
                     res = self.grok.generate(prompt, max_tokens=512, temperature=0.7)
-                    if not res.startswith("Error calling Grok API"):
+                    # If it's a real response and not an error message
+                    if res and not res.startswith("Error calling Grok API") and not res.startswith("Error:"):
                         return res
-                    print(f"Grok failed, falling back to Qwen: {res}")
+                    print(f"Grok failed, falling back to local Qwen: {res}")
                 
+                # FALLBACK TO QWEN (MANDATORY FOR PRESENTATION)
                 if self.HAS_QWEN:
                     with self.lock:
-                        return self.qwen.create_chat_completion(
-                            messages=[{"role": "user", "content": prompt}],
-                            max_tokens=512,
-                            temperature=0.7
-                        )["choices"][0]["message"]["content"].strip()
-                return "Error: No models available (Grok failed and Qwen not loaded)"
+                        try:
+                            completion = self.qwen.create_chat_completion(
+                                messages=[{"role": "user", "content": prompt}],
+                                max_tokens=512,
+                                temperature=0.7
+                            )
+                            return completion["choices"][0]["message"]["content"].strip()
+                        except Exception as q_err:
+                            return f"Cloud error and local Qwen error: {str(q_err)}"
+                
+                return "Error: Grok failed and local Qwen is not loaded."
             elif self.HAS_GROK:
                 return self.grok.generate(prompt, max_tokens=512, temperature=0.7)
             else:
