@@ -66,6 +66,18 @@ To hit >95% confidence on your domain:
 
 ---
 
+## ☁️ Streamlit Cloud Deployment
+To run this app on **Streamlit Community Cloud**:
+1. Fork this repository to your GitHub.
+2. Go to [share.streamlit.io](https://share.streamlit.io) and connect your repository.
+3. In **App Settings → Secrets**, paste your `GROK_API_KEY`:
+   ```toml
+   GROK_API_KEY = "your-xai-api-key"
+   ```
+4. The app will automatically handle `packages.txt` to build the local inference engine and download the Qwen model on first run.
+
+---
+
 ## 📁 Project Structure
 ```
 ├── streamlit_app.py      # Main Streamlit Dashboard (Production)

@@ -14,6 +14,7 @@ from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassifica
 
 # Download NLTK data
 nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True)
 
 class HybridOrchestrator:
     def __init__(self, distilbert_path: str, qwen_path: str, grok_api_key: Optional[str] = None):

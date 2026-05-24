@@ -48,38 +48,55 @@ st.markdown("""
 
 # Initialize components
 logger = Logger()
+
+# Detect environment
+IS_CLOUD = 'STREAMLIT_RUNTIME_EXECUTABLE' in os.environ or 'STREAMLIT_SERVER_PORT' in os.environ
+
 try:
     grok_api_key = st.secrets.get("GROK_API_KEY", None)
 except Exception:
     grok_api_key = os.environ.get("GROK_API_KEY", None)
 
-# Auto-download Qwen model if it doesn't exist
+# Model configuration
 MODEL_DIR = "models"
 MODEL_FILE = "qwen2-0_5b-instruct-q4_k_m.gguf"
 MODEL_PATH = os.path.join(MODEL_DIR, MODEL_FILE)
 
-os.makedirs(MODEL_DIR, exist_ok=True)
-if not os.path.exists(MODEL_PATH):
-    with st.spinner(f"Downloading {MODEL_FILE} (approx 400MB). This happens only once..."):
-        hf_hub_download(
-            repo_id="Qwen/Qwen2-0.5B-Instruct-GGUF",
-            filename=MODEL_FILE,
-            local_dir=MODEL_DIR,
-            local_dir_use_symlinks=False
-        )
+def ensure_local_model():
+    """Downloads the local model if it doesn't exist."""
+    os.makedirs(MODEL_DIR, exist_ok=True)
+    if not os.path.exists(MODEL_PATH):
+        with st.spinner(f"📥 Downloading {MODEL_FILE} (approx 400MB). This happens only once..."):
+            try:
+                hf_hub_download(
+                    repo_id="Qwen/Qwen2-0.5B-Instruct-GGUF",
+                    filename=MODEL_FILE,
+                    local_dir=MODEL_DIR,
+                    local_dir_use_symlinks=False
+                )
+            except Exception as e:
+                st.error(f"Failed to download local model: {e}")
+                return False
+    return True
 
 @st.cache_resource(show_spinner="Loading AI Models (This happens once to save memory)...")
 def load_models():
     # Only instantiated once across all Streamlit reruns
+    
+    # Check if we should even try to load the local model
+    # On Streamlit Cloud, we might want to be more conservative
+    has_local = ensure_local_model()
+    
     orch = HybridOrchestrator(
         distilbert_path="distilbert-base-uncased",
-        qwen_path="models/qwen2-0_5b-instruct-q4_k_m.gguf",
+        qwen_path=MODEL_PATH,
         grok_api_key=None
     )
+    
     # Share the Qwen instance to cut RAM usage in half
     shared_llm = getattr(orch.executor, 'qwen', None)
     pg = PromptGenerator(
-        model_path="models/qwen2-0_5b-instruct-q4_k_m.gguf",
+        model_path=MODEL_PATH,
         llm_instance=shared_llm
     )
     return orch, pg
@@ -105,6 +122,12 @@ if getattr(orchestrator, 'executor', None) and not getattr(orchestrator.executor
 
 # --- Sidebar: Model Routes ---
 with st.sidebar:
+    # Environment Badge
+    if IS_CLOUD:
+        st.success("☁️ **Running on Streamlit Cloud**")
+    else:
+        st.info("💻 **Running Locally**")
+    
     st.markdown("### 🔄 Route → Model")
     st.markdown("""
     | **Route**   | **Primary Model**       | **Fallback**       |

@@ -1,25 +1,32 @@
 from typing import Dict, Optional
-from llama_cpp import Llama
 from core.grok_client import GrokClient
+import threading
 
 class TaskExecutor:
     def __init__(self, qwen_path: str, grok_api_key: Optional[str] = None):
+        self.lock = threading.Lock()
+        # Lazy-import llama_cpp so the app doesn't crash on Streamlit Cloud
         try:
+            from llama_cpp import Llama
             import gc
-            gc.collect()  # Force garbage collection before allocating massive Llama KV cache memory
+            gc.collect()
             self.qwen = Llama(
                 model_path=qwen_path,
-                n_ctx=512,   # Drastically reduced from 2048 to save KV cache RAM
-                n_threads=1, # Reduced to 1 to minimize thread stack memory
-                n_batch=128, # Lower batch size to reduce allocation spikes
+                n_ctx=512,
+                n_threads=1,
+                n_batch=128,
                 n_gpu_layers=0
             )
             self.HAS_QWEN = True
             self.qwen_error = None
+        except ImportError:
+            self.HAS_QWEN = False
+            self.qwen_error = "llama-cpp-python not installed (Streamlit Cloud — Grok API will be used instead)"
+            print(f"Qwen2-0.5B disabled: {self.qwen_error}")
         except Exception as e:
             import traceback
             self.HAS_QWEN = False
-            self.qwen_error = f"{type(e).__name__}: {str(e)} | Details: {traceback.format_exc()}"
+            self.qwen_error = f"{type(e).__name__}: {str(e)}"
             print(f"Qwen2-0.5B disabled: {self.qwen_error}")
 
         self.grok = GrokClient(grok_api_key) if grok_api_key else None
@@ -35,15 +42,17 @@ class TaskExecutor:
 
         try:
             if route == "ODA" and self.HAS_QWEN:
-                return self.qwen.create_chat_completion(messages=[{"role": "user", "content": prompt}], max_tokens=512, temperature=0.7)["choices"][0]["message"]["content"].strip()
+                with self.lock:
+                    return self.qwen.create_chat_completion(messages=[{"role": "user", "content": prompt}], max_tokens=512, temperature=0.7)["choices"][0]["message"]["content"].strip()
             elif route == "Cloud" and self.HAS_GROK:
                 return self.grok.generate(prompt, max_tokens=512, temperature=0.7)
-            elif self.HAS_QWEN:  # Hybrid: Try Qwen first
-                return self.qwen.create_chat_completion(messages=[{"role": "user", "content": prompt}], max_tokens=512, temperature=0.7)["choices"][0]["message"]["content"].strip()
+            elif self.HAS_QWEN:
+                with self.lock:
+                    return self.qwen.create_chat_completion(messages=[{"role": "user", "content": prompt}], max_tokens=512, temperature=0.7)["choices"][0]["message"]["content"].strip()
             elif self.HAS_GROK:
                 return self.grok.generate(prompt, max_tokens=512, temperature=0.7)
             else:
-                return "Error: No models available for execution."
+                return "❌ No models available. Please add your Grok API key in the sidebar."
         except Exception as e:
             if route != "ODA" and self.HAS_GROK:
                 return self.grok.generate(prompt, max_tokens=512, temperature=0.7)
