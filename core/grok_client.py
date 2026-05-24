@@ -12,9 +12,9 @@ class GrokClient:
 
     def generate(self, prompt: str, max_tokens: int = 512, temperature: float = 0.3) -> str:
         """Call Grok API for text generation."""
-        # Use grok-2-1212 or grok-3-mini as they are more stable than grok-beta
+        # Use grok-beta as it is the standard endpoint for xAI
         payload = {
-            "model": "grok-2-1212",
+            "model": "grok-beta",
             "messages": [{"role": "user", "content": prompt}],
             "max_tokens": max_tokens,
             "temperature": temperature
@@ -23,7 +23,7 @@ class GrokClient:
             response = requests.post(
                 self.base_url,
                 headers=self.headers,
-                data=json.dumps(payload),
+                json=payload,
                 timeout=30
             )
             if response.status_code != 200:
