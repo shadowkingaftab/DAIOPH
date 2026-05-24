@@ -48,7 +48,10 @@ st.markdown("""
 
 # Initialize components
 logger = Logger()
-grok_api_key = st.secrets.get("GROK_API_KEY", None)
+try:
+    grok_api_key = st.secrets.get("GROK_API_KEY", None)
+except Exception:
+    grok_api_key = os.environ.get("GROK_API_KEY", None)
 
 # Auto-download Qwen model if it doesn't exist
 MODEL_DIR = "models"
