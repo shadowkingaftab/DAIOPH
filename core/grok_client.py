@@ -12,8 +12,8 @@ class GrokClient:
 
     def generate(self, prompt: str, max_tokens: int = 512, temperature: float = 0.3) -> str:
         """Call Grok API with automatic model failover."""
-        # Try models in order of capability/availability
-        models_to_try = ["grok-2-1212", "grok-beta", "grok-2", "grok-1"]
+        # Standard production model names
+        models_to_try = ["grok-2-1212", "grok-2-latest", "grok-beta"]
         last_error = ""
 
         for model in models_to_try:
