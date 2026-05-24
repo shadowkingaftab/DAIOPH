@@ -33,7 +33,7 @@ def get_config(key, default=None):
 
 GROK_API_KEY    = get_config("GROK_API_KEY")
 GROK_API_URL    = "https://api.x.ai/v1/chat/completions"
-DEFAULT_MODEL   = "grok-3-mini"   # grok-3-mini is fast & cheap; use "grok-3" for max quality
+DEFAULT_MODEL   = "grok-2"   # grok-2 is the most stable standard model
 DEFAULT_TIMEOUT = 30              # seconds
 
 
