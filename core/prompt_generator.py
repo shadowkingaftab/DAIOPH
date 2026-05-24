@@ -1,18 +1,22 @@
 from llama_cpp import Llama
 
 class PromptGenerator:
-    def __init__(self, model_path: str):
-        try:
-            self.llm = Llama(
-                model_path=model_path,
-                n_ctx=2048,
-                n_threads=2,  # Reduced for Streamlit Cloud
-                n_gpu_layers=0
-            )
+    def __init__(self, model_path: str, llm_instance=None):
+        if llm_instance is not None:
+            self.llm = llm_instance
             self.HAS_MODEL = True
-        except Exception as e:
-            self.HAS_MODEL = False
-            print(f"Prompt generator disabled: {str(e)}")
+        else:
+            try:
+                self.llm = Llama(
+                    model_path=model_path,
+                    n_ctx=512,  # Drastically reduced to prevent Streamlit Cloud OOM
+                    n_threads=1,  # Reduced for Streamlit Cloud
+                    n_gpu_layers=0
+                )
+                self.HAS_MODEL = True
+            except Exception as e:
+                self.HAS_MODEL = False
+                print(f"Prompt generator disabled: {str(e)}")
 
     def generate(self) -> str:
         if not self.HAS_MODEL:

@@ -65,12 +65,32 @@ if not os.path.exists(MODEL_PATH):
             local_dir_use_symlinks=False
         )
 
-orchestrator = HybridOrchestrator(
-    distilbert_path="distilbert-base-uncased",
-    qwen_path="models/qwen2-0_5b-instruct-q4_k_m.gguf",
-    grok_api_key=grok_api_key
-)
-prompt_generator = PromptGenerator("models/qwen2-0_5b-instruct-q4_k_m.gguf")
+@st.cache_resource(show_spinner="Loading AI Models (This happens once to save memory)...")
+def load_models():
+    # Only instantiated once across all Streamlit reruns
+    orch = HybridOrchestrator(
+        distilbert_path="distilbert-base-uncased",
+        qwen_path="models/qwen2-0_5b-instruct-q4_k_m.gguf",
+        grok_api_key=None
+    )
+    # Share the Qwen instance to cut RAM usage in half
+    shared_llm = getattr(orch.executor, 'qwen', None)
+    pg = PromptGenerator(
+        model_path="models/qwen2-0_5b-instruct-q4_k_m.gguf",
+        llm_instance=shared_llm
+    )
+    return orch, pg
+
+orchestrator, prompt_generator = load_models()
+
+# Inject grok api key dynamically to avoid invalidating the cache
+if grok_api_key:
+    from core.grok_client import GrokClient
+    orchestrator.grok = GrokClient(grok_api_key)
+    orchestrator.HAS_GROK = True
+    if hasattr(orchestrator, 'executor'):
+        orchestrator.executor.grok = GrokClient(grok_api_key)
+        orchestrator.executor.HAS_GROK = True
 
 # --- Title ---
 st.markdown('<p class="main-header">🤖 Edge AI Orchestrator</p>', unsafe_allow_html=True)
@@ -94,8 +114,13 @@ with st.sidebar:
     st.markdown("### 🔑 Grok API Key")
     grok_api_key_ui = st.text_input("Paste your xAI Grok API key (overrides secrets):", type="password")
     if grok_api_key_ui:
-        orchestrator.grok_api_key = grok_api_key_ui
+        from core.grok_client import GrokClient
         grok_api_key = grok_api_key_ui
+        orchestrator.grok = GrokClient(grok_api_key)
+        orchestrator.HAS_GROK = True
+        if hasattr(orchestrator, 'executor'):
+            orchestrator.executor.grok = GrokClient(grok_api_key)
+            orchestrator.executor.HAS_GROK = True
 
 # --- Main App (Tabs) ---
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
