@@ -17,9 +17,9 @@ def test_pipeline():
     # 2. Route
     print("  Routing...")
     route = get_route(result["intent"], result["confidence"])
-    explanation = get_route_explanation(result["intent"], result["confidence"], route)
+    explanation = get_route_explanation(result["intent_matrix"], route)
     color = get_route_color(route)
-    print(f"  Route: {route}, Color: {color}")
+    print(f"  Route: {route}")
     
     # 3. Log
     print("  Logging...")

@@ -35,11 +35,11 @@ class TaskExecutor:
 
         try:
             if route == "ODA" and self.HAS_QWEN:
-                return self.qwen(prompt=prompt, max_tokens=512, temperature=0.7)["choices"][0]["text"].strip()
+                return self.qwen.create_chat_completion(messages=[{"role": "user", "content": prompt}], max_tokens=512, temperature=0.7)["choices"][0]["message"]["content"].strip()
             elif route == "Cloud" and self.HAS_GROK:
                 return self.grok.generate(prompt, max_tokens=512, temperature=0.7)
             elif self.HAS_QWEN:  # Hybrid: Try Qwen first
-                return self.qwen(prompt=prompt, max_tokens=512, temperature=0.7)["choices"][0]["text"].strip()
+                return self.qwen.create_chat_completion(messages=[{"role": "user", "content": prompt}], max_tokens=512, temperature=0.7)["choices"][0]["message"]["content"].strip()
             elif self.HAS_GROK:
                 return self.grok.generate(prompt, max_tokens=512, temperature=0.7)
             else:

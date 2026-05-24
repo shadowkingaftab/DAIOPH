@@ -224,11 +224,13 @@ class HybridOrchestrator:
 
     def _topological_sort(self, nodes: List[Dict]) -> List[str]:
         in_degree = {node["id"]: 0 for node in nodes}
-        graph = {node["id"]: node.get("depends_on", []) for node in nodes}
+        graph = {node["id"]: [] for node in nodes}
 
         for node in nodes:
             for dep in node.get("depends_on", []):
                 in_degree[node["id"]] += 1
+                if dep in graph:
+                    graph[dep].append(node["id"])
 
         queue = [node["id"] for node in nodes if in_degree[node["id"]] == 0]
         sorted_ids = []

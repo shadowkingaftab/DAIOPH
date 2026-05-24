@@ -42,7 +42,7 @@ def process_prompt(prompt: str):
 
         # ── Step 2: Route ────────────────────────────────────────────────────
         route       = get_route(result["intent"], result["confidence"])
-        explanation = get_route_explanation(result["intent"], result["confidence"], route)
+        explanation = get_route_explanation(result["intent_matrix"], route)
         color       = get_route_color(route)
 
         # ── Step 3: Log ──────────────────────────────────────────────────────

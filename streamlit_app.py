@@ -165,14 +165,18 @@ with tab1:
                 logger.log(log_entry)
 
                 st.markdown("#### 🔗 Task Bifurcation DAG")
-                graph = graphviz.Digraph(graph_attr={"rankdir": "LR"})
-                for node in dag["dag"]["nodes"]:
-                    graph.node(node["id"], node["task"][:30] + "...")
-                for node in dag["dag"]["nodes"]:
-                    if "depends_on" in node:
-                        for dep in node["depends_on"]:
-                            graph.edge(dep, node["id"])
-                st.graphviz_chart(graph)
+                try:
+                    graph = graphviz.Digraph(graph_attr={"rankdir": "LR"})
+                    for node in dag["dag"]["nodes"]:
+                        graph.node(node["id"], node["task"][:30] + "...")
+                    for node in dag["dag"]["nodes"]:
+                        if "depends_on" in node:
+                            for dep in node["depends_on"]:
+                                graph.edge(dep, node["id"])
+                    st.graphviz_chart(graph)
+                except Exception as e:
+                    st.warning("Graphviz is not installed on this system. Showing raw DAG structure:")
+                    st.json(dag["dag"])
 
                 st.markdown("#### 💡 Execution Results")
                 for task_id, result in results.items():

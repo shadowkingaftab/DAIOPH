@@ -33,7 +33,8 @@ def route(intent: str, confidence: float) -> str:
 @mcp.tool()
 def explain_route(intent: str, confidence: float, route: str) -> str:
     """Get an explanation for why a specific route was chosen."""
-    return get_route_explanation(intent, confidence, route)
+    intent_matrix = {intent: confidence}
+    return get_route_explanation(intent_matrix, route)
 
 if __name__ == "__main__":
     mcp.run()
