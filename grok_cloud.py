@@ -44,83 +44,55 @@ def is_api_key_set() -> bool:
 
 def run_grok(
     prompt: str,
-    model: str = DEFAULT_MODEL,
+    model: str = None,
     max_tokens: int = 512,
     temperature: float = 0.7,
     timeout: int = DEFAULT_TIMEOUT,
 ) -> str:
     """
-    Call the Grok API (PRIMARY inference path).
-
-    Args:
-        prompt      : The user's prompt text.
-        model       : Grok model ID. Options: "grok-3-mini", "grok-3", "grok-1".
-        max_tokens  : Maximum tokens in the response.
-        temperature : 0.0 = deterministic, 1.0 = creative.
-        timeout     : Request timeout in seconds.
-
-    Returns:
-        Generated text on success, or an error string prefixed with ❌/⚠️.
+    Call the Grok API with automatic model failover.
     """
     api_key = os.getenv("GROK_API_KEY", "").strip()
 
     if not api_key:
-        return (
-            "⚠️ GROK_API_KEY not set.\n"
-            "• Set it in your .env file: GROK_API_KEY=your-key-here\n"
-            "• Or in PowerShell: $env:GROK_API_KEY = 'your-key-here'\n"
-            "• Or paste it in the Dashboard sidebar."
-        )
+        return "⚠️ GROK_API_KEY not set."
 
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type":  "application/json",
     }
-    payload = {
-        "model":       model,
-        "messages":    [{"role": "user", "content": prompt}],
-        "max_tokens":  max_tokens,
-        "temperature": temperature,
-    }
+    
+    # Try multiple models in case one is not enabled for the user's key
+    models_to_try = [model] if model else ["grok-2-1212", "grok-beta", "grok-2", "grok-1"]
+    last_error = ""
 
-    try:
-        response = requests.post(
-            GROK_API_URL, headers=headers, json=payload, timeout=timeout
-        )
-        response.raise_for_status()
-        content = response.json()["choices"][0]["message"]["content"]
-        return content.strip() if content else "❌ Grok returned an empty response."
+    for m in models_to_try:
+        payload = {
+            "model":       m,
+            "messages":    [{"role": "user", "content": prompt}],
+            "max_tokens":  max_tokens,
+            "temperature": temperature,
+        }
 
-    except requests.exceptions.Timeout:
-        return f"❌ Grok API timed out after {timeout}s. Try again or use local Qwen."
+        try:
+            response = requests.post(
+                GROK_API_URL, headers=headers, json=payload, timeout=timeout
+            )
+            if response.status_code == 200:
+                return response.json()["choices"][0]["message"]["content"]
+            
+            last_error = f"{response.status_code} - {response.text}"
+            if response.status_code in [401, 429]: # Auth/Rate Limit
+                break
+        except Exception as e:
+            last_error = str(e)
 
-    except requests.exceptions.HTTPError as e:
-        code = response.status_code
-        if code == 401:
-            return "Grok API: Invalid API key (401). Check your GROK_API_KEY."
-        if code == 403:
-            body = response.json() if response.content else {}
-            detail = body.get("error", "")
-            return f"Grok API: Access denied (403). {detail} Visit https://console.x.ai to add credits."
-        if code == 429:
-            return "Grok API: Rate limit exceeded (429). Wait a moment and retry."
-        if code == 402:
-            return "Grok API: Quota exceeded (402). Check your xAI billing at https://console.x.ai."
-        return f"Grok API HTTP error {code}: {e}"
-
-    except requests.exceptions.ConnectionError:
-        return "❌ Grok API: No internet connection. Local Qwen will handle this."
-
-    except requests.exceptions.RequestException as e:
-        return f"❌ Grok API connection error: {str(e)}"
-
-    except (KeyError, IndexError):
-        return "❌ Grok API: Unexpected response format."
+    return f"❌ Grok API Error (tried {models_to_try}): {last_error}"
 
 
 def run_grok_with_fallback(
     prompt: str,
-    model: str = DEFAULT_MODEL,
+    model: str = None,
     max_tokens: int = 512,
     temperature: float = 0.7,
 ) -> tuple[str, str]:
@@ -135,7 +107,7 @@ def run_grok_with_fallback(
     grok_resp = run_grok(prompt, model=model, max_tokens=max_tokens, temperature=temperature)
 
     # If Grok returned cleanly (no error prefix), use it
-    if not grok_resp.startswith(("Grok API", "No capacity", "timed out", "connection", "Unexpected")):
+    if not grok_resp.startswith(("❌", "⚠️", "Grok API", "No capacity", "timed out", "connection", "Unexpected")):
         return grok_resp, "grok"
 
     # Grok failed — fall back to local Qwen

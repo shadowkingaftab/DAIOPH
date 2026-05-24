@@ -11,24 +11,33 @@ class GrokClient:
         }
 
     def generate(self, prompt: str, max_tokens: int = 512, temperature: float = 0.3) -> str:
-        """Call Grok API for text generation."""
-        # Use grok-2 as the most compatible model name
-        payload = {
-            "model": "grok-2",
-            "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": max_tokens,
-            "temperature": temperature
-        }
-        try:
-            response = requests.post(
-                self.base_url,
-                headers=self.headers,
-                json=payload,
-                timeout=30
-            )
-            if response.status_code != 200:
-                return f"Error calling Grok API: {response.status_code} - {response.text}"
-            
-            return response.json()["choices"][0]["message"]["content"]
-        except Exception as e:
-            return f"Error calling Grok API: {str(e)}"
+        """Call Grok API with automatic model failover."""
+        # Try models in order of capability/availability
+        models_to_try = ["grok-2-1212", "grok-beta", "grok-2", "grok-1"]
+        last_error = ""
+
+        for model in models_to_try:
+            payload = {
+                "model": model,
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": max_tokens,
+                "temperature": temperature
+            }
+            try:
+                response = requests.post(
+                    self.base_url,
+                    headers=self.headers,
+                    json=payload,
+                    timeout=20
+                )
+                if response.status_code == 200:
+                    return response.json()["choices"][0]["message"]["content"]
+                
+                last_error = f"{response.status_code} - {response.text}"
+                # If it's a 401 (Auth) or 429 (Rate Limit), don't bother retrying other models
+                if response.status_code in [401, 429]:
+                    break
+            except Exception as e:
+                last_error = str(e)
+        
+        return f"Error calling Grok API (tried {', '.join(models_to_try)}): {last_error}"
