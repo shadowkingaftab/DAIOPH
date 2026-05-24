@@ -12,8 +12,9 @@ class GrokClient:
 
     def generate(self, prompt: str, max_tokens: int = 512, temperature: float = 0.3) -> str:
         """Call Grok API for text generation."""
+        # Use grok-2-1212 or grok-3-mini as they are more stable than grok-beta
         payload = {
-            "model": "grok-beta",
+            "model": "grok-2-1212",
             "messages": [{"role": "user", "content": prompt}],
             "max_tokens": max_tokens,
             "temperature": temperature
@@ -25,7 +26,9 @@ class GrokClient:
                 data=json.dumps(payload),
                 timeout=30
             )
-            response.raise_for_status()
+            if response.status_code != 200:
+                return f"Error calling Grok API: {response.status_code} - {response.text}"
+            
             return response.json()["choices"][0]["message"]["content"]
         except Exception as e:
             return f"Error calling Grok API: {str(e)}"
