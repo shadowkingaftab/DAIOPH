@@ -12,8 +12,16 @@ class GrokClient:
 
     def generate(self, prompt: str, max_tokens: int = 512, temperature: float = 0.3) -> str:
         """Call Grok API with automatic model failover."""
-        # Standard production model names
-        models_to_try = ["grok-2-1212", "grok-2-latest", "grok-beta"]
+        # Expanded list of all possible xAI models to ensure one works
+        models_to_try = [
+            "grok-3-mini", 
+            "grok-3", 
+            "grok-2-1212", 
+            "grok-2-latest", 
+            "grok-beta", 
+            "grok-2", 
+            "grok-1"
+        ]
         last_error = ""
 
         for model in models_to_try:

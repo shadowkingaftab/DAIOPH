@@ -63,7 +63,7 @@ def run_grok(
     }
     
     # Try multiple models in case one is not enabled for the user's key
-    models_to_try = [model] if model else ["grok-2-1212", "grok-2-latest", "grok-beta"]
+    models_to_try = [model] if model else ["grok-3-mini", "grok-3", "grok-2-1212", "grok-2-latest", "grok-beta", "grok-2", "grok-1"]
     last_error = ""
 
     for m in models_to_try:

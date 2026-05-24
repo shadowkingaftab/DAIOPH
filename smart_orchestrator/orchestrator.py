@@ -191,23 +191,34 @@ class LLMOrchestrator:
             raise RuntimeError(f"Device execution failed: {str(e)}")
 
     def _execute_cloud_task(self, task: Dict) -> str:
-        """Execute task on cloud Grok"""
-        try:
-            url = "https://api.x.ai/v1/chat/completions"
-            headers = {
-                "Authorization": f"Bearer {self.grok_api_key}",
-                "Content-Type": "application/json"
-            }
+        """Execute task on cloud Grok with automatic failover"""
+        url = "https://api.x.ai/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.grok_api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        models_to_try = ["grok-3-mini", "grok-3", "grok-2-1212", "grok-beta", "grok-2", "grok-1"]
+        last_error = ""
+
+        for model in models_to_try:
             data = {
                 "messages": [{"role": "user", "content": task["task"]}],
-                "model": "grok-1",
+                "model": model,
                 "max_tokens": 512
             }
-            response = requests.post(url, headers=headers, json=data, timeout=30)
-            response.raise_for_status()
-            return response.json()["choices"][0]["message"]["content"]
-        except Exception as e:
-            raise RuntimeError(f"Cloud execution failed: {str(e)}")
+            try:
+                response = requests.post(url, headers=headers, json=data, timeout=30)
+                if response.status_code == 200:
+                    return response.json()["choices"][0]["message"]["content"]
+                
+                last_error = f"{response.status_code} - {response.text}"
+                if response.status_code in [401, 429]:
+                    break
+            except Exception as e:
+                last_error = str(e)
+
+        raise RuntimeError(f"Cloud execution failed (tried {', '.join(models_to_try)}): {last_error}")
 
     def _smart_aggregate_results(self, results: Dict, decomposition: Dict) -> str:
         """Intelligent result merging based on task dependencies"""
