@@ -44,11 +44,21 @@ class TaskExecutor:
             if route == "ODA" and self.HAS_QWEN:
                 with self.lock:
                     return self.qwen.create_chat_completion(messages=[{"role": "user", "content": prompt}], max_tokens=512, temperature=0.7)["choices"][0]["message"]["content"].strip()
-            elif route == "Cloud" and self.HAS_GROK:
-                return self.grok.generate(prompt, max_tokens=512, temperature=0.7)
-            elif self.HAS_QWEN:
-                with self.lock:
-                    return self.qwen.create_chat_completion(messages=[{"role": "user", "content": prompt}], max_tokens=512, temperature=0.7)["choices"][0]["message"]["content"].strip()
+            elif route == "Cloud":
+                if self.HAS_GROK:
+                    res = self.grok.generate(prompt, max_tokens=512, temperature=0.7)
+                    if not res.startswith("Error calling Grok API"):
+                        return res
+                    print(f"Grok failed, falling back to Qwen: {res}")
+                
+                if self.HAS_QWEN:
+                    with self.lock:
+                        return self.qwen.create_chat_completion(
+                            messages=[{"role": "user", "content": prompt}],
+                            max_tokens=512,
+                            temperature=0.7
+                        )["choices"][0]["message"]["content"].strip()
+                return "Error: No models available (Grok failed and Qwen not loaded)"
             elif self.HAS_GROK:
                 return self.grok.generate(prompt, max_tokens=512, temperature=0.7)
             else:
