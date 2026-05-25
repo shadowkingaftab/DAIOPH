@@ -1,92 +1,111 @@
-# Edge AI Intent Classifier & Dashboard
-### Production-Grade Hybrid Inference Engine
+# Edge AI Intent Classifier & Orchestration Ecosystem
+### Production-Grade Hybrid Inference & Prompt Bifurcation Suite
 
-A robust intent classification system that intelligently routes tasks between local **Edge AI (Qwen2-0.5B)** and **Cloud AI (Grok API)**. Features a real-time Streamlit dashboard with performance analytics and a fine-tuning pipeline.
+A comprehensive suite of intelligence-routing frameworks and task compilers designed to orchestrate complex prompt workflows across local **Edge AI (Qwen2-0.5B / Qwen-1.8B GGUF)** and **Cloud AI (xAI Grok API)**. Features multi-stage task decomposition, dynamic DAG parallel execution, real-time visual telemetry, and offline self-refining dual-role agent compilers.
 
 ---
 
 ## 🚀 Key Features
-- **Hybrid Execution**: Cloud-primary (Grok-3-mini) with seamless local fallback (Qwen2-0.5B GGUF).
-- **Edge-Optimized**: Runs on CPU using `llama-cpp-python` with auto-hardware tuning.
-- **Quantization Support**: Choose between `q2_k`, `q4_k_m`, and `q8_0` via config.
-- **Production Analytics**: Track latency, confidence, and routing distributions.
-- **Fine-Tuning Ready**: Built-in pipeline to improve classification accuracy >95%.
-- **Agent Compatible**: Includes **MCP** (Model Context Protocol) and **Corsair** security layers.
+
+*   **Four Orchestration Architectures**: Explore the evolution from baseline zero-shot intent routing to a highly sophisticated offline-first self-refining task compiler.
+*   **Dual-Role LLMCompiler & Self-Refine**: 100% offline planner-executor-refiner pipelines that decompose, execute, and self-correct complex workflows.
+*   **Graphviz-Powered DAG Visualization**: View generated Task Bifurcation Directed Acyclic Graphs (DAGs) in real-time as tasks execute.
+*   **Multi-Stage Task Decomposition**: Automated sentence tokenization, coreference resolution, and clustering to parallelize multi-step prompts.
+*   **Seamless Cloud-to-Local Fallback**: Primary cloud pipelines degrade gracefully to local offline engines if APIs fail or credentials are missing.
+*   **Production Telemetry Dashboard**: Track success rates, execution latencies, prompt logs, and routing distributions using Plotly and Pandas.
+*   **Agent & Protocol Ready**: Built-in Model Context Protocol (MCP) server support for external agent discovery.
 
 ---
 
-## 🛠 Setup & Usage
+## 📁 Ecosystem Structure
 
-### 1. Installation
+The repository is structured into four progressive orchestration frameworks:
+
+```
+├── core/                     # Shared core logic (Grok clients, Task Executors, Prompts)
+├── utils/                    # PDF parsers, thread loggers, and visualizers
+├── models/                   # Local GGUF models and HuggingFace download target
+│
+├── streamlit_app.py          # Framework 1: Real-time Intent Classifier & Dashboard (Production)
+├── unified_orchestrator/     # Framework 2: Hierarchical Parallel DAG Orchestrator
+├── smart_orchestrator/       # Framework 3: Bartender-Decomposition & Telemetry Router
+└── revolutionary_orchestrator/ # Framework 4: 100% Offline LLMCompiler + Self-Refining Pipeline
+```
+
+---
+
+## 🛠 Quick Setup
+
+### 1. Prerequisite Packages
+Install the required Python dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configuration
-Copy `.env.example` to `.env` and add your keys:
+### 2. Environment Configuration
+Copy the `.env.example` file to `.env` and fill in your keys:
 ```bash
-GROK_API_KEY=your-key-here
-QWEN_QUANT=q4_k_m
+GROK_API_KEY=your_xai_grok_api_key
+CLASSIFIER_MODEL_PATH=models/fine_tuned_classifier  # Optional fine-tuned target
 ```
 
-### 3. Run the Dashboard (Streamlit)
+---
+
+## 🚀 Running the Orchestrator Frameworks
+
+Choose the orchestrator architecture you want to launch using Streamlit:
+
+### 1. Framework 1: Intent Classifier & Dashboard (Baseline)
+Deterministic zero-shot classifier routing single prompts between edge and cloud based on intent classification.
 ```bash
 streamlit run streamlit_app.py
 ```
-*Note: dashboard.py was renamed to streamlit_app.py for Cloud deployment.*
 
-### 4. Run the Legacy Gradio UI
+### 2. Framework 2: Unified Hybrid Orchestrator
+Extracts tasks using NLTK sentence parsing, maps coreferences, parallelizes executions, and displays Graphviz DAGs.
 ```bash
-python gradio_app.py
+streamlit run unified_orchestrator/app.py
 ```
 
-### 5. Run the MCP Server (For Agents)
+### 3. Framework 3: Smart LLM Orchestrator
+Decomposes complex flows using template-based Bartender logic and tracks live task metrics.
 ```bash
-npx @modelcontextprotocol/inspector python mcp_server.py
+streamlit run smart_orchestrator/app.py
+```
+
+### 4. Framework 4: Revolutionary Prompt Bifurcation (LLMCompiler)
+Runs entirely offline. Planning, Execution, and Self-Refining correction nodes run locally on CPU, sharing a single model context to optimize RAM usage.
+```bash
+streamlit run revolutionary_orchestrator/app.py
 ```
 
 ---
 
 ## 🐳 Docker Deployment
+
+To build and run the entire suite in a unified container:
 ```bash
 docker-compose up --build
 ```
-Access the dashboard at `http://localhost:8501`.
+Access the primary dashboard at `http://localhost:8501`.
 
 ---
 
-## 🎯 Fine-Tuning the Classifier
-To hit >95% confidence on your domain:
-1. Collect samples in `training/domain_dataset.json`.
-2. Run the trainer:
+## 🎯 Classifier Fine-Tuning Pipeline
+
+To fine-tune the intent classifier model (`typeform/distilbert-base-uncased-mnli`) on custom enterprise data to achieve classification confidences above 95%:
+1. Add custom intent training samples in `training/domain_dataset.json`.
+2. Launch the trainer script:
    ```bash
    python training/train_classifier.py --epochs 5 --eval
    ```
-3. Set `CLASSIFIER_MODEL_PATH=models/fine_tuned_classifier` in `.env`.
+3. Update `.env` to point `CLASSIFIER_MODEL_PATH` to the generated `models/fine_tuned_classifier` directory.
 
 ---
 
-## ☁️ Streamlit Cloud Deployment
-To run this app on **Streamlit Community Cloud**:
-1. Fork this repository to your GitHub.
-2. Go to [share.streamlit.io](https://share.streamlit.io) and connect your repository.
-3. In **App Settings → Secrets**, paste your `GROK_API_KEY`:
-   ```toml
-   GROK_API_KEY = "your-xai-api-key"
-   ```
-4. The app will automatically handle `packages.txt` to build the local inference engine and download the Qwen model on first run.
+## ☁️ Streamlit Cloud Deployment Notes
 
----
-
-## 📁 Project Structure
-```
-├── streamlit_app.py      # Main Streamlit Dashboard (Production)
-├── qwen_oda.py           # Local AI Module (Qwen2-0.5B GGUF)
-├── grok_cloud.py         # Cloud AI Module (Grok API)
-├── classifier.py         # Intent Classifier (DistilBERT)
-├── router.py             # Routing Logic & Fallback Orchestration
-├── training/             # Fine-tuning scripts & datasets
-├── .streamlit/           # Cloud deployment config
-├── Dockerfile            # Containerization
-└── mcp_server.py         # Agent Discovery Layer
-```
+The entire workspace is optimized for seamless zero-config deployment on **Streamlit Community Cloud**:
+*   **Lazy Loading**: Local GGUF models and DistilBERT are dynamically downloaded on first load if missing.
+*   **Fallback Protections**: If C++ compilers are restricted, the system catches import errors and routes traffic gracefully to Grok without disrupting server uptime.
+*   **Thread Safety**: Local inference requests are sequentially locked (`threading.Lock`) to prevent memory corruption under high multi-tenant traffic.

@@ -1,95 +1,210 @@
-# Edge AI Intent Classifier & Dashboard: Comprehensive Implementation Report
+# Edge AI Intent Classifier & Orchestrator: Evolution & Implementation Report
 
-## 1. Project Overview
-The **Edge AI Intent Classifier** is a production-grade, hybrid intelligent routing system. It is designed to intercept user prompts, classify their underlying "intent" and complexity in real-time, and dynamically route the execution to either a fast, private **Local Edge Model** or a powerful **Cloud LLM**.
-
-The system prevents over-reliance on cloud APIs by executing simple or privacy-sensitive tasks locally, while gracefully falling back to the cloud for complex, urgent, or multi-step reasoning tasks. It includes a comprehensive Streamlit dashboard for real-time visualization of routing decisions, performance metrics, and system health.
+This comprehensive implementation report tracks the evolutionary journey of the **Edge AI Intent Classifier & Orchestration System**. What began as a zero-shot intent classifier and dashboard has matured into a multi-phase, state-of-the-art hybrid on-device/cloud routing ecosystem, culminating in a 100% offline, self-refining dual-role compiler architecture.
 
 ---
 
-## 2. System Architecture & Workflow
-The architecture operates in a multi-stage pipeline:
+## 1. Executive Summary & Project Progression
 
-1. **Input Reception**: A user query is received via the Streamlit UI or the Model Context Protocol (MCP) server.
-2. **Intent Classification**: The query is passed to `classifier.py`, which uses a zero-shot transformer model to generate an **Intent Matrix** (a probability distribution over 8 predefined intents).
-3. **Decision Engine (Router)**: `router.py` analyzes the Intent Matrix and applies deterministic thresholds to choose the optimal execution path (ODA, Cloud, or Hybrid).
-4. **Execution Engine**:
-   - **ODA (On-Device AI)**: Handled by `qwen_oda.py` using a local GGUF model.
-   - **Cloud LLM**: Handled by `grok_cloud.py` using the Grok API, with automatic local fallback.
-   - **Hybrid**: Sequentially executes lightweight steps locally and complex steps in the cloud.
-5. **Response & Analytics**: The final response is returned to the user, and the entire transaction (latency, confidence, route) is logged to `logs.csv` for dashboard analytics.
+The system is designed to solve the critical trade-offs of modern LLM systems: **privacy, cost, latency, and reliability**. By combining lightweight local edge models with robust cloud APIs and advanced task decomposition algorithms, the project ensures optimal compute efficiency and graceful degradation.
 
----
+The system's development progressed through four distinct architecture phases:
 
-## 3. Technology Stack
+```mermaid
+graph TD
+    Phase1[Phase 1: Intent Classifier & Router] --> Phase2[Phase 2: Unified Hybrid Orchestrator]
+    Phase2 --> Phase3[Phase 3: Smart Orchestrator]
+    Phase3 --> Phase4[Phase 4: Revolutionary Prompt Bifurcation]
+    
+    style Phase1 fill:#1a1a2e,stroke:#4CC9F0,stroke-width:2px,color:#fff
+    style Phase2 fill:#1a1a2e,stroke:#4CC9F0,stroke-width:2px,color:#fff
+    style Phase3 fill:#1a1a2e,stroke:#4CC9F0,stroke-width:2px,color:#fff
+    style Phase4 fill:#0f0f1a,stroke:#e94560,stroke-width:3px,color:#fff
+```
 
-| Category | Technology / Library | Description & Purpose |
-| :--- | :--- | :--- |
-| **Backend & Orchestration** | Python 3.10+ | Core logic and system integration. |
-| **Intent Classification** | `transformers`, `torch` | Hugging Face pipeline for zero-shot text classification. |
-| **Edge AI Engine** | `llama-cpp-python` | CPU-optimized inference for GGUF local models. |
-| **Edge AI Model** | Qwen2-0.5B (GGUF) | Lightweight, 500M parameter model (`q4_k_m` quantization). Fits in ~300MB RAM. |
-| **Cloud AI Engine** | xAI Grok API (`requests`) | High-reasoning model (`grok-3-mini`) for complex tasks. |
-| **Dashboard UI** | `streamlit`, `plotly`, `pandas` | Real-time web UI, metric rendering, and CSV log parsing. |
-| **Agent Protocol** | Model Context Protocol (MCP) | Allows external agents to interact with the classifier via `mcp_server.py`. |
-| **Environment Control** | `python-dotenv` | Secure API key and config management (`.env`). |
+| Phase | Core Mechanism | Local Model | Cloud Model | Execution Mode | Key Benefit |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **1. Intent Classifier** | Zero-Shot Classifier + Deterministic Router | Qwen2-0.5B (GGUF) | Grok API | Single Route (Local or Cloud) | Basic task routing, zero cloud costs for simple tasks |
+| **2. Unified Orchestrator** | Sentence Tokenization + Hierarchical Graph | Qwen2-0.5B (GGUF) | Grok API | ThreadPool parallel execution | Task decomposition and parallelized hybrid flows |
+| **3. Smart Orchestrator** | Bartender-based Decomposer & Tracker | Qwen-1.8B (GGUF) | Grok API | Dynamic telemetry execution | Intelligent task routing with latency tracking |
+| **4. Revolutionary Bifurcation** | LLMCompiler + Self-Refining Dual-Role Agent | Qwen2-0.5B / Qwen-1.8B (GGUF) | None (100% Offline) | Dependent DAG execution with Refiner | Complete data privacy, self-correcting execution |
 
 ---
 
-## 4. Deep Dive: Component Modules
+## 2. Phase 1: Edge AI Intent Classifier & Dashboard
 
-### 4.1. `classifier.py` (The NLP Brain)
-- **Model Used**: `typeform/distilbert-base-uncased-mnli` (~268MB footprint).
-- **Strategy**: Zero-shot classification.
-- **Labels Tracked**: `summarize`, `translate`, `analyze_data`, `generate_code`, `multi_step`, `ambiguous`, `urgent`, `simple_query`.
-- **Post-Processing**: Applies heuristics (e.g., boosting `multi_step` confidence if "and" or "then" is detected in the prompt).
-- **Output**: Returns a normalized Intent Matrix, top intent, confidence score, and latency.
-
-### 4.2. `router.py` (The Decision Maker)
-Applies a strict ruleset based on the classifier's output:
-- **Urgent Task** (`urgent` > 0.5) → Routes to **Cloud LLM** for immediate, reliable processing.
-- **Multi-Step Task** (`multi_step` > 0.3) → Routes to **Hybrid** (splits the prompt into Edge and Cloud segments).
-- **Low Confidence** (`< 0.55`) → Routes to **Cloud LLM** (Grok provides safer, deeper reasoning).
-- **High Confidence & Simple** (`>= 0.75` for translate, summarize, simple_query) → Routes to **ODA** (Local Edge).
-- **High Confidence & Complex** (`>= 0.75` for analyze_data, generate_code) → Routes to **Cloud LLM**.
-
-### 4.3. `qwen_oda.py` (Edge Execution)
-- Initializes the `Llama` class from `llama_cpp`.
-- Operates entirely offline. If initialized correctly, latency is virtually zero (excluding generation time).
-
-### 4.4. `grok_cloud.py` (Cloud Execution)
-- Sends payloads to `https://api.x.ai/v1/chat/completions`.
-- **Critical Feature**: Implements `run_grok_with_fallback`. If the API key is missing, network fails, or Grok times out, the script transparently reroutes the payload to `qwen_oda.py`.
-
-### 4.5. `streamlit_app.py` (Production Dashboard)
-- **Playground**: Interactive interface for testing queries.
-- **Analytics View**: Parses `logs.csv` to generate:
-  - Total queries processed.
-  - Average latency (ms).
-  - A Plotly Pie Chart showing the Edge vs. Cloud routing distribution.
-  - A confidence distribution gauge.
-- **System Health**: Displays the status of the local LLM engine and Grok API connection.
-
-### 4.6. `mcp_server.py` (Agent Discovery Layer)
-- Exposes the classifier's capabilities to other AI systems using the Model Context Protocol.
-- Defines a tool `classify_intent` that external agents can invoke to get routing recommendations.
+### 2.1. System Workflow & Architecture
+The initial baseline leverages a zero-shot classifier as the "router brain" to intercept user prompts and route them in their entirety to the best execution engine:
+1. **Input Reception**: User prompt is ingested via Streamlit (`streamlit_app.py`).
+2. **Intent Classification** (`classifier.py`): Leverages `typeform/distilbert-base-uncased-mnli` (~268MB footprint) to assign confidence scores over 8 predefined intents:
+   - *Intents*: `summarize`, `translate`, `analyze_data`, `generate_code`, `multi_step`, `ambiguous`, `urgent`, `simple_query`.
+   - *Heuristic Post-Processing*: Regex rules boost `multi_step` when words like "and" or "then" exist.
+3. **Deterministic Routing** (`router.py`):
+   - **Urgent Task** (`urgent > 0.5`) → Routes to **Cloud LLM** (Grok).
+   - **Low Confidence** (`< 0.55`) → Routes to **Cloud LLM** (Grok) for deep reasoning.
+   - **High Confidence & Simple** (`>= 0.75` for translate, summarize, simple) → Routes to **ODA** (Local Qwen2-0.5B).
+   - **High Confidence & Complex** (`>= 0.75` for analysis, code) → Routes to **Cloud LLM**.
+4. **Execution & Fallback** (`grok_cloud.py` & `qwen_oda.py`):
+   - Primary cloud calls use the Grok API with automatic model failover (tries `grok-3-mini`, `grok-3`, `grok-2-1212`, `grok-2-latest`, etc.).
+   - If the API key is missing, network times out, or Grok fails, `grok_cloud.py` automatically cascades the request down to `qwen_oda.py` for offline Qwen fallback, maintaining presentation uptime.
+5. **Real-time Analytics**: Writes metadata (timestamp, prompt, selected route, latency, status) to `logs.csv` for Streamlit reporting.
 
 ---
 
-## 5. Recent Optimizations & Deployment Triumphs
+## 3. Phase 2: Unified Edge AI + Bifurcation System
 
-1. **Streamlit Cloud Compilation Fix**: 
-   - Addressed Streamlit Cloud `ModuleNotFoundError` and Out-Of-Memory (OOM) crashes by strictly defining dependencies.
-   - Optimized `requirements.txt` to use the CPU-only version of PyTorch (`--extra-index-url https://download.pytorch.org/whl/cpu`), drastically reducing container size and build time.
-2. **Robust Fallback Engine**: 
-   - Engineered the system to degrade gracefully. If Streamlit Cloud blocks the C++ compilation of `llama-cpp-python`, `router.py` automatically detects the missing module and routes everything to Grok without crashing the app.
-3. **Hybrid Parallelism**: 
-   - Implemented sequential prompting for Hybrid routes, ensuring multi-step tasks get the benefit of both edge privacy/speed and cloud reasoning.
+To handle multi-step prompts (e.g., *"Summarize this document, extract the key names, and then write a draft letter"*), Phase 2 introduced true **Task Decomposition and Parallel Execution** through the `unified_orchestrator` and `core/hybrid_orchestrator.py`.
+
+```
+                    ┌─────────────────────────┐
+                    │       User Prompt       │
+                    └────────────┬────────────┘
+                                 │
+                   ┌─────────────▼─────────────┐
+                   │  Hierarchical Decomposer  │
+                   │ (NLTK sentence tokenizer) │
+                   └─────────────┬─────────────┘
+                                 │
+                   ┌─────────────▼─────────────┐
+                   │  Coreference Dependency  │
+                   │  (Shared Entity Analyzer) │
+                   └─────────────┬─────────────┘
+                                 │
+                   ┌─────────────▼─────────────┐
+                   │   Agglomerative Clustered │
+                   │   Task Bifurcation DAG    │
+                   └─────────────┬─────────────┘
+                                 │
+                  ┌──────────────┴──────────────┐
+                  ▼                             ▼
+       ┌────────────────────┐         ┌────────────────────┐
+       │   Local Task n1    │         │   Local Task n2    │
+       │   (Qwen2-0.5B)     │         │   (Qwen2-0.5B)     │
+       └──────────┬─────────┘         └──────────┬─────────┘
+                  │                              │
+                  └──────────────┬───────────────┘
+                                 │
+                   ┌─────────────▼─────────────┐
+                   │    Stitcher & Polisher    │
+                   │    (Grok Output Fusion)   │
+                   └───────────────────────────┘
+```
+
+### 3.1. Advanced Task Bifurcation
+Instead of executing the prompt as a monolith, `HybridOrchestrator` splits the query into structured dependency nodes:
+- **Sentence Tokenization & Coreference Resolution**: Leverages NLTK to parse prompt sentences. If two sentences share coreference terms (entities), a dependency edge `depends_on` is injected.
+- **Agglomerative Clustering**: Synthesizes redundant or highly similar sentences into single multi-stage cluster tasks using Cosine Affinity to minimize redundant model runs.
+- **Topological Sorting**: Arranges DAG nodes (`n1`, `n2`, `n3`...) in an acyclic topological sequence.
+
+### 3.2. Parallel Thread Pool Execution
+- Submits ready tasks (nodes with zero pending dependencies) to a `ThreadPoolExecutor` (max 4 workers).
+- Dependent tasks block until parent futures resolve, injecting resolved parent text outputs as a context preamble for the child task.
+- **Conflict Resolution & Polishing**: Checks for negative expressions in overlapping results. If detected, Grok is triggered to resolve conflicts and polish the final stitched output to match the original parent prompt.
+- **Telemetry**: Real-time rendering of the generated Bifurcation DAG in Streamlit using Graphviz.
 
 ---
 
-## 6. Future Roadmap
+## 4. Phase 3: Smart LLM Orchestrator
 
-- **Domain-Specific Fine-Tuning**: Utilizing the `training/` pipeline to fine-tune the DistilBERT model on specific enterprise data to push baseline confidence above 95%.
-- **RLHF (Reinforcement Learning from Human Feedback)**: Adding feedback mechanisms to the Streamlit UI to dynamically adjust routing thresholds over time.
-- **Hardware Acceleration**: Integrating CUDA/Metal detection for `llama-cpp-python` to push Edge generation speeds higher on capable hardware.
+The **Smart LLM Orchestrator** (`smart_orchestrator/`) standardizes execution flows by incorporating:
+- **Bartender-style Prompt Decomposition**: Translates long prompts into highly structured task objects.
+- **Dynamic Routing Engine**: Assigns specific tasks to either Local (Qwen-1.8B) or Cloud (Grok API) based on resource capabilities.
+- **Live Visual Telemetry**: Renders step-by-step progress, latency metrics, and execution states in a custom dashboard view.
+
+---
+
+## 5. Phase 4: Revolutionary Prompt Bifurcation (LLMCompiler)
+
+Phase 4 (`revolutionary_orchestrator/`) represents the pinnacle of the codebase: a **100% offline, privacy-first, self-correcting agent** utilizing a dual-role (Planner, Executor, Refiner) LLMCompiler architecture.
+
+```
+       ┌───────────────────────────────┐
+       │      User Complex Prompt      │
+       └───────────────┬───────────────┘
+                       │
+         ┌─────────────▼─────────────┐
+         │     Regex Pre-Router      │ (Heuristic sequence detection)
+         └─────────────┬─────────────┘
+                       │
+         ┌─────────────▼─────────────┐
+         │   🧠 TaskPlanner (GGUF)   │ (Low temp, zero-shot structured JSON)
+         └─────────────┬─────────────┘
+                       │
+                       ├──────────────────────────┐
+                       │                          │ (Success)
+         ┌─────────────▼─────────────┐            │
+         │   ⚡ TaskExecutor (GGUF)  │            │
+         └─────────────┬─────────────┘            │
+                       │                          │
+                   (If Errors / Short Outputs)    │
+                       │                          │
+         ┌─────────────▼─────────────┐            │
+         │   🔁 TaskRefiner (GGUF)   │            │
+         └─────────────┬─────────────┘            │
+                       │ (Improved DAG)           │
+         ┌─────────────▼─────────────┐            │
+         │   ⚡ TaskExecutor (GGUF)  │            │
+         └─────────────┬─────────────┘            │
+                       │                          │
+                       ├──────────────────────────┘
+                       │
+         ┌─────────────▼─────────────┐
+         │  Synthesized Output UI    │
+         └───────────────────────────┘
+```
+
+### 5.1. The Planner Brain (`planner.py`)
+- **Model Parameters**: Fast local GGUF running at a low temperature `0.1` and `seed=42` to guarantee high determinism.
+- **Regex Guardrails**: Includes a regex pre-router to check for sequential markers (e.g., *"First... Then... Finally..."*). If present, it bypasses the LLM planning call to instantly construct a flawless sequential DAG, protecting small CPU models from context drift.
+- **JSON Structured Output**: Employs zero-shot format templates representing tasks as:
+  ```json
+  {
+    "nodes": [
+      { "id": "n1", "task": "Task description here", "model": "qwen" },
+      { "id": "n2", "task": "Dependent task description", "model": "qwen", "depends_on": ["n1"] }
+    ]
+  }
+  ```
+- **Copycat Guardrails**: Compares generated tasks with prompt examples; if the model copies the templates verbatim, it defaults to a single-node fallback execution.
+
+### 5.2. The Context-Aware Executor (`executor.py`)
+- **Model Parameters**: Run at `temperature=0.3` to facilitate rich, fluent, and creative synthesis.
+- **Topological Solver**: Resolves dependency paths and resolves deadlocks by wiping unresolved dependency lists when cyclics or deadlocks are detected.
+- **Thread-Safety & Sequential Preamble**: Because local C++ inference engines (`llama-cpp-python`) are not natively thread-safe, execution runs sequentially. For each task, a complete context preamble is dynamically built, joining:
+  1. PDF content (truncated gracefully to the first 2,000 characters).
+  2. Sequential outputs of all completed parent tasks marked under `depends_on`.
+- **Global Context Injection**: PDF text is globally injected to every single task, assuring that the local engine retains absolute context awareness.
+
+### 5.3. The Self-Refining Optimizer (`refiner.py`)
+If any task in the execution chain encounters a problem, the pipeline triggers **Self-Refinement**:
+- **Defect Detection**: Evaluates execution outputs against strict performance heuristics:
+  - Task threw an exception (e.g., JSON error, GGUF crash).
+  - Task produced an output that was too short (under 15 words).
+  - Task did not execute due to preceding node state.
+- **Re-Compilation**: Feeds the original DAG and the defect feedback list into `refiner.py` (`temp=0.1`).
+- **Correction Rules**: The refiner automatically rewrites the DAG:
+  1. Splits failed tasks into smaller, less complex sub-tasks.
+  2. Injects intermediate context-gathering steps for short outputs.
+  3. Preserves successful tasks intact to conserve memory.
+  4. Yields an optimized DAG for a seamless second-pass execution.
+
+---
+
+## 6. Development Triumphs & Edge-Deployment Optimization
+
+To enable this system to run fluidly on resource-constrained environments (like local CPUs and **Streamlit Community Cloud**), several deep optimization strategies were applied:
+
+### 6.1. Streamlit Cloud Memory Optimization & Thread Safety
+- **Module Fallback Engine**: Streamlit Cloud restricts C++ compilation for custom bindings like `llama-cpp-python`. The system was engineered to degrade gracefully: `router.py` automatically catches compiler load errors, transparently switching tasks to the Cloud (Grok API) without crashing the application.
+- **CPU-Only PyTorch**: `requirements.txt` was configured with `--extra-index-url https://download.pytorch.org/whl/cpu` to reduce container image footprint and bypass memory exhaustion crashes during Streamlit build phases.
+- **Model Cache Resource**: Models are initialized under `@st.cache_resource` to guarantee they load exactly once across all active websocket connections.
+- **Shared LLM Instances**: In the revolutionary orchestrator, the **Planner, Executor, and Refiner** all share a single `Llama` memory context instance when loading identical GGUF paths. This cuts active RAM requirements in half (saving ~300MB-500MB), allowing the entire system to run within 1GB RAM.
+- **Inference Locks**: Added thread-safe `threading.Lock` mechanisms in `TaskExecutor` to serialize local model completions, preventing memory corruption or segmentation faults during parallel requests.
+
+---
+
+## 7. Future Horizon & Roadmap
+
+- **Dynamic Hardware Acceleration**: Automatically detect and load CUDA, ROCm, or Apple Metal DLLs to utilize local GPUs when available.
+- **Dataset Generation & Training**: Utilize execution outputs inside `logs.csv` to expand `training/domain_dataset.json` for custom DistilBERT fine-tuning.
+- **Continuous Human Feedback (RLHF)**: Add like/dislike buttons inside the Streamlit logging panel to dynamically tune intent classification thresholds based on user reviews.
