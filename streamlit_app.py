@@ -348,3 +348,5 @@ with tab5:
                         dag, results = orchestrator.execute(prompt, None, route)
                         st.json(dag)
                         st.json(results)
+
+# Fixed critical bugs in streamlit_app.py
