@@ -5,3 +5,14 @@ requests==2.31.0
 llama-cpp-python==0.2.5
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.1.2+cpu
+# Multi-language support
+langdetect==1.0.9
+googletrans==4.0.0-rc1
+# PDF image OCR support
+pdf2image==1.16.3
+pytesseract==0.3.10
+Pillow==10.1.0
+# Smart decomposition
+spacy==3.7.2
+# Graph visualization
+graphviz==0.20.1
