@@ -162,14 +162,14 @@ with tab1:
         .custom-chat-pill {
             position: fixed !important;
             bottom: 10% !important;
-            left: 25% !important;
-            width: 50% !important;
+            left: 15% !important;
+            width: 70% !important;
             background: rgba(20, 20, 20, 0.95) !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 20px !important;
+            border-radius: 24px !important;
             padding: 8px 16px !important;
             display: flex !important;
-            align-items: center !important;
+            align-items: flex-end !important;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6) !important;
             z-index: 99999 !important;
             gap: 6px !important;
@@ -187,44 +187,63 @@ with tab1:
         }
         
         /* Input */
-        .custom-chat-pill input {
+        .custom-chat-pill textarea {
             background: transparent !important;
             border: none !important;
-            padding: 12px 10px !important;
+            padding: 10px !important;
             color: #eeeeee !important;
             font-size: 1.05rem !important;
             width: 100% !important;
+            resize: none !important;
+            min-height: 44px !important;
+            box-shadow: none !important;
         }
-        .custom-chat-pill input:focus { box-shadow: none !important; }
-        .custom-chat-pill [data-baseweb="input"] { background: transparent !important; border: none !important; }
-        .custom-chat-pill input::placeholder { color: #888 !important; }
+        .custom-chat-pill textarea:focus { box-shadow: none !important; outline: none !important; border: none !important; }
+        .custom-chat-pill [data-baseweb="textarea"] { background: transparent !important; border: none !important; box-shadow: none !important; }
+        .custom-chat-pill [data-baseweb="base-input"] { background: transparent !important; border: none !important; box-shadow: none !important; }
+        .custom-chat-pill textarea::placeholder { color: #888 !important; }
         
         /* Buttons */
-        .custom-chat-pill .stButton > button {
-            background: transparent !important; border: none !important; color: transparent !important; font-size: 0 !important;
-            padding: 0 !important; width: 36px !important; height: 36px !important; display: flex !important;
-            align-items: center !important; justify-content: center !important; box-shadow: none !important;
-            background-repeat: no-repeat !important; background-position: center !important; transition: all 0.2s ease !important;
-        }
-        
-        .custom-chat-pill .mic-column .stButton > button {
+        .mic-column button {
+            background-color: transparent !important;
+            border: none !important;
             background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ODg4ODgiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgMmEzIDMgMCAwIDAtMyAzdjdhMyAzIDAgMCAwIDYgMFY1YTMgMyAwIDAgMC0zLTN6Ij48L3BhdGg+PHBhdGggZD0iTTE5IDEwdjJhNyA3IDAgMCAxLTE0IDB2LTIiPjwvcGF0aD48bGluZSB4MT0iMTIiIHkxPSIxOSIgeDI9IjEyIiB5Mj0iMjIiPjwvbGluZT48L3N2Zz4=') !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            padding: 0 !important;
+            min-width: 36px !important;
+            cursor: pointer !important;
+            margin-bottom: 2px !important;
         }
-        .custom-chat-pill .mic-column .stButton > button:hover { background-color: rgba(255, 255, 255, 0.05) !important; border-radius: 8px !important; }
+        .mic-column button * { display: none !important; }
+        .mic-column button:hover { background-color: rgba(255, 255, 255, 0.1) !important; border-radius: 8px !important; }
         
-        .custom-chat-pill .send-column .stButton > button {
+        .send-column button {
+            background-color: #2a2a2a !important;
+            border: none !important;
             background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGxpbmUgeDE9IjEyIiB5MT0iMTkiIHgyPSIxMiIgeTI9IjUiPjwvbGluZT48cG9seWxpbmUgcG9pbnRzPSI1IDEyIDEyIDUgMTkgMTIiPjwvcG9seWxpbmU+PC9zdmc+') !important;
-            background-color: #2a2a2a !important; border-radius: 8px !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            padding: 0 !important;
+            min-width: 36px !important;
+            cursor: pointer !important;
+            border-radius: 8px !important;
+            margin-bottom: 2px !important;
         }
-        .custom-chat-pill .send-column .stButton > button:hover { background-color: #444 !important; }
+        .send-column button * { display: none !important; }
+        .send-column button:hover { background-color: #444 !important; }
         
         /* Show send button only when typing */
         .custom-chat-pill .send-column { display: none !important; }
-        .custom-chat-pill:has(input:not(:placeholder-shown)) .send-column { display: flex !important; }
+        .custom-chat-pill:has(textarea:not(:placeholder-shown)) .send-column { display: flex !important; }
         
         /* Plus / File Uploader */
         .custom-chat-pill [data-testid="stFileUploader"] {
-            width: 36px !important; height: 36px !important;
+            width: 36px !important; height: 36px !important; margin-bottom: 2px !important;
         }
         .custom-chat-pill [data-testid="stFileUploaderDropzone"] {
             background: transparent !important; border: 1px solid rgba(255,255,255,0.15) !important; border-radius: 8px !important;
@@ -232,17 +251,11 @@ with tab1:
             position: relative !important; cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important;
         }
         .custom-chat-pill [data-testid="stFileUploaderDropzone"]:hover { background: rgba(255,255,255,0.05) !important; }
-        .custom-chat-pill [data-testid="stFileUploaderDropzone"] > div { display: none !important; }
+        .custom-chat-pill [data-testid="stFileUploaderDropzone"] * { display: none !important; }
         .custom-chat-pill [data-testid="stFileUploaderDropzone"]::before {
             content: ""; position: absolute; width: 16px; height: 16px;
             background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ODg4ODgiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48bGluZSB4MT0iMTIiIHkxPSI1IiB4Mj0iMTIiIHkyPSIxOSI+PC9saW5lPjxsaW5lIHgxPSI1IiB5MT0iMTIiIHgyPSIxOSIgeTI9IjEyIj48L2xpbmU+PC9zdmc+');
             background-repeat: no-repeat; background-position: center;
-        }
-        .custom-chat-pill [data-testid="stFileUploader"] section { display: none !important; }
-        
-        .think-text {
-            color: #888; font-size: 0.95rem; display: flex; align-items: center; justify-content: flex-end;
-            height: 44px; white-space: nowrap; margin-right: 4px;
         }
         
         .chat-messages-wrap { padding-bottom: 120px; }
@@ -262,9 +275,9 @@ with tab1:
                 if(horiz && !horiz.classList.contains('custom-chat-pill')) {
                     horiz.classList.add('custom-chat-pill');
                     const cols = horiz.querySelectorAll('div[data-testid="column"]');
-                    if(cols.length >= 5) {
-                        cols[3].classList.add('mic-column');
-                        cols[4].classList.add('send-column');
+                    if(cols.length >= 4) {
+                        cols[2].classList.add('mic-column');
+                        cols[3].classList.add('send-column');
                     }
                     
                     let isDragging = false;
@@ -278,7 +291,7 @@ with tab1:
                     
                     horiz.addEventListener('mousedown', (e) => {
                         // Prevent drag on inputs/buttons
-                        if(e.target.tagName.toLowerCase() === 'input' || e.target.closest('button') || e.target.closest('[data-testid="stFileUploader"]')) return;
+                        if(e.target.tagName.toLowerCase() === 'textarea' || e.target.closest('button') || e.target.closest('[data-testid="stFileUploader"]')) return;
                         initialX = e.clientX - xOffset;
                         initialY = e.clientY - yOffset;
                         isDragging = true;
@@ -297,6 +310,29 @@ with tab1:
                             sessionStorage.setItem('chatY', currentY);
                         }
                     });
+
+                    // Auto-expand textarea
+                    const textarea = horiz.querySelector('textarea');
+                    if(textarea) {
+                        textarea.addEventListener('input', function() {
+                            this.style.height = '44px';
+                            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+                            if(this.scrollHeight > 150) {
+                                this.style.overflowY = 'auto';
+                            } else {
+                                this.style.overflowY = 'hidden';
+                            }
+                        });
+                        
+                        // Submit on enter without shift
+                        textarea.addEventListener('keydown', function(e) {
+                            if(e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                const sendBtn = horiz.querySelector('.send-column button');
+                                if(sendBtn) sendBtn.click();
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -346,7 +382,7 @@ with tab1:
 
     with chat_container:
         st.markdown('<div class="minimalist-chat-anchor"></div>', unsafe_allow_html=True)
-        col1, col2, col3, col4, col5 = st.columns([0.5, 9, 1.2, 0.5, 0.5], gap="small")
+        col1, col2, col3, col4 = st.columns([0.6, 12, 0.7, 0.7], gap="small")
 
         with col1:
             uploaded_file = st.file_uploader(
@@ -359,17 +395,15 @@ with tab1:
                 st.session_state.uploaded_file = uploaded_file
 
         with col2:
-            user_input = st.text_input(
+            user_input = st.text_area(
                 "Type / for quick access",
                 key="chat_input",
                 label_visibility="collapsed",
-                placeholder="Type / for quick access"
+                placeholder="Type / for quick access",
+                height=44
             )
-            
-        with col3:
-            st.markdown('<div class="think-text">Think ⌄</div>', unsafe_allow_html=True)
 
-        with col4:
+        with col3:
             if st.button("M", key="mic_button", use_container_width=False):
                 with st.spinner("Listening..."):
                     r = sr.Recognizer()
@@ -380,7 +414,7 @@ with tab1:
                         except:
                             user_input = None
                             
-        with col5:
+        with col4:
             send_pressed = st.button("S", key="send_button", use_container_width=False)
 
     if user_input or send_pressed or st.session_state.get("uploaded_file"):
