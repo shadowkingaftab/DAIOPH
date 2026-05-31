@@ -1,7 +1,8 @@
+
 """
 chatbot_app.py
 --------------
-Edge AI Chatbot — Premium Edition
+Edge AI Chatbot - Premium Edition
 Features:
   ✅ Conversation memory (last 5 turns for context)
   ✅ Liquid glass animated UI (glassmorphism + bubble animations)
@@ -14,6 +15,8 @@ Features:
   ✅ Time comparison: Edge AI vs Traditional
   ✅ Exponential backoff retry with route fallback
   ✅ Memory target: <800MB (no PyTorch/transformers)
+  ✅ Fixed bottom glassmorphism input area with 📎, 🎤, ➤
+  ✅ Tooltips and accessibility labels
 
 Run: streamlit run chatbot_app.py
 """
@@ -31,10 +34,10 @@ st.set_page_config(
 )
 
 # ══════════════════════════════════════════════════════════════════════════════
-# LIQUID GLASS CSS — animated gradient + glassmorphism bubbles
+# LIQUID GLASS CSS - animated gradient + glassmorphism bubbles
 # ══════════════════════════════════════════════════════════════════════════════
 st.markdown("""
-<style>
+&lt;style&gt;
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
 
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
@@ -78,8 +81,26 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     margin-bottom: 0.8rem;
 }
 
-/* ── Chat bubbles ── */
-.chat-wrap { max-height: 58vh; overflow-y: auto; padding: 0.5rem 0.5rem 0.5rem; }
+/* ── Fixed bottom input area with glassmorphism ── */
+.bottom-input-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem 1.5rem 1.8rem;
+    background: rgba(15, 12, 41, 0.97);
+    backdrop-filter: blur(25px) saturate(200%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%);
+    z-index: 999;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Chat wrap with bottom padding for fixed input ── */
+.chat-wrap { 
+    max-height: calc(100vh - 340px); 
+    overflow-y: auto; 
+    padding: 0.5rem 0.5rem 160px; 
+}
 .bubble-row-user  { display: flex; justify-content: flex-end;  margin: 0.55rem 0; animation: slideRight 0.3s ease-out; }
 .bubble-row-bot   { display: flex; justify-content: flex-start; margin: 0.55rem 0; animation: slideLeft 0.3s ease-out; }
 
@@ -96,7 +117,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
 .bubble {
     max-width:72%; padding:0.75rem 1rem; border-radius:1.2rem;
-    line-height:1.58; font-size:0.92rem; white-space:pre-wrap; word-break:break-word;
+    line-height:1.58; font-size:0.98rem; white-space:pre-wrap; word-break:break-word;
     backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
 }
 .bubble-user {
@@ -130,26 +151,39 @@ section[data-testid="stSidebar"] {
 }
 
 /* ── Buttons ── */
-.stButton > button {
+.stButton &gt; button {
     background: linear-gradient(135deg,#4CC9F0,#7B2FBE) !important;
     color:white !important; border:none !important;
-    border-radius:0.65rem !important; font-weight:600 !important;
-    transition: transform 0.15s, box-shadow 0.15s !important;
+    border-radius:0.9rem !important; font-weight:600 !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+    height: 42px !important;
 }
-.stButton > button:hover { transform:scale(1.04) !important; box-shadow:0 4px 20px rgba(76,201,240,0.35) !important; }
-
-.icon-btn > button {
-    background:rgba(255,255,255,0.06) !important;
-    border:1px solid rgba(255,255,255,0.14) !important;
-    border-radius:0.55rem !important; font-size:1.15rem !important;
-    padding:0.3rem 0.6rem !important;
-}
+.stButton &gt; button:hover { transform:scale(1.05) !important; box-shadow:0 4px 20px rgba(76,201,240,0.35) !important; }
 
 /* ── Inputs ── */
-.stTextInput input, .stTextArea textarea, .stSelectbox > div > div {
-    background:rgba(255,255,255,0.06) !important;
-    border:1px solid rgba(255,255,255,0.13) !important;
-    border-radius:0.65rem !important; color:#e0e0f0 !important;
+.stTextInput input, .stTextArea textarea, .stSelectbox &gt; div &gt; div {
+    background: rgba(255,255,255,0.07) !important;
+    border: 1px solid rgba(255,255,255,0.14) !important;
+    border-radius: 0.9rem !important;
+    color: #e0e0f0 !important;
+}
+
+.stTextArea [data-testid="stTextArea"] {
+    background: transparent !important;
+}
+
+/* ── File uploader ── */
+[data-testid="stFileUploader"] {
+    background: transparent !important;
+}
+[data-testid="stFileUploader"] &gt; div &gt; button {
+    background: rgba(255,255,255,0.06) !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+    border-radius: 50% !important;
+    width: 42px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    min-width: 42px !important;
 }
 
 /* ── Tabs ── */
@@ -176,10 +210,10 @@ section[data-testid="stSidebar"] {
 .js-plotly-plot { border-radius:1rem; overflow:hidden; }
 
 /* ── Scrollbar ── */
-::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar { width:6px; }
 ::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:2px; }
-</style>
+::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.2); border-radius:3px; }
+&lt;/style&gt;
 """, unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -191,7 +225,7 @@ MODEL_PATH = os.path.join(MODEL_DIR, MODEL_FILE)
 GROK_URL   = "https://api.x.ai/v1/chat/completions"
 GROK_MODELS = ["grok-3-mini", "grok-2-1212", "grok-2-latest", "grok-beta"]
 
-def _get_grok_key() -> str:
+def _get_grok_key() -&gt; str:
     try:
         return st.secrets.get("GROK_API_KEY", "") or ""
     except Exception:
@@ -219,7 +253,7 @@ def _load_qwen():
         return None, str(e)
 
 
-def run_qwen(prompt: str, max_tokens: int = 400) -> str:
+def run_qwen(prompt: str, max_tokens: int = 400) -&gt; str:
     llm, err = _load_qwen()
     if llm is None:
         return f"⚠️ Qwen unavailable: {err}"
@@ -232,7 +266,7 @@ def run_qwen(prompt: str, max_tokens: int = 400) -> str:
         return f"Qwen error: {e}"
 
 
-def run_grok(prompt: str, api_key: str, max_tokens: int = 512) -> str:
+def run_grok(prompt: str, api_key: str, max_tokens: int = 512) -&gt; str:
     if not api_key:
         return "⚠️ No Grok API key. Add it in the sidebar."
     sess = requests.Session()
@@ -248,13 +282,13 @@ def run_grok(prompt: str, api_key: str, max_tokens: int = 512) -> str:
                 break
         except Exception:
             continue
-    return "⚠️ Grok unreachable — falling back."
+    return "⚠️ Grok unreachable - falling back."
 
 
 # ══════════════════════════════════════════════════════════════════════════════
 # CONVERSATION MEMORY  (last N turns as context)
 # ══════════════════════════════════════════════════════════════════════════════
-def build_context_prompt(prompt: str, history: list, n_turns: int = 5) -> str:
+def build_context_prompt(prompt: str, history: list, n_turns: int = 5) -&gt; str:
     """Prepend the last n_turns of conversation to the new prompt for memory."""
     if not history:
         return prompt
@@ -273,8 +307,8 @@ def build_context_prompt(prompt: str, history: list, n_turns: int = 5) -> str:
 _SEQ_KW = ["first","second","third","then","next","after that","finally","step",
            "initially","lastly","subsequently","पहले","फिर","primero","luego","d'abord"]
 
-def decompose_prompt(prompt: str) -> dict:
-    sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', prompt) if s.strip()]
+def decompose_prompt(prompt: str) -&gt; dict:
+    sentences = [s.strip() for s in re.split(r'(?&lt;=[.!?])\s+', prompt) if s.strip()]
     if not sentences:
         sentences = [prompt]
     tasks, cur = [], []
@@ -285,17 +319,17 @@ def decompose_prompt(prompt: str) -> dict:
             cur.append(sent)
     if cur:
         tasks.append(" ".join(cur))
-    if len(tasks) == 1 and len(sentences) > 3:
+    if len(tasks) == 1 and len(sentences) &gt; 3:
         mid   = max(1, len(sentences) // 2)
         tasks = [" ".join(sentences[:mid]), " ".join(sentences[mid:])]
     tasks = [t for t in tasks if t.strip()]
     return {"nodes": [{"id": f"n{i+1}", "task": t,
-                       "depends_on": [f"n{i}"] if i > 0 else []}
+                       "depends_on": [f"n{i}"] if i &gt; 0 else []}
                       for i, t in enumerate(tasks)]}
 
 
 def execute_with_retry(prompt: str, route: str, grok_key: str,
-                       max_tokens: int = 400, max_retries: int = 2) -> tuple:
+                       max_tokens: int = 400, max_retries: int = 2) -&gt; tuple:
     for attempt in range(max_retries + 1):
         try:
             if route == "ODA":
@@ -312,7 +346,7 @@ def execute_with_retry(prompt: str, route: str, grok_key: str,
                 return res, attempt
         except Exception:
             pass
-        if attempt < max_retries:
+        if attempt &lt; max_retries:
             time.sleep(math.pow(2, attempt))
     return "❌ Failed after retries.", max_retries
 
@@ -330,7 +364,7 @@ def show_dag(dag: dict, route: str):
         dot = graphviz.Digraph(graph_attr={"rankdir": "LR", "bgcolor": "transparent",
                                             "splines": "curved"})
         for n in dag["nodes"]:
-            lbl = n["task"][:30] + ("…" if len(n["task"]) > 30 else "")
+            lbl = n["task"][:30] + ("…" if len(n["task"]) &gt; 30 else "")
             dot.node(n["id"], label=lbl, fillcolor=c, fontcolor=fc,
                      style="filled,rounded", fontsize="10",
                      tooltip=f"{n['id']}: {n['task']}")
@@ -341,17 +375,17 @@ def show_dag(dag: dict, route: str):
     except Exception:
         st.json(dag)
     st.markdown("""
-    <div class="dag-legend">
-        <span style="background:#0d3320;color:#4ade80;border:1px solid #2a6644">🟢 ODA</span>
-        <span style="background:#332200;color:#fbbf24;border:1px solid #664400">🟡 Cloud</span>
-        <span style="background:#0d1a33;color:#60a5fa;border:1px solid #2a4477">🔵 Hybrid</span>
-    </div>""", unsafe_allow_html=True)
+    &lt;div class="dag-legend"&gt;
+        &lt;span style="background:#0d3320;color:#4ade80;border:1px solid #2a6644"&gt;🟢 ODA&lt;/span&gt;
+        &lt;span style="background:#332200;color:#fbbf24;border:1px solid #664400"&gt;🟡 Cloud&lt;/span&gt;
+        &lt;span style="background:#0d1a33;color:#60a5fa;border:1px solid #2a4477"&gt;🔵 Hybrid&lt;/span&gt;
+    &lt;/div&gt;""", unsafe_allow_html=True)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
 # PDF / IMAGE UTILITIES
 # ══════════════════════════════════════════════════════════════════════════════
-def extract_pdf_text(pdf_path: str, max_pages: int = 10) -> str:
+def extract_pdf_text(pdf_path: str, max_pages: int = 10) -&gt; str:
     text = ""
     try:
         import PyPDF2
@@ -363,7 +397,7 @@ def extract_pdf_text(pdf_path: str, max_pages: int = 10) -> str:
                     text += t + "\n"
     except Exception as e:
         text = f"[PDF error: {e}]"
-    if len(text.strip()) < 200:
+    if len(text.strip()) &lt; 200:
         try:
             from pdf2image import convert_from_path
             import pytesseract
@@ -376,7 +410,7 @@ def extract_pdf_text(pdf_path: str, max_pages: int = 10) -> str:
     return text[:4000] or "No text extracted."
 
 
-def extract_image_text(image) -> str:
+def extract_image_text(image) -&gt; str:
     try:
         import pytesseract
         return pytesseract.image_to_string(image).strip()
@@ -384,7 +418,7 @@ def extract_image_text(image) -> str:
         return ""
 
 
-def listen_microphone() -> str | None:
+def listen_microphone() -&gt; str | None:
     try:
         import speech_recognition as sr
         r = sr.Recognizer()
@@ -456,24 +490,24 @@ with st.sidebar:
         import psutil
         m   = psutil.virtual_memory()
         pct = m.percent
-        clr = "#4ade80" if pct < 70 else ("#fbbf24" if pct < 85 else "#f87171")
+        clr = "#4ade80" if pct &lt; 70 else ("#fbbf24" if pct &lt; 85 else "#f87171")
         st.markdown(f"""
-        <div style="margin-top:0.8rem;padding:0.55rem 0.7rem;
+        &lt;div style="margin-top:0.8rem;padding:0.55rem 0.7rem;
                     background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
-                    border-radius:0.6rem">
-          <small style="color:#777">💾 Memory</small><br>
-          <span style="color:{clr};font-weight:700;font-size:1.05rem">{pct:.1f}%</span>
-          <small style="color:#555"> ({m.used/1e9:.1f}/{m.total/1e9:.1f} GB)</small>
-        </div>""", unsafe_allow_html=True)
+                    border-radius:0.6rem"&gt;
+          &lt;small style="color:#777"&gt;💾 Memory&lt;/small&gt;&lt;br&gt;
+          &lt;span style="color:{clr};font-weight:700;font-size:1.05rem"&gt;{pct:.1f}%&lt;/span&gt;
+          &lt;small style="color:#555"&gt; ({m.used/1e9:.1f}/{m.total/1e9:.1f} GB)&lt;/small&gt;
+        &lt;/div&gt;""", unsafe_allow_html=True)
     except Exception:
         pass
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MAIN — THREE TABS
 # ══════════════════════════════════════════════════════════════════════════════
-st.markdown('<h1 class="chat-header">🤖 Edge AI Chatbot</h1>', unsafe_allow_html=True)
+st.markdown('&lt;h1 class="chat-header"&gt;🤖 Edge AI Chatbot&lt;/h1&gt;', unsafe_allow_html=True)
 st.markdown(
-    '<p class="chat-subheader">Qwen2-0.5B On-Device  •  Grok Cloud  •  Conversation Memory  •  Voice & Image</p>',
+    '&lt;p class="chat-subheader"&gt;Qwen2-0.5B On-Device  •  Grok Cloud  •  Conversation Memory  •  Voice &amp; Image&lt;/p&gt;',
     unsafe_allow_html=True)
 
 tab_chat, tab_analytics, tab_settings = st.tabs(["💬 Chat", "📊 Analytics", "⚙️ Settings"])
@@ -483,68 +517,79 @@ tab_chat, tab_analytics, tab_settings = st.tabs(["💬 Chat", "📊 Analytics", 
 # ─────────────────────────────────────────────────────────────────────────────
 with tab_chat:
     badge_html = {
-        "ODA":    '<span class="route-badge badge-oda">ODA</span>',
-        "Hybrid": '<span class="route-badge badge-hybrid">Hybrid</span>',
-        "Cloud":  '<span class="route-badge badge-cloud">Cloud</span>',
+        "ODA":    '&lt;span class="route-badge badge-oda"&gt;ODA&lt;/span&gt;',
+        "Hybrid": '&lt;span class="route-badge badge-hybrid"&gt;Hybrid&lt;/span&gt;',
+        "Cloud":  '&lt;span class="route-badge badge-cloud"&gt;Cloud&lt;/span&gt;',
     }
 
     # Chat history
-    chat_html = '<div class="chat-wrap">'
+    chat_html = '&lt;div class="chat-wrap"&gt;'
     for msg in st.session_state.messages:
         ts    = msg.get("ts", "")
         role  = msg["role"]
-        body  = msg["content"].replace("<", "&lt;").replace(">", "&gt;")
+        body  = msg["content"].replace("&lt;", "&amp;lt;").replace("&gt;", "&amp;gt;")
         badge = badge_html.get(msg.get("route", ""), "")
         if role == "user":
             chat_html += f"""
-            <div class="bubble-row-user">
-              <div>
-                <div class="bubble bubble-user">{body}</div>
-                <div class="bubble-time">{ts}</div>
-              </div>
-              <div class="bubble-avatar bubble-avatar-user">👤</div>
-            </div>"""
+            &lt;div class="bubble-row-user"&gt;
+              &lt;div&gt;
+                &lt;div class="bubble bubble-user"&gt;{body}&lt;/div&gt;
+                &lt;div class="bubble-time"&gt;{ts}&lt;/div&gt;
+              &lt;/div&gt;
+              &lt;div class="bubble-avatar bubble-avatar-user"&gt;👤&lt;/div&gt;
+            &lt;/div&gt;"""
         else:
             chat_html += f"""
-            <div class="bubble-row-bot">
-              <div class="bubble-avatar bubble-avatar-bot">🤖</div>
-              <div>
-                <div class="bubble bubble-bot">{body}{badge}</div>
-                <div class="bubble-time">{ts}</div>
-              </div>
-            </div>"""
-    chat_html += "</div>"
+            &lt;div class="bubble-row-bot"&gt;
+              &lt;div class="bubble-avatar bubble-avatar-bot"&gt;🤖&lt;/div&gt;
+              &lt;div&gt;
+                &lt;div class="bubble bubble-bot"&gt;{body}{badge}&lt;/div&gt;
+                &lt;div class="bubble-time"&gt;{ts}&lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;"""
+    chat_html += "&lt;/div&gt;"
     st.markdown(chat_html, unsafe_allow_html=True)
 
     # Empty state
     if not st.session_state.messages:
         st.markdown("""
-        <div style="text-align:center;padding:2.5rem 1rem;color:#444">
-            <div style="font-size:3rem;margin-bottom:0.8rem;filter:drop-shadow(0 0 20px #7B2FBE)">🤖</div>
-            <div style="font-size:1.05rem;font-weight:600;color:#666">Start a conversation!</div>
-            <div style="font-size:0.82rem;margin-top:0.4rem;color:#444">
-                Try: <em>"Explain edge AI"</em> &nbsp;|&nbsp; Upload a PDF or image &nbsp;|&nbsp; Use the 🎤 mic
-            </div>
-        </div>""", unsafe_allow_html=True)
+        &lt;div style="text-align:center;padding:2.5rem 1rem;color:#444"&gt;
+            &lt;div style="font-size:3rem;margin-bottom:0.8rem;filter:drop-shadow(0 0 20px #7B2FBE)"&gt;🤖&lt;/div&gt;
+            &lt;div style="font-size:1.05rem;font-weight:600;color:#666"&gt;Start a conversation!&lt;/div&gt;
+            &lt;div style="font-size:0.82rem;margin-top:0.4rem;color:#444"&gt;
+                Try: &lt;em&gt;"Explain edge AI"&lt;/em&gt; &amp;nbsp;|&amp;nbsp; Upload a PDF or image &amp;nbsp;|&amp;nbsp; Use the 🎤 mic
+            &lt;/div&gt;
+        &lt;/div&gt;""", unsafe_allow_html=True)
 
-    # Input toolbar
-    st.markdown("---")
-    col_text, col_file, col_mic, col_send = st.columns([7, 1, 1, 1])
-    with col_text:
-        user_text = st.text_input("msg", value=st.session_state.pending_text,
-                                   placeholder="💬 Ask me anything…",
-                                   label_visibility="collapsed", key="chat_input_box")
+    # Input toolbar with custom fixed bottom design
+    # We'll use Streamlit's native components wrapped with custom styling
+    st.markdown('&lt;div class="bottom-input-container"&gt;', unsafe_allow_html=True)
+    st.markdown('&lt;div style="max-width: 1200px; margin: 0 auto; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); border-radius: 1.2rem; padding: 0.7rem 1rem; box-shadow: 0 8px 32px rgba(0,0,0,0.25);"&gt;', unsafe_allow_html=True)
+    
+    col_file, col_text, col_mic, col_send = st.columns([1, 7, 1, 1.2])
+    
     with col_file:
-        st.markdown('<div class="icon-btn">', unsafe_allow_html=True)
-        uploaded = st.file_uploader("➕", type=["pdf","jpg","jpeg","png","webp"],
-                                     label_visibility="collapsed", key="file_upload")
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown('&lt;div style="margin-top: 0.1rem;"&gt;', unsafe_allow_html=True)
+        uploaded = st.file_uploader("📎", type=["pdf","jpg","jpeg","png","webp"],
+                                     label_visibility="collapsed", key="file_upload", 
+                                     help="Upload file (PDF/Image)")
+        st.markdown('&lt;/div&gt;', unsafe_allow_html=True)
+        
+    with col_text:
+        user_text = st.text_area("msg", value=st.session_state.pending_text,
+                                   placeholder="Type your message...",
+                                   label_visibility="collapsed", key="chat_input_box",
+                                   height=50)
+        
     with col_mic:
-        st.markdown('<div class="icon-btn">', unsafe_allow_html=True)
-        mic_btn = st.button("🎤", key="mic_btn", help="Voice input")
-        st.markdown("</div>", unsafe_allow_html=True)
+        mic_btn = st.button("🎤", key="mic_btn", help="Voice input", 
+                            use_container_width=True)
+        
     with col_send:
-        send_btn = st.button("➤ Send", key="send_btn", use_container_width=True)
+        send_btn = st.button("➤", key="send_btn", use_container_width=True,
+                            type="primary")
+    
+    st.markdown('&lt;/div&gt;&lt;/div&gt;', unsafe_allow_html=True)
 
     # Voice
     if mic_btn:
@@ -579,7 +624,7 @@ with tab_chat:
                 pass
             st.success(f"✅ PDF: {len(file_context)} chars extracted")
             with st.expander("📋 Preview"):
-                st.text(file_context[:800] + ("…" if len(file_context) > 800 else ""))
+                st.text(file_context[:800] + ("…" if len(file_context) &gt; 800 else ""))
 
     # Send / execute
     final_prompt = user_text.strip()
@@ -605,11 +650,11 @@ with tab_chat:
             dag        = decompose_prompt(full_prompt)
             results, total_retries = {}, 0
 
-            prog = st.progress(0) if len(dag["nodes"]) > 1 else None
+            prog = st.progress(0) if len(dag["nodes"]) &gt; 1 else None
 
             for i, node in enumerate(dag["nodes"]):
                 task_p = ctx_prompt if i == 0 else node["task"]
-                if i > 0 and node.get("depends_on"):
+                if i &gt; 0 and node.get("depends_on"):
                     prev_out = results.get(node["depends_on"][0], "")
                     if prev_out:
                         task_p = f"Previous step output:\n{prev_out}\n\nContinue: {node['task']}"
@@ -627,7 +672,7 @@ with tab_chat:
 
             total_words = sum(len(n["task"].split()) for n in dag["nodes"])
             trad_time   = total_words / 20
-            savings_pct = ((trad_time - edge_time) / trad_time * 100) if trad_time > 0 else 0
+            savings_pct = ((trad_time - edge_time) / trad_time * 100) if trad_time &gt; 0 else 0
 
             # Record metrics
             m = st.session_state.metrics
@@ -662,7 +707,7 @@ with tab_chat:
                 c2.metric("⚡ Edge AI Time", f"{et[-1]:.2f}s" if et else "—")
                 c3.metric("🐌 Traditional Est.", f"{rt[-1]:.2f}s" if rt else "—")
                 c4.metric("📝 Response Words", wc)
-                if et and rt and rt[-1] > 0:
+                if et and rt and rt[-1] &gt; 0:
                     sp = (rt[-1] - et[-1]) / rt[-1] * 100
                     st.success(f"⚡ **{sp:.1f}% faster** than traditional sequential execution!")
 
@@ -687,7 +732,7 @@ with tab_analytics:
     except ImportError:
         HAS_PLOTLY = False
 
-    st.markdown("### 📊 Performance Analytics")
+    st.markdown("## 📊 Performance Analytics")
 
     m = st.session_state.metrics
     if not m["timestamps"]:
@@ -739,7 +784,7 @@ with tab_analytics:
         avg_trad      = sum(m["trad_times"])      / total_queries
         total_tokens  = sum(m["tokens"])
         success_rate  = sum(m["success"]) / total_queries * 100
-        avg_savings   = ((avg_trad - avg_edge) / avg_trad * 100) if avg_trad > 0 else 0
+        avg_savings   = ((avg_trad - avg_edge) / avg_trad * 100) if avg_trad &gt; 0 else 0
 
         k1, k2, k3, k4, k5 = st.columns(5)
         k1.metric("💬 Total Queries",   total_queries)
@@ -754,7 +799,7 @@ with tab_analytics:
 
         # ── Chart 1: Execution time over time (line) ──────────────────────────
         with col_l:
-            st.markdown("#### ⏱️ Execution Time Over Time")
+            st.markdown("### ⏱️ Execution Time Over Time")
             fig1 = go.Figure()
             for rt in df["Route"].unique():
                 sub = df[df["Route"] == rt]
@@ -774,7 +819,7 @@ with tab_analytics:
 
         # ── Chart 2: Route usage pie ──────────────────────────────────────────
         with col_r:
-            st.markdown("#### 🛣️ Route Usage Distribution")
+            st.markdown("### 🛣️ Route Usage Distribution")
             rc = df["Route"].value_counts().reset_index()
             rc.columns = ["Route", "Count"]
             fig2 = px.pie(rc, values="Count", names="Route", hole=0.45,
@@ -789,7 +834,7 @@ with tab_analytics:
 
         # ── Chart 3: Token usage over time (bar) ─────────────────────────────
         with col_l2:
-            st.markdown("#### 📝 Token Usage per Query")
+            st.markdown("### 📝 Token Usage per Query")
             fig3 = px.bar(df, x="Time", y="Tokens", color="Route",
                           color_discrete_map=ROUTE_COLORS,
                           barmode="group")
@@ -798,7 +843,7 @@ with tab_analytics:
 
         # ── Chart 4: Speed savings over time (area) ───────────────────────────
         with col_r2:
-            st.markdown("#### 🚀 Speed Savings vs Traditional (%)")
+            st.markdown("### 🚀 Speed Savings vs Traditional (%)")
             df["Savings %"] = ((df["Traditional"] - df["Edge AI (s)"]) /
                                df["Traditional"].replace(0, 1) * 100).clip(lower=0)
             fig4 = px.area(df, x="Time", y="Savings %", color="Route",
@@ -817,12 +862,12 @@ with tab_analytics:
 # TAB 3 — SETTINGS
 # ─────────────────────────────────────────────────────────────────────────────
 with tab_settings:
-    st.markdown("### ⚙️ Settings & Controls")
+    st.markdown("## ⚙️ Settings &amp; Controls")
 
     col_s1, col_s2 = st.columns(2)
 
     with col_s1:
-        st.markdown("#### 🗑️ Data Management")
+        st.markdown("### 🗑️ Data Management")
         if st.button("🗑️ Clear Chat History", use_container_width=True):
             st.session_state.messages = []
             st.success("Chat cleared!")
@@ -840,7 +885,7 @@ with tab_settings:
             st.rerun()
 
     with col_s2:
-        st.markdown("#### 📋 App Info")
+        st.markdown("### 📋 App Info")
         try:
             import psutil
             vm   = psutil.virtual_memory()
@@ -857,16 +902,27 @@ with tab_settings:
         except Exception:
             st.info("Install psutil for system stats: `pip install psutil`")
 
-        st.markdown("#### 🚀 How to Run")
+        st.markdown("### 🚀 How to Run")
         st.code("streamlit run chatbot_app.py", language="bash")
 
-        st.markdown("#### 📦 Memory Estimate")
+        st.markdown("### 📦 Memory Estimate")
         st.markdown("""
 | Component | Memory |
 |-----------|--------|
-| Qwen2-0.5B GGUF | ~400 MB |
-| Grok HTTP Client | ~50 MB |
-| Streamlit + Plotly | ~230 MB |
-| Pillow + OCR | ~80 MB |
-| **Total** | **~760 MB ✅** |
+| Qwen2-0.5B GGUF | ~400MB |
+| Streamlit + Python | ~150MB |
+| **Total** | **~550MB** |
+""")
+
+        st.markdown("---")
+        st.markdown("### ✨ Features")
+        st.markdown("""
+- 🤖 **Edge AI**: Qwen2-0.5B runs locally on your device
+- ☁️ **Cloud Fallback**: Grok API for complex queries
+- 💾 **Conversation Memory**: Remembers previous messages
+- 📎 **File Upload**: Supports PDFs and images
+- 🎤 **Voice Input**: Speech-to-text via microphone
+- 📊 **Analytics**: Real-time performance metrics
+- 🎨 **Glass UI**: Beautiful glassmorphism design
+- 📱 **Responsive**: Works on desktop and mobile
 """)
