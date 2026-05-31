@@ -8,6 +8,9 @@ import pandas as pd
 from datetime import datetime
 import os
 from huggingface_hub import hf_hub_download
+from PIL import Image
+import speech_recognition as sr
+import pytesseract
 
 # --- Setup ---
 st.set_page_config(
@@ -134,53 +137,241 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "✨ Generate Prompts"
 ])
 
+# --- Session State Initialization ---
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+if "uploaded_file" not in st.session_state:
+    st.session_state.uploaded_file = None
+
 # --- Tab 1: Classify & Execute ---
 with tab1:
     st.markdown("### Classify & Execute a Prompt")
     st.info("DistilBERT splits prompts into tasks, then executes them using the selected route (ODA/Hybrid/Cloud).")
 
-    route = st.selectbox(
-        "Select execution route:",
-        ["ODA (Qwen2-0.5B only)", "Hybrid (Qwen + Grok)", "Cloud LLM (Grok + Qwen fallback)"],
-        index=1
-    )
+    # --- Custom CSS for Modern Chatbox ---
+    st.markdown("""
+    <style>
+        /* Chatbox Container */
+        .chatbox-container {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 10px;
+            margin: 0 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+        }
 
-    col1, col2 = st.columns([3, 1])
+        /* Input Area */
+        .chat-input-area {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* File Uploader (Hidden) */
+        .stFileUploader > div > div > div {
+            display: none;
+        }
+
+        /* Icon Buttons */
+        .icon-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+        }
+        .icon-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Text Input */
+        .stTextInput > div > div > input {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 10px !important;
+        }
+
+        /* Send Button */
+        .stButton > button {
+            background: linear-gradient(135deg, #4CC9F0, #2E86C1) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 8px 16px !important;
+            font-weight: bold !important;
+        }
+        
+        /* Chat Wrapper to prevent overlapping with fixed bottom */
+        .chat-messages-wrap {
+            padding-bottom: 120px;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # --- Chatbox UI ---
+    st.markdown('<div class="chat-messages-wrap">', unsafe_allow_html=True)
+    
+    # Display chat messages (your existing code)
+    for message in st.session_state.messages:
+        if message["role"] == "user":
+            st.markdown(f"""
+            <div style="background: rgba(76, 201, 240, 0.8); color: white; padding: 12px; border-radius: 12px; margin: 10px 0; max-width: 70%; float: right; clear: both;">
+                <strong>You:</strong><br>{message["content"]}
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown(f"""
+            <div style="background: rgba(255, 255, 255, 0.2); color: white; padding: 12px; border-radius: 12px; margin: 10px 0; max-width: 70%; float: left; clear: both;">
+                <strong>Edge AI:</strong><br>{message["content"]}
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Also show DAG and results if available
+            if "dag" in message and "results" in message:
+                with st.expander("🔗 View Details"):
+                    try:
+                        graph = graphviz.Digraph(graph_attr={"rankdir": "LR"})
+                        for node in message["dag"]["dag"]["nodes"]:
+                            graph.node(node["id"], node["task"][:30] + "...")
+                        for node in message["dag"]["dag"]["nodes"]:
+                            if "depends_on" in node:
+                                for dep in node["depends_on"]:
+                                    graph.edge(dep, node["id"])
+                        st.graphviz_chart(graph)
+                    except Exception as e:
+                        st.json(message["dag"]["dag"])
+                    
+                    st.json(message["results"])
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('<div class="chatbox-container">', unsafe_allow_html=True)
+    st.markdown('<div class="chat-input-area">', unsafe_allow_html=True)
+
+    col1, col2, col3, col4 = st.columns([1, 6, 1, 1])
+
     with col1:
-        user_prompt = st.text_area("Your prompt:", placeholder="e.g., First, summarize this PDF. Then, write a tweet about it.", height=150)
-    with col2:
-        input_method = st.radio("Input Method:", ["Text", "PDF + Text"])
-
-    pdf_text = None
-    if input_method == "PDF + Text":
-        uploaded_file = st.file_uploader("Upload PDF", type=["pdf"])
+        # Plus Icon (File Uploader)
+        uploaded_file = st.file_uploader(
+            "📎",
+            type=["pdf", "jpg", "png", "jpeg"],
+            key="chat_file_uploader",
+            label_visibility="collapsed"
+        )
         if uploaded_file:
+            st.session_state.uploaded_file = uploaded_file
+
+    with col2:
+        # Text Input
+        user_input = st.text_input(
+            "Type your message...",
+            key="chat_input",
+            label_visibility="collapsed",
+            placeholder="Ask me anything..."
+        )
+
+    with col3:
+        # Mic Icon (Speech-to-Text)
+        if st.button("🎤", key="mic_button"):
+            with st.spinner("Listening..."):
+                r = sr.Recognizer()
+                with sr.Microphone() as source:
+                    try:
+                        r.adjust_for_ambient_noise(source, duration=0.5)
+                        audio = r.listen(source, timeout=10)
+                        user_input = r.recognize_google(audio)
+                    except Exception as e:
+                        st.error(f"Error: {str(e)}")
+                        user_input = None
+
+    with col4:
+        # Send Button
+        if st.button("➤", key="send_button") or user_input:
+            if user_input or st.session_state.get("uploaded_file"):
+                if st.session_state.get("uploaded_file"):
+                    file = st.session_state.uploaded_file
+                    if file.type.startswith("image/"):
+                        image = Image.open(file)
+                        st.session_state.messages.append({
+                            "role": "user",
+                            "content": f"![Uploaded Image]({file.name})",
+                            "type": "image"
+                        })
+                    elif file.type == "application/pdf":
+                        st.session_state.messages.append({
+                            "role": "user",
+                            "content": f"[Uploaded PDF: {file.name}]",
+                            "type": "pdf"
+                        })
+                    st.session_state.uploaded_file = None
+
+                if user_input:
+                    st.session_state.messages.append({
+                        "role": "user",
+                        "content": user_input,
+                        "type": "text"
+                    })
+                    st.rerun()
+
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # After the chatbox UI code above, process logic
+    if st.session_state.get("uploaded_file"):
+        uploaded_file = st.session_state.uploaded_file
+        if uploaded_file.type.startswith("image/"):
+            image = Image.open(uploaded_file)
+            st.session_state.messages[-1]["content"] = f"![Uploaded Image]({uploaded_file.name})"
+            # Process image (OCR, etc.)
+            extracted_text = pytesseract.image_to_string(image)
+            st.session_state.messages[-1]["content"] += f"\n\nExtracted Text: {extracted_text}"
+        elif uploaded_file.type == "application/pdf":
             pdf_path = f"temp_{uploaded_file.name}"
             with open(pdf_path, "wb") as f:
                 f.write(uploaded_file.getbuffer())
             pdf_text = extract_text_from_pdf(pdf_path)
+            st.session_state.messages[-1]["content"] = f"[Uploaded PDF: {uploaded_file.name}]\n\n{pdf_text[:1000]}..."
 
-    if st.button("🚀 CLASSIFY, ROUTE & EXECUTE", use_container_width=True):
-        if not user_prompt:
-            st.warning("Please enter a prompt.")
-        else:
+    # Process user input (your existing logic)
+    if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
+        user_message = st.session_state.messages[-1]["content"]
+        if not user_message.startswith("[Uploaded") and not user_message.startswith("![Uploaded"):
+            # Regular text prompt - execute as before
+            route = st.selectbox("Route:", ["ODA", "Hybrid", "Cloud"], index=1, key="route")
+            
+            route_map = {
+                "ODA": "ODA",
+                "Hybrid": "Hybrid",
+                "Cloud": "Cloud"
+            }
+
             with st.spinner("Processing..."):
                 start_time = datetime.now()
                 log_entry = {
                     "timestamp": start_time.strftime("%Y-%m-%d %H:%M:%S.%f"),
-                    "prompt": user_prompt,
-                    "route": route.split(" ")[0],
+                    "prompt": user_message,
+                    "route": route,
                     "status": "started",
                     "model": f"{route} (DistilBERT + Qwen/Grok)"
                 }
                 logger.log(log_entry)
 
-                route_map = {
-                    "ODA (Qwen2-0.5B only)": "ODA",
-                    "Hybrid (Qwen + Grok)": "Hybrid",
-                    "Cloud LLM (Grok + Qwen fallback)": "Cloud"
-                }
-                dag, results = orchestrator.execute(user_prompt, pdf_text, route_map[route])
+                dag, results = orchestrator.execute(user_message, None, route_map[route])
 
                 end_time = datetime.now()
                 log_entry.update({
@@ -192,27 +383,13 @@ with tab1:
                 })
                 logger.log(log_entry)
 
-                st.markdown("#### 🔗 Task Bifurcation DAG")
-                try:
-                    graph = graphviz.Digraph(graph_attr={"rankdir": "LR"})
-                    for node in dag["dag"]["nodes"]:
-                        graph.node(node["id"], node["task"][:30] + "...")
-                    for node in dag["dag"]["nodes"]:
-                        if "depends_on" in node:
-                            for dep in node["depends_on"]:
-                                graph.edge(dep, node["id"])
-                    st.graphviz_chart(graph)
-                except Exception as e:
-                    st.warning("Graphviz is not installed on this system. Showing raw DAG structure:")
-                    st.json(dag["dag"])
-
-                st.markdown("#### 💡 Execution Results")
-                for task_id, result in results.items():
-                    if isinstance(result, dict) and "error" in result:
-                        st.error(f"**Task {task_id}:** {result['error']}")
-                    else:
-                        st.success(f"**Task {task_id}:**")
-                        st.write(result)
+                st.session_state.messages.append({
+                    "role": "bot",
+                    "content": results.get("final_output", "No output generated."),
+                    "dag": dag,
+                    "results": results
+                })
+                st.rerun()
 
 # --- Tab 2: Analytics ---
 with tab2:
