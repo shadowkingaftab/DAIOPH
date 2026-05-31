@@ -236,3 +236,6 @@ def get_route_smart(prompt):
         return "Hybrid"
     else:
         return "Cloud"
+
+def prioritize_tasks(tasks):
+    return sorted(tasks, key=lambda x: len(str(x).split()))
