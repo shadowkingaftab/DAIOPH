@@ -64,25 +64,44 @@ except ImportError:
 
 class HybridOrchestrator:
     def __init__(self, distilbert_path: str, qwen_path: str, grok_api_key: Optional[str] = None):
-        try:
-            self.tokenizer = AutoTokenizer.from_pretrained(distilbert_path)
-            self.distilbert_model = AutoModelForSequenceClassification.from_pretrained(distilbert_path)
-            self.distilbert_classifier = pipeline(
-                "text-classification",
-                model=self.distilbert_model,
-                tokenizer=self.tokenizer
-            )
-            self.HAS_DISTILBERT = True
-        except Exception as e:
+        if SKLEARN_TRANSFORMERS_AVAILABLE:
+            try:
+                self.tokenizer = AutoTokenizer.from_pretrained(distilbert_path)
+                self.distilbert_model = AutoModelForSequenceClassification.from_pretrained(distilbert_path)
+                self.distilbert_classifier = pipeline(
+                    "text-classification",
+                    model=self.distilbert_model,
+                    tokenizer=self.tokenizer
+                )
+                self.HAS_DISTILBERT = True
+            except Exception as e:
+                import streamlit as st
+                st.warning(f"⚠️ DistilBERT disabled: {str(e)}")
+                self.HAS_DISTILBERT = False
+        else:
             import streamlit as st
-            st.warning(f"⚠️ DistilBERT disabled: {str(e)}")
+            st.warning("⚠️ DistilBERT disabled: transformers not available")
             self.HAS_DISTILBERT = False
 
         self.executor       = TaskExecutor(qwen_path, grok_api_key)
-        if IMAGE_EXECUTOR_AVAILABLE:
-            self.image_executor = ImageExecutor()          # 0 MB — cloud/graphviz only
-        else:
-            self.image_executor = ImageExecutor()
+        
+        try:
+            if IMAGE_EXECUTOR_AVAILABLE:
+                self.image_executor = ImageExecutor()
+            else:
+                # Fallback image executor that does nothing
+                class _FallbackImageExecutor:
+                    @staticmethod
+                    def execute(task, route):
+                        return f"[Image generation disabled: missing dependencies]"
+                self.image_executor = _FallbackImageExecutor()
+        except Exception:
+            class _FallbackImageExecutor:
+                @staticmethod
+                def execute(task, route):
+                    return f"[Image generation disabled: error loading image executor]"
+            self.image_executor = _FallbackImageExecutor()
+            
         self.grok           = GrokClient(grok_api_key) if grok_api_key else None
         self.HAS_GROK       = grok_api_key is not None
 
