@@ -100,3 +100,9 @@ if __name__ == "__main__":
 def log_execution(prompt, route, status, duration):
     with open("executions.log", "a") as f:
         f.write(f"{datetime.now()}|{prompt[:50]}|{route}|{status}|{duration}\n")
+
+def log_cost(route, tokens):
+    costs = {"ODA": 0, "Hybrid": 0.0005, "Cloud": 0.001}
+    cost = tokens * costs.get(route, 0)
+    with open("costs.log", "a") as f:
+        f.write(f"{datetime.now()}|{route}|{tokens}|${cost:.4f}\n")
