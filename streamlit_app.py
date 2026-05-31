@@ -1,7 +1,7 @@
 import streamlit as st
 from core.hybrid_orchestrator import HybridOrchestrator
 from core.prompt_generator import PromptGenerator
-from utils.pdf_parser import extract_text_from_pdf
+from utils.pdf_parser import extract_text_from_pdf, get_pdf_images
 from utils.logger import Logger
 import graphviz
 import pandas as pd
@@ -17,32 +17,48 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for aesthetics
+# Custom CSS — dark-theme glass morphism style
 st.markdown("""
 <style>
-    .stTabs [data-baseweb="tab-list"] { gap: 2rem; }
-    .stTabs [data-baseweb="tab"] {
-        height: 3rem; padding: 0 2rem; background-color: #f0f2f6;
-        border-radius: 0.5rem 0.5rem 0 0; font-weight: 600;
-    }
-    .stTabs [aria-selected="true"] {
-        background-color: #4CC9F0; color: white;
-    }
-    .main-header {
-        font-size: 3rem; font-weight: 800; color: #4CC9F0;
-        text-align: center; margin-bottom: 1rem;
-    }
-    .sub-header {
-        font-size: 1.2rem; color: #484848; margin-bottom: 2rem;
-        text-align: center;
-    }
-    .stButton>button {
-        background-color: #4CC9F0; color: white; border: none;
-        border-radius: 0.5rem; padding: 0.5rem 2rem; font-weight: 600;
-    }
-    .stButton>button:hover {
-        background-color: #48B5E9;
-    }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+
+.stApp { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); color: #f0f0f0; }
+
+.stTabs [data-baseweb="tab-list"] { gap: 2rem; border-bottom: 1px solid #444; }
+.stTabs [data-baseweb="tab"] {
+    height: 3rem; padding: 0 1.5rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 0.5rem 0.5rem 0 0; font-weight: 600; color: #ccc;
+}
+.stTabs [aria-selected="true"] { background: linear-gradient(90deg, #4CC9F0, #7B2FBE); color: white; }
+
+.main-header {
+    font-size: 2.8rem; font-weight: 800;
+    background: linear-gradient(90deg, #4CC9F0, #F72585);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-align: center; margin-bottom: 0.5rem;
+}
+.sub-header { font-size: 1.1rem; color: #aaa; text-align: center; margin-bottom: 2rem; }
+
+.stButton>button {
+    background: linear-gradient(90deg, #4CC9F0, #7B2FBE);
+    color: white; border: none; border-radius: 0.5rem;
+    padding: 0.6rem 2rem; font-weight: 700; font-size: 1rem;
+    transition: transform 0.1s;
+}
+.stButton>button:hover { transform: scale(1.03); opacity: 0.95; }
+
+.stTextInput input, .stTextArea textarea {
+    background: rgba(255,255,255,0.07) !important;
+    color: white !important; border: 1px solid #555 !important; border-radius: 0.4rem;
+}
+.dag-legend { display: flex; gap: 1rem; margin: 0.5rem 0 1rem; flex-wrap: wrap; }
+.dag-legend span {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.2rem 0.7rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 600;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -157,10 +173,76 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "✨ Generate Prompts"
 ])
 
+
+# ── Colorful DAG with tooltips ─────────────────────────────────────────────────
+def show_dag(dag):
+    """Render a colorful Graphviz DAG. Green=ODA, Gold=Cloud, LightBlue=Hybrid, Red=Error."""
+    color_map = {
+        "ODA":    "#2ecc71",      # Green
+        "Cloud":  "#f1c40f",      # Gold
+        "Hybrid": "#74b9ff",      # Light blue
+        "failed": "#e74c3c",      # Red
+    }
+    font_color_map = {
+        "ODA": "white", "Cloud": "#333", "Hybrid": "#333", "failed": "white"
+    }
+
+    dot = graphviz.Digraph(graph_attr={"rankdir": "LR", "bgcolor": "transparent",
+                                        "splines": "curved", "fontname": "Inter"})
+
+    nodes = dag.get("dag", dag).get("nodes", [])
+    for node in nodes:
+        route = node.get("route", "Hybrid")
+        color = color_map.get(route, "#95a5a6")
+        fcolor = font_color_map.get(route, "white")
+        label = node["task"][:28] + ("…" if len(node["task"]) > 28 else "")
+        tooltip = f"ID: {node['id']} | Route: {route}\n{node['task']}"
+        dot.node(
+            node["id"],
+            label=label,
+            fillcolor=color,
+            fontcolor=fcolor,
+            style="filled,rounded",
+            fontsize="11",
+            tooltip=tooltip,
+            fontname="Inter",
+        )
+
+    for node in nodes:
+        for dep in node.get("depends_on", []):
+            dot.edge(dep, node["id"], color="#aaaaaa", arrowsize="0.7")
+
+    try:
+        st.graphviz_chart(dot)
+    except Exception:
+        st.json(dag.get("dag", dag))
+
+    # DAG legend
+    st.markdown("""
+    <div class="dag-legend">
+        <span style="background:#2ecc71;color:white">🟢 ODA (On-Device)</span>
+        <span style="background:#f1c40f;color:#333">🟡 Cloud (Grok)</span>
+        <span style="background:#74b9ff;color:#333">🔵 Hybrid</span>
+        <span style="background:#e74c3c;color:white">🔴 Failed</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 # --- Tab 1: Classify & Execute ---
 with tab1:
     st.markdown("### Classify & Execute a Prompt")
-    st.info("DistilBERT splits prompts into tasks, then executes them using the selected route (ODA/Hybrid/Cloud).")
+    st.info("DistilBERT splits prompts into tasks, then executes them using the selected route (ODA/Hybrid/Cloud). Supports multi-language input.")
+
+    # Example prompts dropdown
+    EXAMPLE_PROMPTS = [
+        "Custom (type below)",
+        "First, summarize this document. Then, extract 3 key points. Finally, write a tweet about it.",
+        "Analyze the main themes and then compare them with modern AI trends.",
+        "Explain edge AI, then list its advantages over cloud AI.",
+        "पहले इस पाठ का सारांश दें। फिर मुख्य विचार बताएं।",  # Hindi
+        "Primero resume el texto. Luego explica los puntos clave.",  # Spanish
+    ]
+    selected_example = st.selectbox("📚 Example Prompts (pick one or type your own):", EXAMPLE_PROMPTS)
 
     route = st.selectbox(
         "Select execution route:",
@@ -170,11 +252,16 @@ with tab1:
 
     col1, col2 = st.columns([3, 1])
     with col1:
-        user_prompt = st.text_area("Your prompt:", placeholder="e.g., First, summarize this PDF. Then, write a tweet about it.", height=150)
+        default_text = "" if selected_example == "Custom (type below)" else selected_example
+        user_prompt = st.text_area("Your prompt:", value=default_text,
+                                   placeholder="e.g., First, summarize this PDF. Then, write a tweet about it.",
+                                   height=150)
     with col2:
         input_method = st.radio("Input Method:", ["Text", "PDF + Text"])
+        explain_mode = st.checkbox("🔍 Explain Mode", help="Show intermediate reasoning steps")
 
     pdf_text = None
+    pdf_path = None
     if input_method == "PDF + Text":
         uploaded_file = st.file_uploader("Upload PDF", type=["pdf"])
         if uploaded_file:
@@ -187,7 +274,7 @@ with tab1:
         if not user_prompt:
             st.warning("Please enter a prompt.")
         else:
-            with st.spinner("Processing..."):
+            with st.spinner("🧠 Processing your prompt..."):
                 start_time = datetime.now()
                 log_entry = {
                     "timestamp": start_time.strftime("%Y-%m-%d %H:%M:%S.%f"),
@@ -203,7 +290,11 @@ with tab1:
                     "Hybrid (Qwen + Grok)": "Hybrid",
                     "Cloud LLM (Grok + Qwen fallback)": "Cloud"
                 }
-                dag, results = orchestrator.execute(user_prompt, pdf_text, route_map[route])
+                try:
+                    dag, results = orchestrator.execute(user_prompt, pdf_text, route_map[route])
+                except Exception as e:
+                    st.error(f"Execution error: {e}")
+                    dag, results = {"dag": {"nodes": []}}, {}
 
                 end_time = datetime.now()
                 log_entry.update({
@@ -215,27 +306,75 @@ with tab1:
                 })
                 logger.log(log_entry)
 
-                st.markdown("#### 🔗 Task Bifurcation DAG")
-                try:
-                    graph = graphviz.Digraph(graph_attr={"rankdir": "LR"})
-                    for node in dag["dag"]["nodes"]:
-                        graph.node(node["id"], node["task"][:30] + "...")
-                    for node in dag["dag"]["nodes"]:
-                        if "depends_on" in node:
-                            for dep in node["depends_on"]:
-                                graph.edge(dep, node["id"])
-                    st.graphviz_chart(graph)
-                except Exception as e:
-                    st.warning("Graphviz is not installed on this system. Showing raw DAG structure:")
-                    st.json(dag["dag"])
+                # ── Detected Language badge ──────────────────────────────────────────
+                detected_lang = results.get("detected_language", dag.get("language", "en"))
+                lang_names = {"en": "English", "hi": "Hindi", "es": "Spanish", "fr": "French",
+                              "de": "German", "ar": "Arabic", "zh": "Chinese", "ja": "Japanese"}
+                lang_label = lang_names.get(detected_lang, detected_lang.upper())
+                st.info(f"🌍 Detected Language: **{lang_label}**")
 
+                # ── Colorful DAG ──────────────────────────────────────────────────────
+                st.markdown("#### 🔗 Task Bifurcation DAG")
+                show_dag(dag)
+
+                # ── Execution Results ────────────────────────────────────────────────
                 st.markdown("#### 💡 Execution Results")
                 for task_id, result in results.items():
+                    if task_id in ("final_output", "times", "retry_counts", "detected_language"):
+                        continue
                     if isinstance(result, dict) and "error" in result:
                         st.error(f"**Task {task_id}:** {result['error']}")
                     else:
                         st.success(f"**Task {task_id}:**")
                         st.write(result)
+
+                if results.get("final_output"):
+                    st.markdown("#### ✨ Final Stitched Output")
+                    st.markdown(results["final_output"])
+
+                # ── Explain Mode ───────────────────────────────────────────────────
+                if explain_mode:
+                    st.markdown("#### 🔍 Reasoning Steps (Explain Mode)")
+                    nodes = dag.get("dag", dag).get("nodes", [])
+                    for node in nodes:
+                        with st.expander(f"Task `{node['id']}`: {node['task'][:60]}..."):
+                            st.write(f"**Route:** {node.get('route', 'Hybrid')}")
+                            st.write(f"**Depends on:** {node.get('depends_on', [])}")
+                            st.write(f"**Output:** {results.get(node['id'], 'N/A')}")
+
+                # ── Time Comparison ─────────────────────────────────────────────────
+                times = results.get("times", {})
+                if times:
+                    st.markdown("#### ⏱️ Time Comparison: Edge AI vs Traditional")
+                    tc1, tc2, tc3 = st.columns(3)
+                    with tc1:
+                        st.metric("Traditional (Sequential)", f"{times.get('traditional', 0):.2f}s",
+                                  help="Estimated time if all tasks ran sequentially on a single cloud model")
+                    with tc2:
+                        st.metric("Edge AI (Parallel)", f"{times.get('edge_ai', 0):.2f}s",
+                                  help="Actual time with DAG-parallel execution")
+                    with tc3:
+                        savings = times.get('savings_percent', 0)
+                        delta_str = f"{abs(savings):.1f}% {'faster' if savings >= 0 else 'slower'}"
+                        st.metric("Time Saved", delta_str,
+                                  delta=f"{savings:.1f}%" if savings >= 0 else None)
+
+                # ── Retry Statistics ─────────────────────────────────────────────────
+                retry_counts = results.get("retry_counts", {})
+                if retry_counts:
+                    st.markdown("#### 🔄 Retry Statistics")
+                    for task_id, count in retry_counts.items():
+                        st.warning(f"Task `{task_id}` required **{count} retr{'y' if count==1 else 'ies'}** before succeeding.")
+
+                # ── PDF Image Preview ────────────────────────────────────────────────
+                if input_method == "PDF + Text" and pdf_path:
+                    with st.expander("🖼️ PDF Image Preview"):
+                        images = get_pdf_images(pdf_path)
+                        if images:
+                            for i, img in enumerate(images[:5]):  # Show up to 5 pages
+                                st.image(img, caption=f"Page {i+1}", use_column_width=True)
+                        else:
+                            st.info("No images found or pdf2image not installed.")
 
 # --- Tab 2: Analytics ---
 with tab2:
