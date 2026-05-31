@@ -161,7 +161,7 @@ with tab1:
         }
 
         /* Pill Container */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) > div[data-testid="stHorizontalBlock"] {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="stHorizontalBlock"] {
             position: fixed;
             bottom: 30px;
             left: 20%;
@@ -216,7 +216,7 @@ with tab1:
 
         /* Mic Button (Column 4) */
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="column"]:nth-child(4) .stButton > button {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%23888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>') !important;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ODg4ODgiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgMmEzIDMgMCAwIDAtMyAzdjdhMyAzIDAgMCAwIDYgMFY1YTMgMyAwIDAgMC0zLTN6Ij48L3BhdGg+PHBhdGggZD0iTTE5IDEwdjJhNyA3IDAgMCAxLTE0IDB2LTIiPjwvcGF0aD48bGluZSB4MT0iMTIiIHkxPSIxOSIgeDI9IjEyIiB5Mj0iMjIiPjwvbGluZT48L3N2Zz4=') !important;
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="column"]:nth-child(4) .stButton > button:hover {
             background-color: rgba(255, 255, 255, 0.05) !important;
@@ -225,7 +225,7 @@ with tab1:
 
         /* Send Button (Column 5) */
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="column"]:nth-child(5) .stButton > button {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>') !important;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGxpbmUgeDE9IjEyIiB5MT0iMTkiIHgyPSIxMiIgeTI9IjUiPjwvbGluZT48cG9seWxpbmUgcG9pbnRzPSI1IDEyIDEyIDUgMTkgMTIiPjwvcG9seWxpbmU+PC9zdmc+') !important;
             background-color: #2a2a2a !important;
             border-radius: 8px !important;
         }
@@ -234,11 +234,11 @@ with tab1:
         }
 
         /* Dynamic visibility for Send Button: hide if input empty */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) > div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-child(5) {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-child(5) {
             display: none !important;
         }
         /* Show send button when typing */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) > div[data-testid="stHorizontalBlock"]:has(input:not(:placeholder-shown)) > div[data-testid="column"]:nth-child(5) {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="stHorizontalBlock"]:has(input:not(:placeholder-shown)) > div[data-testid="column"]:nth-child(5) {
             display: flex !important;
         }
 
@@ -272,7 +272,7 @@ with tab1:
             position: absolute;
             width: 16px;
             height: 16px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>');
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ODg4ODgiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48bGluZSB4MT0iMTIiIHkxPSI1IiB4Mj0iMTIiIHkyPSIxOSI+PC9saW5lPjxsaW5lIHgxPSI1IiB5MT0iMTIiIHgyPSIxOSIgeTI9IjEyIj48L2xpbmU+PC9zdmc+');
             background-repeat: no-repeat;
             background-position: center;
         }
@@ -287,7 +287,7 @@ with tab1:
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            height: 36px;
+            height: 44px;
             white-space: nowrap;
             margin-right: 4px;
         }
