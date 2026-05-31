@@ -362,3 +362,5 @@ with tab5:
 # Add explain mode for transparency
 
 # Add dark mode toggle for better UX
+
+# Add DAG visualization for task dependencies
