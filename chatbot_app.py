@@ -78,8 +78,26 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     margin-bottom: 0.8rem;
 }
 
+/* ── Fixed bottom input area with glassmorphism ── */
+.bottom-input-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem 1.5rem 1.8rem;
+    background: rgba(15, 12, 41, 0.97);
+    backdrop-filter: blur(25px) saturate(200%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%);
+    z-index: 999;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 /* ── Chat bubbles ── */
-.chat-wrap { max-height: 58vh; overflow-y: auto; padding: 0.5rem 0.5rem 0.5rem; }
+.chat-wrap { 
+    max-height: calc(100vh - 340px); 
+    overflow-y: auto; 
+    padding: 0.5rem 0.5rem 160px; 
+}
 .bubble-row-user  { display: flex; justify-content: flex-end;  margin: 0.55rem 0; animation: slideRight 0.3s ease-out; }
 .bubble-row-bot   { display: flex; justify-content: flex-start; margin: 0.55rem 0; animation: slideLeft 0.3s ease-out; }
 
@@ -527,24 +545,34 @@ with tab_chat:
             </div>
         </div>""", unsafe_allow_html=True)
 
-    # Input toolbar
-    st.markdown("---")
-    col_text, col_file, col_mic, col_send = st.columns([7, 1, 1, 1])
-    with col_text:
-        user_text = st.text_input("msg", value=st.session_state.pending_text,
-                                   placeholder="💬 Ask me anything…",
-                                   label_visibility="collapsed", key="chat_input_box")
+    # Input toolbar with custom fixed bottom design
+    st.markdown('<div class="bottom-input-container">', unsafe_allow_html=True)
+    st.markdown('<div style="max-width:1200px;margin:0 auto;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:1.2rem;padding:0.7rem 1rem;box-shadow:0 8px 32px rgba(0,0,0,0.25);">', unsafe_allow_html=True)
+    
+    col_file, col_text, col_mic, col_send = st.columns([1, 7, 1, 1.2])
+    
     with col_file:
-        st.markdown('<div class="icon-btn">', unsafe_allow_html=True)
-        uploaded = st.file_uploader("➕", type=["pdf","jpg","jpeg","png","webp"],
-                                     label_visibility="collapsed", key="file_upload")
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown('<div style="margin-top:0.1rem;">', unsafe_allow_html=True)
+        uploaded = st.file_uploader("📎", type=["pdf","jpg","jpeg","png","webp"],
+                                     label_visibility="collapsed", key="file_upload", 
+                                     help="Upload file (PDF/Image)")
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+    with col_text:
+        user_text = st.text_area("msg", value=st.session_state.pending_text,
+                                   placeholder="Type your message…",
+                                   label_visibility="collapsed", key="chat_input_box",
+                                   height=50)
+        
     with col_mic:
-        st.markdown('<div class="icon-btn">', unsafe_allow_html=True)
-        mic_btn = st.button("🎤", key="mic_btn", help="Voice input")
-        st.markdown("</div>", unsafe_allow_html=True)
+        mic_btn = st.button("🎤", key="mic_btn", help="Voice input", 
+                            use_container_width=True)
+        
     with col_send:
-        send_btn = st.button("➤ Send", key="send_btn", use_container_width=True)
+        send_btn = st.button("➤", key="send_btn", use_container_width=True,
+                            type="primary")
+    
+    st.markdown('</div></div>', unsafe_allow_html=True)
 
     # Voice
     if mic_btn:
