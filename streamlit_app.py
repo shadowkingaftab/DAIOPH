@@ -818,7 +818,7 @@ with tab1:
                         st.warning(f"Task `{task_id}` required **{count} retr{'y' if count==1 else 'ies'}** before succeeding.")
 
                 # ── PDF Image Preview ────────────────────────────────────────────────
-                if input_method == "PDF + Text" and pdf_path:
+                if pdf_path:
                     with st.expander("🖼️ PDF Image Preview"):
                         images = get_pdf_images(pdf_path)
                         if images:

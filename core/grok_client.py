@@ -35,11 +35,10 @@ class GrokClient:
         self.api_key  = api_key or ""
         self.base_url = "https://api.x.ai/v1/chat/completions"
         self.models   = [
-            "grok-3-mini",
-            "grok-2-1212",
             "grok-2-latest",
             "grok-beta",
-            "grok-2",
+            "grok-3-mini",
+            "grok-2-1212"
         ]
 
         # Persistent session reuses TCP connections — saves ~20ms per request

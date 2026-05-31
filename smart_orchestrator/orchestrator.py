@@ -198,7 +198,7 @@ class LLMOrchestrator:
             "Content-Type": "application/json"
         }
         
-        models_to_try = ["grok-3-mini", "grok-3", "grok-2-1212", "grok-beta", "grok-2", "grok-1"]
+        models_to_try = ["grok-2-latest", "grok-beta", "grok-3-mini", "grok-2-1212"]
         last_error = ""
 
         for model in models_to_try:

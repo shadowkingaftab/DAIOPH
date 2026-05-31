@@ -33,7 +33,7 @@ def get_config(key, default=None):
 
 GROK_API_KEY    = get_config("GROK_API_KEY")
 GROK_API_URL    = "https://api.x.ai/v1/chat/completions"
-DEFAULT_MODEL   = "grok-2"   # grok-2 is the most stable standard model
+DEFAULT_MODEL   = "grok-2-latest"   # grok-2-latest is the most stable standard model
 DEFAULT_TIMEOUT = 30              # seconds
 
 
@@ -63,7 +63,7 @@ def run_grok(
     }
     
     # Try multiple models in case one is not enabled for the user's key
-    models_to_try = [model] if model else ["grok-3-mini", "grok-3", "grok-2-1212", "grok-2-latest", "grok-beta", "grok-2", "grok-1"]
+    models_to_try = [model] if model else ["grok-2-latest", "grok-beta", "grok-3-mini", "grok-2-1212"]
     last_error = ""
 
     for m in models_to_try:
