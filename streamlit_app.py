@@ -358,3 +358,5 @@ with tab5:
 # Add loading spinners for better UX
 
 # Add progress bars for task execution
+
+# Add explain mode for transparency
