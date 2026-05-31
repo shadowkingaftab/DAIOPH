@@ -109,3 +109,4 @@ The entire workspace is optimized for seamless zero-config deployment on **Strea
 *   **Lazy Loading**: Local GGUF models and DistilBERT are dynamically downloaded on first load if missing.
 *   **Fallback Protections**: If C++ compilers are restricted, the system catches import errors and routes traffic gracefully to Grok without disrupting server uptime.
 *   **Thread Safety**: Local inference requests are sequentially locked (`threading.Lock`) to prevent memory corruption under high multi-tenant traffic.
+\n## What's New\n- Added dark mode\n- Improved performance with ThreadPoolExecutor\n- Caching and chunking optimizations\n
