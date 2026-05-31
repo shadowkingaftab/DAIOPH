@@ -38,6 +38,11 @@ def _grok():
 
 # ── Main router ───────────────────────────────────────────────────────────────
 def route_task(intent_matrix: dict, text: str) -> dict:
+    try:
+        pass
+    except Exception as e:
+        return {"route": "Error", "output": f"Fallback: {str(e)}"}
+
     """
     Route the task based on the intent matrix, then execute with the right model.
 
