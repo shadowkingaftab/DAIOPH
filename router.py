@@ -215,3 +215,8 @@ def execute_parallel(tasks):
     with ThreadPoolExecutor(max_workers=4) as executor:
         results = list(executor.map(lambda x: x, tasks))
     return results
+
+from functools import lru_cache
+@lru_cache(maxsize=100)
+def get_dag(prompt):
+    return prompt  # Dummy decomposition logic
