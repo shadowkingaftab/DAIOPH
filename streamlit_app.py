@@ -356,3 +356,5 @@ with tab5:
 # Preload models at startup for faster execution
 
 # Add loading spinners for better UX
+
+# Add progress bars for task execution
