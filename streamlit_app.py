@@ -396,84 +396,117 @@ with tab1:
 
     explain_mode = st.checkbox("🔍 Explain Mode", help="Show intermediate reasoning steps")
 
-    # --- Minimalist Chatbox UI ---
+    # --- Minimalist Chatbox UI (Streamlit Compatible CSS Hack) ---
     st.markdown("""
     <style>
-        /* Chatbox Container */
-        .chatbox {
+        /* Target the chat container using :has() */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) {
             position: fixed;
             bottom: 20px;
             left: 5%;
             right: 5%;
-            background: rgba(15, 15, 15, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 8px;
+            background: rgba(15, 15, 15, 0.8) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 12px !important;
+            padding: 10px 15px !important;
             display: flex;
             align-items: center;
-            gap: 8px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
+            backdrop-filter: blur(10px) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+            z-index: 9999 !important;
+            width: 90% !important;
         }
 
-        /* Input Area */
-        .chat-input {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.05);
-            border: none;
-            border-radius: 4px;
-            padding: 8px 12px;
+        /* Clean Text Input */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) input {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 10px 15px !important;
+            color: white !important;
+            height: 44px !important;
+            line-height: 44px !important;
+        }
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) input:focus {
+            background: rgba(255, 255, 255, 0.1) !important;
+            box-shadow: none !important;
+        }
+        /* Remove Streamlit's input wrapper borders */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-baseweb="input"] {
+            background: transparent !important;
+            border: none !important;
+        }
+
+        /* Fix Buttons (Override global styles) */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) .stButton > button {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: none !important;
+            border-radius: 8px !important;
+            width: 44px !important;
+            height: 44px !important;
+            color: white !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 44px !important;
+            font-size: 1.2rem !important;
+            box-shadow: none !important;
+        }
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) .stButton > button:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            transform: scale(1.05) !important;
+        }
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) .stButton > button:disabled {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: rgba(255, 255, 255, 0.3) !important;
+            cursor: not-allowed !important;
+        }
+
+        /* Make Send button pop (it's the second button, i.e. col4) */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="column"]:nth-child(4) .stButton > button {
+            background: #4C97F0 !important;
+        }
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="column"]:nth-child(4) .stButton > button:hover {
+            background: #3A7BC8 !important;
+        }
+
+        /* Transform File Uploader into a simple icon button */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="stFileUploader"] {
+            width: 44px !important;
+            height: 44px !important;
+        }
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="stFileUploaderDropzone"] {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: none !important;
+            border-radius: 8px !important;
+            width: 44px !important;
+            height: 44px !important;
+            min-height: 44px !important;
+            padding: 0 !important;
+            position: relative !important;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="stFileUploaderDropzone"]:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+        }
+        /* Hide default dropzone text */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="stFileUploaderDropzone"] > div {
+            display: none !important; 
+        }
+        /* Insert the clip emoji */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="stFileUploaderDropzone"]::before {
+            content: "📎";
+            font-size: 1.2rem;
+            position: absolute;
             color: white;
-            outline: none;
         }
-        .chat-input:focus {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Icon Buttons */
-        .icon-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 4px;
-            width: 36px;
-            height: 36px;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        .icon-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* File Uploader (Hidden) */
-        .stFileUploader > div > div > div {
-            display: none;
-        }
-
-        /* Send Button */
-        .send-btn {
-            background: #4C97F0;
-            border: none;
-            border-radius: 4px;
-            width: 36px;
-            height: 36px;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        .send-btn:hover {
-            background: #3A7BC8;
-        }
-        .send-btn:disabled {
-            background: rgba(255, 255, 255, 0.1);
-            cursor: not-allowed;
+        /* Hide uploaded file details summary */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="stFileUploader"] section {
+            display: none !important; 
         }
 
         /* Message Bubbles */
@@ -522,49 +555,49 @@ with tab1:
     st.markdown('</div>', unsafe_allow_html=True)
 
     # --- Chatbox Input (Fixed at Bottom) ---
-    st.markdown('<div class="chatbox">', unsafe_allow_html=True)
+    chat_container = st.container()
     
-    col1, col2, col3, col4 = st.columns([1, 6, 1, 1])
+    with chat_container:
+        st.markdown('<div class="minimalist-chat-anchor"></div>', unsafe_allow_html=True)
+        col1, col2, col3, col4 = st.columns([1, 6, 1, 1])
 
-    with col1:
-        # File Upload Button (Hidden Uploader + Visible Icon)
-        uploaded_file = st.file_uploader(
-            "📎",
-            type=["pdf", "jpg", "png", "jpeg"],
-            key="chat_file_uploader",
-            label_visibility="collapsed"
-        )
-        if uploaded_file:
-            st.session_state.uploaded_file = uploaded_file
+        with col1:
+            # File Upload Button (Hidden Uploader + Visible Icon)
+            uploaded_file = st.file_uploader(
+                "📎",
+                type=["pdf", "jpg", "png", "jpeg"],
+                key="chat_file_uploader",
+                label_visibility="collapsed"
+            )
+            if uploaded_file:
+                st.session_state.uploaded_file = uploaded_file
 
-    with col2:
-        # Text Input
-        user_input = st.text_input(
-            "Type your message...",
-            key="chat_input",
-            label_visibility="collapsed",
-            placeholder="Ask me anything..."
-        )
+        with col2:
+            # Text Input
+            user_input = st.text_input(
+                "Type your message...",
+                key="chat_input",
+                label_visibility="collapsed",
+                placeholder="Ask me anything..."
+            )
 
-    with col3:
-        # Mic Button
-        if st.button("🎤", key="mic_button", use_container_width=False):
-            with st.spinner("Listening..."):
-                if sr:
-                    r = sr.Recognizer()
-                    with sr.Microphone() as source:
-                        try:
-                            audio = r.listen(source, timeout=10)
-                            user_input = r.recognize_google(audio)
-                        except:
-                            user_input = None
+        with col3:
+            # Mic Button
+            if st.button("🎤", key="mic_button", use_container_width=False):
+                with st.spinner("Listening..."):
+                    if sr:
+                        r = sr.Recognizer()
+                        with sr.Microphone() as source:
+                            try:
+                                audio = r.listen(source, timeout=10)
+                                user_input = r.recognize_google(audio)
+                            except:
+                                user_input = None
 
-    with col4:
-        # Send Button
-        send_disabled = not user_input and not st.session_state.get("uploaded_file")
-        send_pressed = st.button("→", key="send_button", disabled=send_disabled, use_container_width=False)
-
-    st.markdown('</div>', unsafe_allow_html=True)
+        with col4:
+            # Send Button
+            send_disabled = not user_input and not st.session_state.get("uploaded_file")
+            send_pressed = st.button("→", key="send_button", disabled=send_disabled, use_container_width=False)
 
     if (user_input or st.session_state.get("uploaded_file")) and (send_pressed or user_input):
         st.session_state.current_pdf_text = None
