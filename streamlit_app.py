@@ -396,110 +396,110 @@ with tab1:
 
     explain_mode = st.checkbox("🔍 Explain Mode", help="Show intermediate reasoning steps")
 
-    # --- Minimalist Chatbox UI (Streamlit Compatible CSS Hack) ---
+    # --- Minimalist Chatbox (Exact Pill Design) ---
     st.markdown("""
     <style>
-        /* Target the chat container safely using :has() and exclude the main page container */
+        /* The container wrapper shouldn't have background anymore */
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            backdrop-filter: none !important;
+        }
+
+        /* Target the horizontal block containing the columns to make it the Pill */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) > div[data-testid="stHorizontalBlock"] {
             position: fixed;
-            bottom: 20px;
-            left: 5%;
-            right: 5%;
-            background: rgba(15, 15, 15, 0.8) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 12px !important;
-            padding: 10px 15px !important;
-            display: flex;
-            align-items: center;
-            backdrop-filter: blur(10px) !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+            bottom: 30px;
+            left: 20%;
+            right: 20%;
+            background: #111111 !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            border-radius: 16px !important;
+            padding: 4px 12px !important;
+            display: flex !important;
+            align-items: center !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
             z-index: 9999 !important;
-            width: 90% !important;
+            gap: 0 !important;
         }
 
         /* Clean Text Input */
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) input {
-            background: rgba(255, 255, 255, 0.05) !important;
+            background: transparent !important;
             border: none !important;
-            border-radius: 8px !important;
-            padding: 10px 15px !important;
-            color: white !important;
-            height: 44px !important;
-            line-height: 44px !important;
+            padding: 12px 10px !important;
+            color: #eeeeee !important;
+            font-size: 1rem !important;
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) input:focus {
-            background: rgba(255, 255, 255, 0.1) !important;
             box-shadow: none !important;
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-baseweb="input"] {
             background: transparent !important;
             border: none !important;
         }
+        
+        /* Placeholder color */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) input::placeholder {
+            color: #666 !important;
+        }
 
-        /* Fix Buttons */
+        /* Fix Mic Button */
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) .stButton > button {
-            background: rgba(255, 255, 255, 0.1) !important;
+            background: transparent !important;
             border: none !important;
-            border-radius: 8px !important;
-            width: 44px !important;
-            height: 44px !important;
-            color: white !important;
+            color: #888 !important;
+            font-size: 1.2rem !important;
             padding: 0 !important;
+            width: 36px !important;
+            height: 36px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            min-height: 44px !important;
-            font-size: 1.2rem !important;
             box-shadow: none !important;
+            margin-left: auto !important;
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) .stButton > button:hover {
-            background: rgba(255, 255, 255, 0.2) !important;
-            transform: scale(1.05) !important;
-        }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) .stButton > button:disabled {
+            color: white !important;
             background: rgba(255, 255, 255, 0.05) !important;
-            color: rgba(255, 255, 255, 0.3) !important;
-            cursor: not-allowed !important;
+            border-radius: 8px !important;
+            transform: none !important;
         }
 
-        /* Make Send button pop */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="column"]:nth-child(4) .stButton > button {
-            background: #4C97F0 !important;
-        }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="column"]:nth-child(4) .stButton > button:hover {
-            background: #3A7BC8 !important;
-        }
-
-        /* Transform File Uploader into a simple icon button */
+        /* Transform File Uploader into + icon */
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploader"] {
-            width: 44px !important;
-            height: 44px !important;
+            width: 36px !important;
+            height: 36px !important;
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"] {
-            background: rgba(255, 255, 255, 0.1) !important;
-            border: none !important;
+            background: transparent !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 8px !important;
-            width: 44px !important;
-            height: 44px !important;
-            min-height: 44px !important;
+            width: 32px !important;
+            height: 32px !important;
+            min-height: 32px !important;
             padding: 0 !important;
             position: relative !important;
             cursor: pointer !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
+            margin-top: 2px !important;
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"]:hover {
-            background: rgba(255, 255, 255, 0.2) !important;
+            background: rgba(255, 255, 255, 0.1) !important;
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"] > div {
             display: none !important; 
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"]::before {
-            content: "📎";
-            font-size: 1.2rem;
+            content: "+";
+            font-size: 1.5rem;
             position: absolute;
-            color: white;
+            color: #888;
+            font-weight: 300;
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploader"] section {
             display: none !important; 
@@ -555,12 +555,12 @@ with tab1:
     
     with chat_container:
         st.markdown('<div class="minimalist-chat-anchor"></div>', unsafe_allow_html=True)
-        col1, col2, col3, col4 = st.columns([1, 6, 1, 1])
+        col1, col2, col3 = st.columns([0.5, 10, 0.5], gap="small")
 
         with col1:
-            # File Upload Button (Hidden Uploader + Visible Icon)
+            # File Upload Button
             uploaded_file = st.file_uploader(
-                "📎",
+                "+",
                 type=["pdf", "jpg", "png", "jpeg"],
                 key="chat_file_uploader",
                 label_visibility="collapsed"
@@ -571,10 +571,10 @@ with tab1:
         with col2:
             # Text Input
             user_input = st.text_input(
-                "Type your message...",
+                "Type / for quick access",
                 key="chat_input",
                 label_visibility="collapsed",
-                placeholder="Ask me anything..."
+                placeholder="Type / for quick access"
             )
 
         with col3:
@@ -590,36 +590,32 @@ with tab1:
                             except:
                                 user_input = None
 
-        with col4:
-            # Send Button
-            send_disabled = not user_input and not st.session_state.get("uploaded_file")
-            send_pressed = st.button("→", key="send_button", disabled=send_disabled, use_container_width=False)
-
     st.markdown('</div>', unsafe_allow_html=True)
 
-    if (user_input or st.session_state.get("uploaded_file")) and (send_pressed or user_input):
-        st.session_state.current_pdf_text = None
-        if st.session_state.get("uploaded_file"):
-            file = st.session_state.uploaded_file
-            if file.type.startswith("image/"):
-                try:
-                    image = PILImage.open(file)
-                    img_text = pytesseract.image_to_string(image) if pytesseract else ""
-                    st.session_state.messages.append({"role": "user", "content": f"![Uploaded Image]({file.name})\n\n{img_text}", "type": "image"})
-                except:
-                    st.session_state.messages.append({"role": "user", "content": f"![Uploaded Image]({file.name})", "type": "image"})
-            elif file.type == "application/pdf":
-                pdf_path = f"temp_{file.name}"
-                with open(pdf_path, "wb") as f: f.write(file.getbuffer())
-                st.session_state.current_pdf_text = extract_text_from_pdf(pdf_path)
-                st.session_state.messages.append({"role": "user", "content": f"[Uploaded PDF: {file.name}]", "type": "pdf"})
-            st.session_state.uploaded_file = None
-
+    if user_input or st.session_state.get("uploaded_file"):
+        # Use user_input as the trigger for submission. If only file is uploaded, wait for text.
         if user_input:
-            st.session_state.messages.append({"role": "user", "content": user_input, "type": "text"})
-        
-        st.session_state.trigger_execution = True
-        st.rerun()
+            st.session_state.current_pdf_text = None
+            if st.session_state.get("uploaded_file"):
+                file = st.session_state.uploaded_file
+                if file.type.startswith("image/"):
+                    try:
+                        image = PILImage.open(file)
+                        img_text = pytesseract.image_to_string(image) if pytesseract else ""
+                        st.session_state.messages.append({"role": "user", "content": f"![Uploaded Image]({file.name})\n\n{img_text}\n\n{user_input}", "type": "image"})
+                    except:
+                        st.session_state.messages.append({"role": "user", "content": f"![Uploaded Image]({file.name})\n\n{user_input}", "type": "image"})
+                elif file.type == "application/pdf":
+                    pdf_path = f"temp_{file.name}"
+                    with open(pdf_path, "wb") as f: f.write(file.getbuffer())
+                    st.session_state.current_pdf_text = extract_text_from_pdf(pdf_path)
+                    st.session_state.messages.append({"role": "user", "content": f"[Uploaded PDF: {file.name}]\n\n{user_input}", "type": "pdf"})
+                st.session_state.uploaded_file = None
+            else:
+                st.session_state.messages.append({"role": "user", "content": user_input, "type": "text"})
+            
+            st.session_state.trigger_execution = True
+            st.rerun()
 
     pdf_text = st.session_state.current_pdf_text
     user_prompt = st.session_state.messages[-1]["content"] if st.session_state.get("messages") and st.session_state.messages[-1]["role"] == "user" else None
