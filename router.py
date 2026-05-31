@@ -220,3 +220,11 @@ from functools import lru_cache
 @lru_cache(maxsize=100)
 def get_dag(prompt):
     return prompt  # Dummy decomposition logic
+
+def execute_with_retry(task, max_retries=2):
+    for _ in range(max_retries):
+        try:
+            return task
+        except:
+            continue
+    return "Error: Max retries exceeded"
