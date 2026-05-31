@@ -78,7 +78,7 @@ class HybridOrchestrator:
             dag["language"] = lang
             raw_results = self._execute_parallel(dag, pdf_text, route)
 
-        final_output = self._stitch_outputs(dag, raw_results)
+        final_output = self._stitch_outputs(dag, raw_results, original_prompt=prompt)
         edge_time = time.time() - start_time
 
         # ── Step 4: Estimate traditional (sequential cloud) time ──────────────
@@ -228,27 +228,34 @@ class HybridOrchestrator:
         return new_dag
 
     def _execute_parallel(self, dag: Dict, pdf_text: Optional[str] = None, route: str = "Hybrid") -> Dict:
+        """Execute DAG nodes in topological order, passing full dependency context to each child."""
         results = {}
         futures = {}
-        
+
         with ThreadPoolExecutor(max_workers=4) as executor:
-            # Submit in topological order so parent futures exist when children are submitted
             sorted_tasks = self._topological_sort(dag["dag"]["nodes"])
-            
+
             for task_id in sorted_tasks:
                 node = next(t for t in dag["dag"]["nodes"] if t["id"] == task_id)
-                
+
                 def run_node(n, deps):
-                    # Wait for dependencies to finish and gather context
+                    # Build rich context from ALL dependency outputs
                     context_parts = []
-                    for d in deps:
-                        res = futures[d].result()  # Wait for parent to finish
-                        if isinstance(res, str):
-                            context_parts.append(res)
-                    
+                    for dep_id in deps:
+                        dep_res = futures[dep_id].result()  # blocks until parent done
+                        if isinstance(dep_res, str) and dep_res.strip():
+                            # Find the dependency task description for labelling
+                            dep_node = next(
+                                (x for x in dag["dag"]["nodes"] if x["id"] == dep_id), None
+                            )
+                            dep_desc = dep_node.get("task", dep_id)[:80] if dep_node else dep_id
+                            context_parts.append(
+                                f"[Step {dep_id} — {dep_desc}]\n{dep_res[:1500]}"
+                            )
+
                     context = "\n\n".join(context_parts) if context_parts else None
                     return self.executor.execute(n, context, pdf_text, route)
-                
+
                 deps = node.get("depends_on", [])
                 futures[task_id] = executor.submit(run_node, node, deps)
 
@@ -260,37 +267,158 @@ class HybridOrchestrator:
 
         return results
 
-    def _stitch_outputs(self, dag: Dict, results: Dict) -> str:
-        sorted_tasks = self._topological_sort(dag["dag"]["nodes"])
+    # ══════════════════════════════════════════════════════════════════════════
+    # INTELLIGENT OUTPUT STITCHING
+    # ══════════════════════════════════════════════════════════════════════════
+
+    def _stitch_outputs(self, dag: Dict, results: Dict, original_prompt: str = "") -> str:
+        """
+        Intelligently stitch task outputs into ONE coherent answer.
+
+        Strategy (with fallback chain):
+          1. Single task → return directly (no stitching needed).
+          2. Multiple tasks + Grok available → Grok synthesizes everything.
+          3. Multiple tasks + only Qwen → Qwen synthesizes.
+          4. No LLM → topological smart concatenation with section headers.
+        """
+        nodes = dag.get("dag", dag).get("nodes", [])
+
+        # ── Case 1: Only one task — nothing to stitch ─────────────────────────
+        if len(nodes) <= 1:
+            single_id = nodes[0]["id"] if nodes else "n1"
+            out = results.get(single_id, "")
+            return out if isinstance(out, str) else str(out)
+
+        # ── Collect task details (with truncation to keep tokens manageable) ──
+        task_details = []
+        sorted_ids = self._topological_sort(nodes)
+        for task_id in sorted_ids:
+            node = next((n for n in nodes if n["id"] == task_id), {})
+            output = results.get(task_id, "")
+            if isinstance(output, dict):
+                output = output.get("error", str(output))
+
+            # Gather dependency outputs for context labelling
+            dep_summaries = []
+            for dep_id in node.get("depends_on", []):
+                dep_node = next((n for n in nodes if n["id"] == dep_id), None)
+                dep_desc = dep_node.get("task", dep_id)[:60] if dep_node else dep_id
+                dep_out  = results.get(dep_id, "")
+                if isinstance(dep_out, str) and dep_out.strip():
+                    dep_summaries.append(f"{dep_desc}: {dep_out[:300]}")
+
+            task_details.append({
+                "id":           task_id,
+                "description":  node.get("task", task_id),
+                "output":       self._truncate_for_synthesis(output),
+                "dependencies": "\n".join(dep_summaries) if dep_summaries else "None",
+            })
+
+        synthesis_prompt = self._create_synthesis_prompt(original_prompt, task_details)
+
+        # ── Case 2: Grok synthesis (best quality) ─────────────────────────────
+        if self.HAS_GROK and self.grok:
+            try:
+                result = self.grok.generate(
+                    synthesis_prompt,
+                    max_tokens=2048,
+                    temperature=0.3,
+                )
+                if result and not result.startswith("⚠️"):
+                    return result
+            except Exception as e:
+                print(f"[orchestrator] Grok synthesis failed: {e}")
+
+        # ── Case 3: Qwen synthesis (fallback) ────────────────────────────────
+        if getattr(self.executor, "HAS_QWEN", False):
+            try:
+                out = self.executor._run_qwen(synthesis_prompt[:3000])  # Qwen has smaller ctx
+                if out and not out.startswith(("⚠️", "Qwen error")):
+                    return out
+            except Exception as e:
+                print(f"[orchestrator] Qwen synthesis failed: {e}")
+
+        # ── Case 4: Smart concatenation (ultimate fallback) ───────────────────
+        return self._smart_concatenation(nodes, results, sorted_ids)
+
+    def _create_synthesis_prompt(self, original_prompt: str, task_details: list) -> str:
+        """
+        Build a detailed prompt that tells Grok/Qwen exactly how to synthesize
+        multiple task outputs into a single, human-quality answer.
+        """
+        tasks_block = ""
+        for i, task in enumerate(task_details, 1):
+            tasks_block += f"""
+**Task {i}: {task['description']}**
+- Dependency context: {task['dependencies']}
+- Output: {task['output']}
+---"""
+
+        return f"""You are an expert analyst. Synthesize the following task outputs into ONE coherent, professional answer that directly addresses the user's original request.
+
+ORIGINAL USER REQUEST:
+{original_prompt}
+
+TASK OUTPUTS:
+{tasks_block}
+
+SYNTHESIS RULES:
+1. Address the ORIGINAL REQUEST completely — that is the only thing that matters.
+2. Combine all relevant information with logical flow: introduction → body → conclusion.
+3. Use Markdown formatting: ## for sections, **bold** for key points, - for bullet lists.
+4. Remove all redundancy — never repeat the same point twice.
+5. Resolve any contradictions between task outputs using sound reasoning.
+6. Do NOT mention "tasks", "outputs", "steps", or any internal pipeline terminology.
+7. Do NOT start with "Here is..." or "Certainly!" — begin directly with the answer.
+8. Write as a single intelligent voice, not as a list of sections from different sources.
+
+SYNTHESIZED ANSWER:"""
+
+    def _truncate_for_synthesis(self, text: str, max_chars: int = 2000) -> str:
+        """Truncate a task output to keep the synthesis prompt within token limits."""
+        if not text or len(text) <= max_chars:
+            return text
+        return text[:max_chars] + f"\n…[truncated {len(text)-max_chars} chars]"
+
+    def _smart_concatenation(self, nodes: list, results: dict, sorted_ids: list) -> str:
+        """
+        Fallback when no LLM is available: topological concatenation with section headers.
+        Skips a task's output if it already contains the full content of a dependency.
+        """
         final_parts = []
+        seen_content: set = set()
 
-        for task_id in sorted_tasks:
-            task = next(t for t in dag["dag"]["nodes"] if t["id"] == task_id)
-            output = results[task_id]
-
-            if isinstance(output, dict) and "error" in output:
-                final_parts.append(f"Error in {task_id}: {output['error']}")
+        for task_id in sorted_ids:
+            node   = next((n for n in nodes if n["id"] == task_id), {})
+            output = results.get(task_id, "")
+            if isinstance(output, dict):
+                output = output.get("error", str(output))
+            if not output or not output.strip():
                 continue
 
-            # Resolve conflicts with dependencies
-            for dep in task.get("depends_on", []):
-                parent_output = results[dep]
-                if self._contradicts(output, parent_output):
-                    output = self._resolve_conflict(output, parent_output)
+            # Deduplicate: skip if this output is almost identical to something already added
+            output_sig = output.strip()[:200]
+            if output_sig in seen_content:
+                continue
+            seen_content.add(output_sig)
 
-            final_parts.append(output)
+            task_desc = node.get("task", task_id)
+            # Only add a header if the output doesn't already open with the task description
+            if task_desc.lower()[:30] not in output.lower()[:100]:
+                final_parts.append(f"### {task_desc}\n\n{output}")
+            else:
+                final_parts.append(output)
 
-        combined = "\n\n".join(final_parts)
+        return "\n\n".join(final_parts)
 
-        # Polish if Cloud route was used
-        if dag.get("original_prompt") and any(node.get("route") == "Cloud" for node in dag["dag"]["nodes"]):
-            combined = self._polish_output(combined, dag["original_prompt"])
-
-        return combined
+    # ══════════════════════════════════════════════════════════════════════════
+    # TOPOLOGICAL SORT + LEGACY CONFLICT HELPERS
+    # ══════════════════════════════════════════════════════════════════════════
 
     def _topological_sort(self, nodes: List[Dict]) -> List[str]:
+        """Kahn's algorithm — returns node IDs in dependency order."""
         in_degree = {node["id"]: 0 for node in nodes}
-        graph = {node["id"]: [] for node in nodes}
+        graph     = {node["id"]: [] for node in nodes}
 
         for node in nodes:
             for dep in node.get("depends_on", []):
@@ -298,9 +426,8 @@ class HybridOrchestrator:
                 if dep in graph:
                     graph[dep].append(node["id"])
 
-        queue = [node["id"] for node in nodes if in_degree[node["id"]] == 0]
+        queue      = [node["id"] for node in nodes if in_degree[node["id"]] == 0]
         sorted_ids = []
-
         while queue:
             node_id = queue.pop(0)
             sorted_ids.append(node_id)
@@ -309,6 +436,11 @@ class HybridOrchestrator:
                 if in_degree[neighbor] == 0:
                     queue.append(neighbor)
 
+        # Append any nodes not reached (e.g. cycles) at the end
+        for node in nodes:
+            if node["id"] not in sorted_ids:
+                sorted_ids.append(node["id"])
+
         return sorted_ids
 
     def _contradicts(self, output1: str, output2: str) -> bool:
@@ -316,17 +448,20 @@ class HybridOrchestrator:
         return any(neg in output1.lower() and neg in output2.lower() for neg in negations)
 
     def _resolve_conflict(self, output1: str, output2: str) -> str:
-        if self.HAS_GROK:
+        if self.HAS_GROK and self.grok:
             return self.grok.generate(
-                f"Resolve conflict between these outputs:\nOutput 1: {output1}\nOutput 2: {output2}\nCombined:",
-                max_tokens=256
+                f"Resolve the contradiction between these two statements and give one unified answer:\n"
+                f"Statement A: {output1[:500]}\nStatement B: {output2[:500]}\nUnified:",
+                max_tokens=300,
             )
-        return f"{output1}\n\nNote: Conflicts with: {output2}"
+        return f"{output1}\n\n*(Note: possible conflict with an earlier step.)*"
 
     def _polish_output(self, output: str, prompt: str) -> str:
-        if self.HAS_GROK:
+        """Legacy polish hook — now superseded by _stitch_outputs synthesis."""
+        if self.HAS_GROK and self.grok:
             return self.grok.generate(
-                f"Refine this output to better match the original prompt:\nPrompt: {prompt}\nOutput: {output}\nRefined:",
-                max_tokens=512
+                f"Refine this output to better match the original prompt.\n"
+                f"Prompt: {prompt}\nOutput: {output[:1000]}\nRefined:",
+                max_tokens=512,
             )
         return output
