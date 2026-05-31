@@ -205,7 +205,7 @@ with tab1:
         
         /* Buttons */
         .mic-column button {
-            background-color: transparent !important;
+            background: transparent !important;
             border: none !important;
             background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ODg4ODgiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgMmEzIDMgMCAwIDAtMyAzdjdhMyAzIDAgMCAwIDYgMFY1YTMgMyAwIDAgMC0zLTN6Ij48L3BhdGg+PHBhdGggZD0iTTE5IDEwdjJhNyA3IDAgMCAxLTE0IDB2LTIiPjwvcGF0aD48bGluZSB4MT0iMTIiIHkxPSIxOSIgeDI9IjEyIiB5Mj0iMjIiPjwvbGluZT48L3N2Zz4=') !important;
             background-repeat: no-repeat !important;
@@ -218,10 +218,10 @@ with tab1:
             margin-bottom: 2px !important;
         }
         .mic-column button * { display: none !important; }
-        .mic-column button:hover { background-color: rgba(255, 255, 255, 0.1) !important; border-radius: 8px !important; }
+        .mic-column button:hover { background: rgba(255, 255, 255, 0.1) !important; border-radius: 8px !important; }
         
         .send-column button {
-            background-color: #2a2a2a !important;
+            background: #2a2a2a !important;
             border: none !important;
             background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGxpbmUgeDE9IjEyIiB5MT0iMTkiIHgyPSIxMiIgeTI9IjUiPjwvbGluZT48cG9seWxpbmUgcG9pbnRzPSI1IDEyIDEyIDUgMTkgMTIiPjwvcG9seWxpbmU+PC9zdmc+') !important;
             background-repeat: no-repeat !important;
@@ -274,7 +274,7 @@ with tab1:
                 const horiz = vert.querySelector('div[data-testid="stHorizontalBlock"]');
                 if(horiz && !horiz.classList.contains('custom-chat-pill')) {
                     horiz.classList.add('custom-chat-pill');
-                    const cols = horiz.querySelectorAll('div[data-testid="column"]');
+                    const cols = horiz.querySelectorAll('div[data-testid="column"], div[data-testid="stColumn"]');
                     if(cols.length >= 4) {
                         cols[2].classList.add('mic-column');
                         cols[3].classList.add('send-column');
