@@ -28,6 +28,9 @@ huggingface_hub
 # ── System metrics (memory monitor) ───────────────────────────────────────────
 psutil
 
+# ── Analytics / visualization ─────────────────────────────────────────────────
+plotly>=5.18.0
+
 # ── NLP utilities (lightweight) ───────────────────────────────────────────────
 numpy
 
