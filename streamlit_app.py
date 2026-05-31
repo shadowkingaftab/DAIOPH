@@ -1,13 +1,62 @@
 import streamlit as st
-from core.hybrid_orchestrator import HybridOrchestrator
-from core.prompt_generator import PromptGenerator
-from utils.pdf_parser import extract_text_from_pdf, get_pdf_images
-from utils.logger import Logger
-from utils.image_executor import requires_diagram, requires_image
-import graphviz
-import pandas as pd
-from datetime import datetime
+import sys
 import os
+
+# Optional imports with fallbacks
+try:
+    from core.hybrid_orchestrator import HybridOrchestrator
+    ORCHESTRATOR_AVAILABLE = True
+except Exception as e:
+    print(f"Warning: HybridOrchestrator unavailable: {e}")
+    ORCHESTRATOR_AVAILABLE = False
+
+try:
+    from core.prompt_generator import PromptGenerator
+    PROMPT_GEN_AVAILABLE = True
+except Exception as e:
+    print(f"Warning: PromptGenerator unavailable: {e}")
+    PROMPT_GEN_AVAILABLE = False
+
+try:
+    from utils.pdf_parser import extract_text_from_pdf, get_pdf_images
+    PDF_PARSER_AVAILABLE = True
+except Exception as e:
+    print(f"Warning: PDF parser unavailable: {e}")
+    PDF_PARSER_AVAILABLE = False
+
+    # Fallback functions
+    def extract_text_from_pdf(path, *args, **kwargs): return ""
+    def get_pdf_images(path): return []
+
+try:
+    from utils.logger import Logger
+except Exception as e:
+    print(f"Warning: Logger unavailable: {e}")
+    class Logger:
+        def __init__(self, *args, **kwargs): pass
+        def log(self, *args, **kwargs): pass
+        def get_history(self, *args, **kwargs): return []
+
+try:
+    from utils.image_executor import requires_diagram, requires_image
+except Exception as e:
+    print(f"Warning: Image executor unavailable: {e}")
+    def requires_diagram(text): return False
+    def requires_image(text): return False
+
+try:
+    import graphviz
+except Exception as e:
+    print(f"Warning: Graphviz unavailable: {e}")
+    graphviz = None
+
+try:
+    import pandas as pd
+except Exception as e:
+    print(f"Warning: Pandas unavailable: {e}")
+    pd = None
+
+from datetime import datetime
 from huggingface_hub import hf_hub_download
 
 # --- Setup ---
@@ -100,6 +149,9 @@ def ensure_local_model():
 def load_models():
     # Only instantiated once across all Streamlit reruns
     
+    if not ORCHESTRATOR_AVAILABLE:
+        return None, None
+    
     # Check if we should even try to load the local model
     # On Streamlit Cloud, we might want to be more conservative
     has_local = ensure_local_model()
@@ -112,28 +164,37 @@ def load_models():
     
     # Share the Qwen instance to cut RAM usage in half
     shared_llm = getattr(orch.executor, 'qwen', None)
-    pg = PromptGenerator(
-        model_path=MODEL_PATH,
-        llm_instance=shared_llm
-    )
+    if PROMPT_GEN_AVAILABLE:
+        pg = PromptGenerator(
+            model_path=MODEL_PATH,
+            llm_instance=shared_llm
+        )
+    else:
+        pg = None
     return orch, pg
 
 orchestrator, prompt_generator = load_models()
 
 # Inject grok api key dynamically to avoid invalidating the cache
-if grok_api_key:
-    from core.grok_client import GrokClient
-    orchestrator.grok = GrokClient(grok_api_key)
-    orchestrator.HAS_GROK = True
-    if hasattr(orchestrator, 'executor'):
-        orchestrator.executor.grok = GrokClient(grok_api_key)
-        orchestrator.executor.HAS_GROK = True
+if grok_api_key and orchestrator:
+    try:
+        from core.grok_client import GrokClient
+        orchestrator.grok = GrokClient(grok_api_key)
+        orchestrator.HAS_GROK = True
+        if hasattr(orchestrator, 'executor'):
+            orchestrator.executor.grok = GrokClient(grok_api_key)
+            orchestrator.executor.HAS_GROK = True
+    except Exception as e:
+        st.warning(f"⚠️ Grok API not available: {e}")
 
 # --- Title ---
 st.markdown('<p class="main-header">🤖 Edge AI Orchestrator</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">DistilBERT Orchestrator • Qwen2-0.5B Execution • Grok Cloud Fallback</p>', unsafe_allow_html=True)
 
-if getattr(orchestrator, 'executor', None) and not getattr(orchestrator.executor, 'HAS_QWEN', True):
+if not ORCHESTRATOR_AVAILABLE:
+    st.error("❌ Critical components missing. Some features will not be available.")
+
+if orchestrator and getattr(orchestrator, 'executor', None) and not getattr(orchestrator.executor, 'HAS_QWEN', True):
     st.error(f"⚠️ **Qwen2-0.5B failed to load!** Reason: `{getattr(orchestrator.executor, 'qwen_error', 'Unknown Error')}`")
     st.info("💡 You can still use the Cloud LLM route if you provide a Grok API Key in the sidebar.")
 
@@ -156,14 +217,17 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("### 🔑 Grok API Key")
     grok_api_key_ui = st.text_input("Paste your xAI Grok API key (overrides secrets):", type="password")
-    if grok_api_key_ui:
-        from core.grok_client import GrokClient
-        grok_api_key = grok_api_key_ui
-        orchestrator.grok = GrokClient(grok_api_key)
-        orchestrator.HAS_GROK = True
-        if hasattr(orchestrator, 'executor'):
-            orchestrator.executor.grok = GrokClient(grok_api_key)
-            orchestrator.executor.HAS_GROK = True
+    if grok_api_key_ui and orchestrator:
+        try:
+            from core.grok_client import GrokClient
+            grok_api_key = grok_api_key_ui
+            orchestrator.grok = GrokClient(grok_api_key)
+            orchestrator.HAS_GROK = True
+            if hasattr(orchestrator, 'executor'):
+                orchestrator.executor.grok = GrokClient(grok_api_key)
+                orchestrator.executor.HAS_GROK = True
+        except Exception as e:
+            st.warning(f"⚠️ Grok API not available: {e}")
 
 # --- Main App (Tabs) ---
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
@@ -178,6 +242,10 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 # ── Colorful DAG with tooltips ─────────────────────────────────────────────────
 def show_dag(dag):
     """Render a colorful Graphviz DAG. Green=ODA, Gold=Cloud, LightBlue=Hybrid, Red=Error."""
+    if not graphviz:
+        st.json(dag.get("dag", dag))
+        return
+    
     color_map = {
         "ODA":    "#2ecc71",      # Green
         "Cloud":  "#f1c40f",      # Gold
@@ -335,6 +403,8 @@ with tab1:
     if st.button("🚀 CLASSIFY, ROUTE & EXECUTE", use_container_width=True):
         if not user_prompt:
             st.warning("Please enter a prompt.")
+        elif not orchestrator:
+            st.error("❌ Orchestrator not available. Please check your dependencies.")
         else:
             with st.spinner("🧠 Processing your prompt..."):
                 start_time = datetime.now()

@@ -26,7 +26,7 @@ except ImportError:
 try:
     import pytesseract
     HAS_TESSERACT = True
-except ImportError:
+except (ImportError, Exception):
     HAS_TESSERACT = False
 
 

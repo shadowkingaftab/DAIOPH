@@ -1,19 +1,18 @@
 # ── Core framework ─────────────────────────────────────────────────────────────
 streamlit>=1.35.0
-pandas==2.0.3
 requests==2.31.0
 
 # ── PDF processing ─────────────────────────────────────────────────────────────
 PyPDF2==3.0.1
 pdf2image==1.16.3
 
-# ── OCR + image support ────────────────────────────────────────────────────────
-pytesseract==0.3.10
+# ── OCR + image support (optional) ─────────────────────────────────────────────
+# pytesseract==0.3.10  # Commented out - Tesseract requires system installation
 Pillow==10.1.0
 
-# ── Voice input ────────────────────────────────────────────────────────────────
-SpeechRecognition==3.10.0
-pydub==0.25.1
+# ── Voice input (optional) ─────────────────────────────────────────────────────
+# SpeechRecognition==3.10.0
+# pydub==0.25.1
 
 # ── On-device LLM (Qwen2-0.5B GGUF) ──────────────────────────────────────────
 # Pre-compiled CPU wheel — no CUDA/gcc needed
@@ -37,3 +36,4 @@ numpy
 # NOTE: torch, transformers, scikit-learn, nltk, langdetect, googletrans
 # have been intentionally removed to keep memory under 1GB on Streamlit Cloud.
 # The chatbot_app.py uses llama-cpp-python + Grok API only (no PyTorch needed).
+# Also removed pandas and pytesseract to avoid compatibility issues
