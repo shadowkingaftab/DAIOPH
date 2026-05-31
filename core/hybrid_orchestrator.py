@@ -6,6 +6,9 @@ import re
 import json
 import nltk
 import copy
+import time
+import math
+from collections import defaultdict
 from nltk.tokenize import sent_tokenize
 from functools import lru_cache
 import numpy as np
@@ -15,6 +18,16 @@ from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassifica
 # Download NLTK data
 nltk.download('punkt', quiet=True)
 nltk.download('punkt_tab', quiet=True)
+
+# ── Multi-language support (graceful import) ──────────────────────────────────
+try:
+    from classifier import detect_language, translate_to_english, decompose_prompt as _smart_decompose
+    HAS_MULTILANG = True
+except ImportError:
+    HAS_MULTILANG = False
+    def detect_language(text): return "en"
+    def translate_to_english(text, lang): return text
+    def _smart_decompose(prompt, lang="en"): return {"nodes": [{"id": "n1", "task": prompt, "model": "qwen", "route": "Hybrid", "depends_on": []}], "language": lang}
 
 class HybridOrchestrator:
     def __init__(self, distilbert_path: str, qwen_path: str, grok_api_key: Optional[str] = None):
@@ -37,14 +50,55 @@ class HybridOrchestrator:
         self.HAS_GROK = grok_api_key is not None
 
     def execute(self, prompt: str, pdf_text: Optional[str] = None, route: str = "Hybrid") -> Tuple[Dict, Dict]:
-        if not self.HAS_DISTILBERT:
-            return self._execute_grok_only(prompt, pdf_text, route)
+        """Execute a prompt through the orchestrator pipeline with full telemetry.
+        
+        Returns:
+            (dag, results) where results includes 'final_output', 'times', 'retry_counts',
+            and all individual task outputs keyed by node ID.
+        """
+        start_time = time.time()
 
-        dag = self._decompose(prompt, pdf_text)
-        dag["original_prompt"] = prompt
-        results = self._execute_parallel(dag, pdf_text, route)
-        final_output = self._stitch_outputs(dag, results)
-        return dag, {"final_output": final_output, **results}
+        # ── Step 1: Language detection + translation ───────────────────────────
+        lang = detect_language(prompt)
+        original_lang = lang
+        if lang != "en" and route != "Cloud":
+            translated_prompt = translate_to_english(prompt, lang)
+        else:
+            translated_prompt = prompt
+
+        # ── Step 2: Reset retry tracker for this execution ────────────────────
+        self.executor.reset_retry_counts()
+
+        # ── Step 3: Decompose + execute ───────────────────────────────────────
+        if not self.HAS_DISTILBERT:
+            dag, raw_results = self._execute_grok_only(translated_prompt, pdf_text, route)
+        else:
+            dag = self._decompose(translated_prompt, pdf_text, lang=lang)
+            dag["original_prompt"] = prompt
+            dag["language"] = lang
+            raw_results = self._execute_parallel(dag, pdf_text, route)
+
+        final_output = self._stitch_outputs(dag, raw_results)
+        edge_time = time.time() - start_time
+
+        # ── Step 4: Estimate traditional (sequential cloud) time ──────────────
+        total_words = sum(len(node["task"].split()) for node in dag.get("dag", dag).get("nodes", []))
+        traditional_time = total_words / 20  # Grok processes ~20 tokens/sec sequentially
+        savings_pct = ((traditional_time - edge_time) / traditional_time * 100) if traditional_time > 0 else 0
+
+        results = {
+            "final_output": final_output,
+            "times": {
+                "edge_ai": round(edge_time, 3),
+                "traditional": round(traditional_time, 3),
+                "savings": round(traditional_time - edge_time, 3),
+                "savings_percent": round(savings_pct, 1),
+            },
+            "retry_counts": self.executor.get_retry_counts(),
+            "detected_language": original_lang,
+            **raw_results,
+        }
+        return dag, results
 
     def _execute_grok_only(self, prompt: str, pdf_text: Optional[str] = None, route: str = "Cloud") -> Tuple[Dict, Dict]:
         if not self.HAS_GROK:
@@ -58,18 +112,29 @@ class HybridOrchestrator:
         except Exception as e:
             return {"dag": {"nodes": []}}, {"error": str(e)}
 
-    def _decompose(self, prompt: str, pdf_text: Optional[str] = None) -> Dict:
-        # Try template matching first
+    def _decompose(self, prompt: str, pdf_text: Optional[str] = None, lang: str = "en") -> Dict:
+        """Smart universal decomposition — tries template matching, then smart NLP, then hierarchical."""
+        # Try template matching first (fastest)
         for template in self._get_templates():
             if re.search(template["pattern"], prompt, re.IGNORECASE):
-                return self._apply_template(template, prompt)
+                dag = self._apply_template(template, prompt)
+                dag["language"] = lang
+                return dag
 
-        # Try hierarchical decomposition
+        # Use smart multi-language decomposition from classifier.py
+        if HAS_MULTILANG:
+            smart_dag = _smart_decompose(prompt, lang=lang)
+            if len(smart_dag.get("nodes", [])) > 1:
+                return {"dag": smart_dag, "language": lang}
+
+        # Hierarchical decomposition for longer prompts
         if len(prompt.split()) > 10:
-            return self._hierarchical_decompose(prompt, pdf_text)
+            dag = self._hierarchical_decompose(prompt, pdf_text)
+            dag["language"] = lang
+            return dag
 
         # Default: Single task
-        return {"dag": {"nodes": [{"id": "n1", "task": prompt, "model": "qwen"}]}}
+        return {"dag": {"nodes": [{"id": "n1", "task": prompt, "model": "qwen", "route": "Hybrid", "depends_on": []}]}, "language": lang}
 
     def _get_templates(self) -> List[Dict]:
         return [
