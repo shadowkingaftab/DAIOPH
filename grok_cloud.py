@@ -131,3 +131,9 @@ if __name__ == "__main__":
     resp, source = run_grok_with_fallback(test_prompt)
     print(f"Source : {source}")
     print(f"Output : {resp.encode('ascii', 'ignore').decode('ascii')}")
+
+# Reuse HTTP sessions in Grok client
+import requests
+session = requests.Session()
+def generate(prompt, **kwargs):
+    return session.post(GROK_API_URL, **kwargs)
