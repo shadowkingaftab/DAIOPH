@@ -228,3 +228,11 @@ def execute_with_retry(task, max_retries=2):
         except:
             continue
     return "Error: Max retries exceeded"
+
+def get_route_smart(prompt):
+    if len(prompt.split()) < 50:
+        return "ODA"
+    elif len(prompt.split()) < 200:
+        return "Hybrid"
+    else:
+        return "Cloud"
