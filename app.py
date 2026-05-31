@@ -148,30 +148,57 @@ with tab1:
     st.markdown("### Classify & Execute a Prompt")
     st.info("DistilBERT splits prompts into tasks, then executes them using the selected route (ODA/Hybrid/Cloud).")
 
-    # --- Custom CSS for Modern Chatbox ---
+    # --- Minimalist Chatbox UI ---
     st.markdown("""
     <style>
         /* Chatbox Container */
-        .chatbox-container {
+        .chatbox {
             position: fixed;
             bottom: 20px;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.1);
+            left: 5%;
+            right: 5%;
+            background: rgba(15, 15, 15, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 10px;
-            margin: 0 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             z-index: 1000;
         }
 
         /* Input Area */
-        .chat-input-area {
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            color: white;
+            outline: none;
+        }
+        .chat-input:focus {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Icon Buttons */
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 4px;
+            width: 36px;
+            height: 36px;
+            color: white;
+            cursor: pointer;
             display: flex;
-            gap: 8px;
             align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         /* File Uploader (Hidden) */
@@ -179,65 +206,69 @@ with tab1:
             display: none;
         }
 
-        /* Icon Buttons */
-        .icon-button {
-            background: rgba(255, 255, 255, 0.2);
+        /* Send Button */
+        .send-btn {
+            background: #4C97F0;
             border: none;
-            border-radius: 8px;
-            width: 40px;
-            height: 40px;
+            border-radius: 4px;
+            width: 36px;
+            height: 36px;
+            color: white;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            font-size: 20px;
             transition: all 0.2s;
         }
-        .icon-button:hover {
-            background: rgba(255, 255, 255, 0.3);
+        .send-btn:hover {
+            background: #3A7BC8;
+        }
+        .send-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            cursor: not-allowed;
         }
 
-        /* Text Input */
-        .stTextInput > div > div > input {
-            background: rgba(255, 255, 255, 0.1) !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 8px !important;
-            padding: 10px !important;
+        /* Message Bubbles */
+        .user-message {
+            background: rgba(76, 151, 240, 0.8);
+            color: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin: 8px 0;
+            max-width: 70%;
+            float: right;
+            clear: both;
         }
-
-        /* Send Button */
-        .stButton > button {
-            background: linear-gradient(135deg, #4CC9F0, #2E86C1) !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 8px !important;
-            padding: 8px 16px !important;
-            font-weight: bold !important;
+        .bot-message {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin: 8px 0;
+            max-width: 70%;
+            float: left;
+            clear: both;
         }
         
-        /* Chat Wrapper to prevent overlapping with fixed bottom */
         .chat-messages-wrap {
             padding-bottom: 120px;
         }
     </style>
     """, unsafe_allow_html=True)
 
-    # --- Chatbox UI ---
+    # --- Chat Messages ---
     st.markdown('<div class="chat-messages-wrap">', unsafe_allow_html=True)
-    
-    # Display chat messages (your existing code)
     for message in st.session_state.messages:
         if message["role"] == "user":
             st.markdown(f"""
-            <div style="background: rgba(76, 201, 240, 0.8); color: white; padding: 12px; border-radius: 12px; margin: 10px 0; max-width: 70%; float: right; clear: both;">
-                <strong>You:</strong><br>{message["content"]}
+            <div class="user-message">
+                {message["content"]}
             </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown(f"""
-            <div style="background: rgba(255, 255, 255, 0.2); color: white; padding: 12px; border-radius: 12px; margin: 10px 0; max-width: 70%; float: left; clear: both;">
-                <strong>Edge AI:</strong><br>{message["content"]}
+            <div class="bot-message">
+                {message["content"]}
             </div>
             """, unsafe_allow_html=True)
 
@@ -260,13 +291,13 @@ with tab1:
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="chatbox-container">', unsafe_allow_html=True)
-    st.markdown('<div class="chat-input-area">', unsafe_allow_html=True)
+    # --- Chatbox Input (Fixed at Bottom) ---
+    st.markdown('<div class="chatbox">', unsafe_allow_html=True)
 
     col1, col2, col3, col4 = st.columns([1, 6, 1, 1])
 
     with col1:
-        # Plus Icon (File Uploader)
+        # File Upload Button (Hidden Uploader + Visible Icon)
         uploaded_file = st.file_uploader(
             "📎",
             type=["pdf", "jpg", "png", "jpeg"],
@@ -286,50 +317,49 @@ with tab1:
         )
 
     with col3:
-        # Mic Icon (Speech-to-Text)
-        if st.button("🎤", key="mic_button"):
+        # Mic Button
+        if st.button("🎤", key="mic_button", use_container_width=False):
             with st.spinner("Listening..."):
                 r = sr.Recognizer()
                 with sr.Microphone() as source:
                     try:
-                        r.adjust_for_ambient_noise(source, duration=0.5)
                         audio = r.listen(source, timeout=10)
                         user_input = r.recognize_google(audio)
-                    except Exception as e:
-                        st.error(f"Error: {str(e)}")
+                    except:
                         user_input = None
 
     with col4:
         # Send Button
-        if st.button("➤", key="send_button") or user_input:
-            if user_input or st.session_state.get("uploaded_file"):
-                if st.session_state.get("uploaded_file"):
-                    file = st.session_state.uploaded_file
-                    if file.type.startswith("image/"):
-                        image = Image.open(file)
-                        st.session_state.messages.append({
-                            "role": "user",
-                            "content": f"![Uploaded Image]({file.name})",
-                            "type": "image"
-                        })
-                    elif file.type == "application/pdf":
-                        st.session_state.messages.append({
-                            "role": "user",
-                            "content": f"[Uploaded PDF: {file.name}]",
-                            "type": "pdf"
-                        })
-                    st.session_state.uploaded_file = None
-
-                if user_input:
-                    st.session_state.messages.append({
-                        "role": "user",
-                        "content": user_input,
-                        "type": "text"
-                    })
-                    st.rerun()
+        send_disabled = not user_input and not st.session_state.get("uploaded_file")
+        send_pressed = st.button("→", key="send_button", disabled=send_disabled, use_container_width=False)
 
     st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+
+    if (user_input or st.session_state.get("uploaded_file")) and (send_pressed or user_input):
+        if st.session_state.get("uploaded_file"):
+            file = st.session_state.uploaded_file
+            if file.type.startswith("image/"):
+                st.session_state.messages.append({
+                    "role": "user",
+                    "content": f"![Uploaded Image]({file.name})",
+                    "type": "image"
+                })
+            elif file.type == "application/pdf":
+                st.session_state.messages.append({
+                    "role": "user",
+                    "content": f"[Uploaded PDF: {file.name}]",
+                    "type": "pdf"
+                })
+            st.session_state.uploaded_file = None
+
+        if user_input:
+            st.session_state.messages.append({
+                "role": "user",
+                "content": user_input,
+                "type": "text"
+            })
+            
+        st.rerun()
 
     # After the chatbox UI code above, process logic
     if st.session_state.get("uploaded_file"):
