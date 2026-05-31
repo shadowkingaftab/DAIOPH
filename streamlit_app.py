@@ -354,3 +354,5 @@ with tab5:
 # Tested routes
 
 # Preload models at startup for faster execution
+
+# Add loading spinners for better UX
