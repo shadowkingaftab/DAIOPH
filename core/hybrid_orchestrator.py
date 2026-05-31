@@ -2,7 +2,6 @@ from typing import Dict, Tuple, Optional, List
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from core.grok_client import GrokClient
 from core.task_executor import TaskExecutor
-from utils.image_executor import ImageExecutor, requires_diagram, requires_image
 import re
 import json
 import copy
@@ -11,8 +10,21 @@ import math
 from collections import defaultdict
 from functools import lru_cache
 import numpy as np
-from sklearn.cluster import AgglomerativeClustering
-from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+
+# Optional image executor import
+try:
+    from utils.image_executor import ImageExecutor, requires_diagram, requires_image
+    IMAGE_EXECUTOR_AVAILABLE = True
+except Exception as e:
+    print(f"Warning: Image executor not available: {e}")
+    IMAGE_EXECUTOR_AVAILABLE = False
+
+    # Fallback functions
+    def requires_diagram(text): return False
+    def requires_image(text): return False
+    class ImageExecutor:
+        def __init__(self): pass
+        def execute(self, task, *args): return "[Image feature disabled]"
 
 # Download NLTK data EARLY with error handling
 try:
@@ -30,6 +42,15 @@ except Exception as e:
         # Split on periods followed by whitespace and uppercase letters
         sentences = re.split(r'(?<=[.!?])\s+(?=[A-Z])', text)
         return [s.strip() for s in sentences if s.strip()]
+
+# ── Heavy dependencies (conditionally imported) ──────────────────────────────
+try:
+    from sklearn.cluster import AgglomerativeClustering
+    from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
+    SKLEARN_TRANSFORMERS_AVAILABLE = True
+except Exception as e:
+    print(f"Warning: sklearn/transformers not available, using lightweight fallback: {e}")
+    SKLEARN_TRANSFORMERS_AVAILABLE = False
 
 # ── Multi-language support (graceful import) ──────────────────────────────────
 try:
@@ -58,7 +79,10 @@ class HybridOrchestrator:
             self.HAS_DISTILBERT = False
 
         self.executor       = TaskExecutor(qwen_path, grok_api_key)
-        self.image_executor = ImageExecutor()          # 0 MB — cloud/graphviz only
+        if IMAGE_EXECUTOR_AVAILABLE:
+            self.image_executor = ImageExecutor()          # 0 MB — cloud/graphviz only
+        else:
+            self.image_executor = ImageExecutor()
         self.grok           = GrokClient(grok_api_key) if grok_api_key else None
         self.HAS_GROK       = grok_api_key is not None
 
@@ -212,16 +236,37 @@ class HybridOrchestrator:
         return {"dag": dag}
 
     def _has_coreference(self, sentence1: str, sentence2: str) -> bool:
-        words1 = set(word.lower() for word in nltk.word_tokenize(sentence1) if word.isalnum())
-        words2 = set(word.lower() for word in nltk.word_tokenize(sentence2) if word.isalnum())
-        return len(words1 & words2) > 1
+        # Fallback word tokenizer
+        def simple_word_tokenize(text):
+            return re.findall(r'\b\w+\b', text.lower())
+        
+        try:
+            if NLTK_AVAILABLE:
+                import nltk
+                words1 = set(word.lower() for word in nltk.word_tokenize(sentence1) if word.isalnum())
+                words2 = set(word.lower() for word in nltk.word_tokenize(sentence2) if word.isalnum())
+            else:
+                words1 = set(simple_word_tokenize(sentence1))
+                words2 = set(simple_word_tokenize(sentence2))
+            return len(words1 & words2) > 1
+        except Exception as e:
+            print(f"Warning: Coreference detection failed: {e}")
+            return False
 
     def _cluster_tasks(self, dag: Dict) -> Dict:
+        # Fallback clustering if sklearn not available
+        if not SKLEARN_TRANSFORMERS_AVAILABLE:
+            return dag
+        
         # Simplified clustering (replace with actual embeddings in production)
         sentences = [node["task"] for node in dag["nodes"]]
         # Mock embeddings (replace with DistilBERT in production)
         embeddings = np.random.rand(len(sentences), 768)
-        clusters = AgglomerativeClustering(n_clusters=min(3, len(sentences)), affinity='cosine', linkage='average').fit_predict(embeddings)
+        try:
+            clusters = AgglomerativeClustering(n_clusters=min(3, len(sentences)), metric='cosine', linkage='average').fit_predict(embeddings)
+        except Exception as e:
+            print(f"Warning: Clustering failed, using single tasks: {e}")
+            return dag
 
         # Merge nodes in the same cluster
         new_dag = {"nodes": []}
