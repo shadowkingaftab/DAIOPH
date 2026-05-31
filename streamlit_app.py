@@ -360,3 +360,5 @@ with tab5:
 # Add progress bars for task execution
 
 # Add explain mode for transparency
+
+# Add dark mode toggle for better UX
