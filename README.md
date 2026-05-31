@@ -109,4 +109,24 @@ The entire workspace is optimized for seamless zero-config deployment on **Strea
 *   **Lazy Loading**: Local GGUF models and DistilBERT are dynamically downloaded on first load if missing.
 *   **Fallback Protections**: If C++ compilers are restricted, the system catches import errors and routes traffic gracefully to Grok without disrupting server uptime.
 *   **Thread Safety**: Local inference requests are sequentially locked (`threading.Lock`) to prevent memory corruption under high multi-tenant traffic.
-\n## What's New\n- Added dark mode\n- Improved performance with ThreadPoolExecutor\n- Caching and chunking optimizations\n
+
+---
+
+## 🆕 What's New (May 31, 2026)
+
+### 12 New Features Added in the Supercharged Blitz
+
+| Feature | Description |
+|---------|-------------|
+| 🌍 **Multi-Language Support** | Auto-detects Hindi, Spanish, French, German, Arabic and translates to English for ODA/Hybrid routes |
+| 🖼️ **PDF Image OCR** | Extracts text from images inside PDFs using `pytesseract` + `pdf2image` |
+| 🔄 **Never-Give-Up Execution** | Exponential backoff retry (1s → 2s → 4s) with automatic ODA→Cloud route fallback |
+| 🧠 **Universal Prompt Decomposition** | spaCy-powered smart decomposition that works for any language and prompt style |
+| ⏱️ **Time Comparison Timer** | Shows Edge AI execution time vs estimated traditional sequential cloud time |
+| 🎨 **Colorful DAG Graph** | Green=ODA, Gold=Cloud, Blue=Hybrid, Red=Failed — with node tooltips |
+| 🌐 **Language Detection UI** | Displays detected input language badge after every execution |
+| 📄 **PDF Image Preview** | Renders extracted PDF page images in the UI |
+| 📊 **Retry Statistics** | Transparently shows how many retries each task required |
+| 🔍 **Explain Mode** | Checkbox to reveal intermediate reasoning steps per task |
+| 💡 **Example Prompts Dropdown** | Pre-loaded multi-language example prompts for quick testing |
+| 🎨 **Premium Dark UI** | Glassmorphism gradient design with Inter font and animated buttons |
