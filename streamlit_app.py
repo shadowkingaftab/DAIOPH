@@ -408,7 +408,7 @@ with tab1:
             backdrop-filter: none !important;
         }
 
-        /* Target the horizontal block containing the columns to make it the Pill */
+        /* Pill Container */
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) > div[data-testid="stHorizontalBlock"] {
             position: fixed;
             bottom: 30px;
@@ -417,12 +417,12 @@ with tab1:
             background: #111111 !important;
             border: 1px solid rgba(255, 255, 255, 0.05) !important;
             border-radius: 16px !important;
-            padding: 4px 12px !important;
+            padding: 6px 12px !important;
             display: flex !important;
             align-items: center !important;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
             z-index: 9999 !important;
-            gap: 0 !important;
+            gap: 4px !important;
         }
 
         /* Clean Text Input */
@@ -440,42 +440,64 @@ with tab1:
             background: transparent !important;
             border: none !important;
         }
-        
-        /* Placeholder color */
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) input::placeholder {
             color: #666 !important;
         }
 
-        /* Fix Mic Button */
+        /* Reset all buttons inside chatbox */
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) .stButton > button {
             background: transparent !important;
             border: none !important;
-            color: #888 !important;
-            font-size: 1.2rem !important;
+            color: transparent !important;
+            font-size: 0 !important;
             padding: 0 !important;
-            width: 36px !important;
-            height: 36px !important;
+            width: 32px !important;
+            height: 32px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             box-shadow: none !important;
-            margin-left: auto !important;
-        }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) .stButton > button:hover {
-            color: white !important;
-            background: rgba(255, 255, 255, 0.05) !important;
-            border-radius: 8px !important;
-            transform: none !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            transition: all 0.2s ease !important;
         }
 
-        /* Transform File Uploader into + icon */
+        /* Mic Button (Column 4) */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="column"]:nth-child(4) .stButton > button {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%23888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>') !important;
+        }
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="column"]:nth-child(4) .stButton > button:hover {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            border-radius: 8px !important;
+        }
+
+        /* Send Button (Column 5) */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="column"]:nth-child(5) .stButton > button {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>') !important;
+            background-color: #2a2a2a !important;
+            border-radius: 8px !important;
+        }
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="column"]:nth-child(5) .stButton > button:hover {
+            background-color: #444 !important;
+        }
+
+        /* Dynamic visibility for Send Button: hide if input empty */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) > div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-child(5) {
+            display: none !important;
+        }
+        /* Show send button when typing */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) > div[data-testid="stHorizontalBlock"]:has(input:not(:placeholder-shown)) > div[data-testid="column"]:nth-child(5) {
+            display: flex !important;
+        }
+
+        /* Transform File Uploader (+ Icon) */
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploader"] {
-            width: 36px !important;
-            height: 36px !important;
+            width: 32px !important;
+            height: 32px !important;
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"] {
             background: transparent !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
             border-radius: 8px !important;
             width: 32px !important;
             height: 32px !important;
@@ -486,23 +508,36 @@ with tab1:
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            margin-top: 2px !important;
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"]:hover {
-            background: rgba(255, 255, 255, 0.1) !important;
+            background: rgba(255, 255, 255, 0.05) !important;
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"] > div {
             display: none !important; 
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"]::before {
-            content: "+";
-            font-size: 1.5rem;
+            content: "";
             position: absolute;
-            color: #888;
-            font-weight: 300;
+            width: 16px;
+            height: 16px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>');
+            background-repeat: no-repeat;
+            background-position: center;
         }
         div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploader"] section {
             display: none !important; 
+        }
+
+        /* "Think v" Text */
+        .think-text {
+            color: #888;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            height: 36px;
+            white-space: nowrap;
+            margin-right: 4px;
         }
 
         /* Message Bubbles */
@@ -555,10 +590,9 @@ with tab1:
     
     with chat_container:
         st.markdown('<div class="minimalist-chat-anchor"></div>', unsafe_allow_html=True)
-        col1, col2, col3 = st.columns([0.5, 10, 0.5], gap="small")
+        col1, col2, col3, col4, col5 = st.columns([0.5, 9, 1.2, 0.5, 0.5], gap="small")
 
         with col1:
-            # File Upload Button
             uploaded_file = st.file_uploader(
                 "+",
                 type=["pdf", "jpg", "png", "jpeg"],
@@ -569,17 +603,18 @@ with tab1:
                 st.session_state.uploaded_file = uploaded_file
 
         with col2:
-            # Text Input
             user_input = st.text_input(
                 "Type / for quick access",
                 key="chat_input",
                 label_visibility="collapsed",
                 placeholder="Type / for quick access"
             )
-
+            
         with col3:
-            # Mic Button
-            if st.button("🎤", key="mic_button", use_container_width=False):
+            st.markdown('<div class="think-text">Think ⌄</div>', unsafe_allow_html=True)
+
+        with col4:
+            if st.button("M", key="mic_button", use_container_width=False):
                 with st.spinner("Listening..."):
                     if sr:
                         r = sr.Recognizer()
@@ -589,10 +624,13 @@ with tab1:
                                 user_input = r.recognize_google(audio)
                             except:
                                 user_input = None
+                                
+        with col5:
+            send_pressed = st.button("S", key="send_button", use_container_width=False)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    if user_input or st.session_state.get("uploaded_file"):
+    if user_input or send_pressed or st.session_state.get("uploaded_file"):
         # Use user_input as the trigger for submission. If only file is uploaded, wait for text.
         if user_input:
             st.session_state.current_pdf_text = None
