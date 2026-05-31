@@ -1,7 +1,18 @@
 import streamlit as st
 import sys
 import os
-
+try:
+    from PIL import Image as PILImage
+except:
+    pass
+try:
+    import speech_recognition as sr
+except:
+    sr = None
+try:
+    import pytesseract
+except:
+    pytesseract = None
 # Optional imports with fallbacks
 try:
     from core.hybrid_orchestrator import HybridOrchestrator
@@ -343,6 +354,16 @@ def _render_task_result(task_id: str, result):
         st.write(result)
 
 
+# --- Session State Initialization ---
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+if "uploaded_file" not in st.session_state:
+    st.session_state.uploaded_file = None
+if "trigger_execution" not in st.session_state:
+    st.session_state.trigger_execution = False
+if "current_pdf_text" not in st.session_state:
+    st.session_state.current_pdf_text = None
+
 # --- Tab 1: Classify & Execute ---
 with tab1:
     st.markdown("### Classify & Execute a Prompt")
@@ -373,27 +394,97 @@ with tab1:
         index=1
     )
 
-    col1, col2 = st.columns([3, 1])
+    explain_mode = st.checkbox("🔍 Explain Mode", help="Show intermediate reasoning steps")
+
+    # --- Custom CSS for Modern Chatbox ---
+    st.markdown("""
+    <style>
+        .chatbox-container {
+            position: fixed; bottom: 20px; left: 0; right: 0;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+            border-radius: 12px; padding: 10px; margin: 0 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.2); z-index: 1000;
+        }
+        .chat-input-area { display: flex; gap: 8px; align-items: center; }
+        .stFileUploader > div > div > div { display: none; }
+        .icon-button {
+            background: rgba(255, 255, 255, 0.2); border: none; border-radius: 8px;
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 20px; transition: all 0.2s;
+        }
+        .icon-button:hover { background: rgba(255, 255, 255, 0.3); }
+        .stTextInput > div > div > input { background: rgba(255, 255, 255, 0.1) !important; color: white !important; border: none !important; border-radius: 8px !important; padding: 10px !important; }
+        .stButton > button { background: linear-gradient(135deg, #4CC9F0, #2E86C1) !important; color: white !important; border: none !important; border-radius: 8px !important; padding: 8px 16px !important; font-weight: bold !important; }
+        .chat-messages-wrap { padding-bottom: 120px; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # --- Chatbox UI ---
+    st.markdown('<div class="chat-messages-wrap">', unsafe_allow_html=True)
+    for message in st.session_state.messages:
+        if message["role"] == "user":
+            st.markdown(f'<div style="background: rgba(76, 201, 240, 0.8); color: white; padding: 12px; border-radius: 12px; margin: 10px 0; max-width: 70%; float: right; clear: both;"><strong>You:</strong><br>{message["content"]}</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<div style="background: rgba(255, 255, 255, 0.2); color: white; padding: 12px; border-radius: 12px; margin: 10px 0; max-width: 70%; float: left; clear: both;"><strong>Edge AI:</strong><br>{message["content"]}</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('<div class="chatbox-container"><div class="chat-input-area">', unsafe_allow_html=True)
+    col1, col2, col3, col4 = st.columns([1, 6, 1, 1])
+    
     with col1:
-        default_text = "" if selected_example == "Custom (type below)" else selected_example
-        user_prompt = st.text_area("Your prompt:", value=default_text,
-                                   placeholder="e.g., First, summarize this PDF. Then, write a tweet about it.",
-                                   height=150)
-    with col2:
-        input_method = st.radio("Input Method:", ["Text", "PDF + Text"])
-        explain_mode = st.checkbox("🔍 Explain Mode", help="Show intermediate reasoning steps")
-
-    pdf_text = None
-    pdf_path = None
-    if input_method == "PDF + Text":
-        uploaded_file = st.file_uploader("Upload PDF", type=["pdf"])
+        uploaded_file = st.file_uploader("📎", type=["pdf", "jpg", "png", "jpeg"], key="chat_file_uploader", label_visibility="collapsed")
         if uploaded_file:
-            pdf_path = f"temp_{uploaded_file.name}"
-            with open(pdf_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
-            pdf_text = extract_text_from_pdf(pdf_path)
+            st.session_state.uploaded_file = uploaded_file
 
-    if st.button("🚀 CLASSIFY, ROUTE & EXECUTE", use_container_width=True):
+    with col2:
+        user_input = st.text_input("Type your message...", key="chat_input", label_visibility="collapsed", placeholder="Ask me anything...")
+
+    with col3:
+        if st.button("🎤", key="mic_button"):
+            with st.spinner("Listening..."):
+                if sr:
+                    r = sr.Recognizer()
+                    with sr.Microphone() as source:
+                        try:
+                            r.adjust_for_ambient_noise(source, duration=0.5)
+                            audio = r.listen(source, timeout=10)
+                            user_input = r.recognize_google(audio)
+                        except Exception as e:
+                            st.error(f"Error: {str(e)}")
+                            user_input = None
+
+    with col4:
+        if st.button("➤", key="send_button") or user_input:
+            st.session_state.current_pdf_text = None
+            if user_input or st.session_state.get("uploaded_file"):
+                if st.session_state.get("uploaded_file"):
+                    file = st.session_state.uploaded_file
+                    if file.type.startswith("image/"):
+                        try:
+                            image = PILImage.open(file)
+                            img_text = pytesseract.image_to_string(image) if pytesseract else ""
+                            st.session_state.messages.append({"role": "user", "content": f"![Uploaded Image]({file.name})\n\n{img_text}", "type": "image"})
+                        except:
+                            st.session_state.messages.append({"role": "user", "content": f"![Uploaded Image]({file.name})", "type": "image"})
+                    elif file.type == "application/pdf":
+                        pdf_path = f"temp_{file.name}"
+                        with open(pdf_path, "wb") as f: f.write(file.getbuffer())
+                        st.session_state.current_pdf_text = extract_text_from_pdf(pdf_path)
+                        st.session_state.messages.append({"role": "user", "content": f"[Uploaded PDF: {file.name}]", "type": "pdf"})
+                    st.session_state.uploaded_file = None
+
+                if user_input:
+                    st.session_state.messages.append({"role": "user", "content": user_input, "type": "text"})
+                
+                st.session_state.trigger_execution = True
+                st.rerun()
+    st.markdown('</div></div>', unsafe_allow_html=True)
+
+    pdf_text = st.session_state.current_pdf_text
+    user_prompt = st.session_state.messages[-1]["content"] if st.session_state.get("messages") and st.session_state.messages[-1]["role"] == "user" else None
+
+    if st.session_state.trigger_execution:
+        st.session_state.trigger_execution = False
         if not user_prompt:
             st.warning("Please enter a prompt.")
         elif not orchestrator:
@@ -497,6 +588,13 @@ with tab1:
                         delta_str = f"{abs(savings):.1f}% {'faster' if savings >= 0 else 'slower'}"
                         st.metric("Time Saved", delta_str,
                                   delta=f"{savings:.1f}%" if savings >= 0 else None)
+                
+                # Save the final output to the chat history
+                st.session_state.messages.append({
+                    "role": "bot",
+                    "content": final_output or "No output generated.",
+                    "type": "text"
+                })
 
                 # ── Retry Statistics ─────────────────────────────────────────────────
                 retry_counts = results.get("retry_counts", {})
