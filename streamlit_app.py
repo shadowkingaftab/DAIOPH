@@ -313,34 +313,51 @@ with tab1:
                 lang_label = lang_names.get(detected_lang, detected_lang.upper())
                 st.info(f"🌍 Detected Language: **{lang_label}**")
 
-                # ── Colorful DAG ──────────────────────────────────────────────────────
-                st.markdown("#### 🔗 Task Bifurcation DAG")
-                show_dag(dag)
+                # ── PRIMARY: Synthesized Final Answer ────────────────────────────────
+                final_output = results.get("final_output", "")
+                if final_output:
+                    st.markdown("""
+                    <div style="background:linear-gradient(135deg,rgba(76,201,240,0.08),rgba(123,47,190,0.08));
+                                border:1px solid rgba(76,201,240,0.25);border-radius:1rem;
+                                padding:1.2rem 1.5rem;margin:0.8rem 0">
+                        <div style="font-size:0.8rem;font-weight:700;color:#4CC9F0;
+                                    letter-spacing:0.05em;margin-bottom:0.6rem">
+                            🤖 SYNTHESIZED ANSWER
+                        </div>
+                    """, unsafe_allow_html=True)
+                    st.markdown(final_output)
+                    st.markdown("</div>", unsafe_allow_html=True)
+                else:
+                    st.warning("No output was generated. Check that at least one model route is available.")
 
-                # ── Execution Results ────────────────────────────────────────────────
-                st.markdown("#### 💡 Execution Results")
-                for task_id, result in results.items():
-                    if task_id in ("final_output", "times", "retry_counts", "detected_language"):
-                        continue
-                    if isinstance(result, dict) and "error" in result:
-                        st.error(f"**Task {task_id}:** {result['error']}")
-                    else:
-                        st.success(f"**Task {task_id}:**")
-                        st.write(result)
+                # ── Task Breakdown (expandable) ───────────────────────────────────────
+                task_results = {k: v for k, v in results.items()
+                                if k not in ("final_output", "times", "retry_counts",
+                                             "detected_language")}
+                n_tasks = len(dag.get("dag", dag).get("nodes", []))
+                with st.expander(f"🔍 View Task Breakdown ({n_tasks} task{'s' if n_tasks != 1 else ''})", expanded=False):
+                    st.markdown("#### 🔗 Task DAG")
+                    show_dag(dag)
 
-                if results.get("final_output"):
-                    st.markdown("#### ✨ Final Stitched Output")
-                    st.markdown(results["final_output"])
+                    if task_results:
+                        st.markdown("#### 📋 Individual Task Outputs")
+                        for task_id, result in task_results.items():
+                            if isinstance(result, dict) and "error" in result:
+                                st.error(f"**Task `{task_id}`:** {result['error']}")
+                            elif result:
+                                with st.expander(f"Task `{task_id}`"):
+                                    st.write(result)
 
                 # ── Explain Mode ───────────────────────────────────────────────────
                 if explain_mode:
                     st.markdown("#### 🔍 Reasoning Steps (Explain Mode)")
                     nodes = dag.get("dag", dag).get("nodes", [])
                     for node in nodes:
-                        with st.expander(f"Task `{node['id']}`: {node['task'][:60]}..."):
+                        with st.expander(f"Task `{node['id']}`: {node['task'][:60]}…"):
                             st.write(f"**Route:** {node.get('route', 'Hybrid')}")
                             st.write(f"**Depends on:** {node.get('depends_on', [])}")
-                            st.write(f"**Output:** {results.get(node['id'], 'N/A')}")
+                            raw_out = results.get(node['id'], 'N/A')
+                            st.write(f"**Raw Output:** {raw_out}")
 
                 # ── Time Comparison ─────────────────────────────────────────────────
                 times = results.get("times", {})
@@ -352,7 +369,7 @@ with tab1:
                                   help="Estimated time if all tasks ran sequentially on a single cloud model")
                     with tc2:
                         st.metric("Edge AI (Parallel)", f"{times.get('edge_ai', 0):.2f}s",
-                                  help="Actual time with DAG-parallel execution")
+                                  help="Actual time with DAG-parallel execution + synthesis")
                     with tc3:
                         savings = times.get('savings_percent', 0)
                         delta_str = f"{abs(savings):.1f}% {'faster' if savings >= 0 else 'slower'}"
@@ -371,7 +388,7 @@ with tab1:
                     with st.expander("🖼️ PDF Image Preview"):
                         images = get_pdf_images(pdf_path)
                         if images:
-                            for i, img in enumerate(images[:5]):  # Show up to 5 pages
+                            for i, img in enumerate(images[:5]):
                                 st.image(img, caption=f"Page {i+1}", use_column_width=True)
                         else:
                             st.info("No images found or pdf2image not installed.")
