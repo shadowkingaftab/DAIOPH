@@ -239,3 +239,6 @@ def get_route_smart(prompt):
 
 def prioritize_tasks(tasks):
     return sorted(tasks, key=lambda x: len(str(x).split()))
+
+def stitch_outputs(results, dag):
+    return "\n\n".join(str(r) for r in results)
