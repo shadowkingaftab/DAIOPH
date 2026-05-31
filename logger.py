@@ -96,3 +96,7 @@ if __name__ == "__main__":
     }
     saved = log_result(fake_classification, "ODA")
     print("Saved row:", saved)
+
+def log_execution(prompt, route, status, duration):
+    with open("executions.log", "a") as f:
+        f.write(f"{datetime.now()}|{prompt[:50]}|{route}|{status}|{duration}\n")
