@@ -364,3 +364,5 @@ with tab5:
 # Add dark mode toggle for better UX
 
 # Add DAG visualization for task dependencies
+
+# Add execution metrics dashboard
