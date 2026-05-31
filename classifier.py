@@ -12,30 +12,148 @@ Model used: typeform/distilbert-base-uncased-mnli (~268MB, fast)
 Fine-tuned model support:
   Set CLASSIFIER_MODEL_PATH=models/fine_tuned_classifier in .env
   after running: python training/train_classifier.py --epochs 5 --eval
+
+Multi-language support:
+  Automatically detects input language using langdetect.
+  Translates non-English prompts to English via googletrans.
+  Sequential patterns detected in Hindi, Spanish, French, and English.
 """
 
 import os
+import re
 from transformers import pipeline
 from dotenv import load_dotenv
 import time
 import sys
+from collections import defaultdict
 
 load_dotenv()
 
+# ── Multi-language support ────────────────────────────────────────────────────
+try:
+    from langdetect import detect, DetectorFactory
+    DetectorFactory.seed = 0  # Ensures consistent detection results
+    HAS_LANGDETECT = True
+except ImportError:
+    HAS_LANGDETECT = False
+
+try:
+    from googletrans import Translator
+    HAS_GOOGLETRANS = True
+except ImportError:
+    HAS_GOOGLETRANS = False
+
+# ── spaCy for smarter sentence segmentation ───────────────────────────────────
+try:
+    import spacy
+    _nlp = spacy.load("en_core_web_sm")
+    HAS_SPACY = True
+except Exception:
+    _nlp = None
+    HAS_SPACY = False
+
+# Sequential keywords per language for smart decomposition
+SEQUENTIAL_KEYWORDS = {
+    "en": ["first", "then", "next", "after that", "finally", "initially", "step"],
+    "hi": ["पहले", "फिर", "अगला", "उसके बाद", "अंत में", "चरण"],  # Hindi
+    "es": ["primero", "luego", "después", "finalmente", "paso"],    # Spanish
+    "fr": ["d'abord", "ensuite", "après", "enfin", "étape"],       # French
+    "de": ["zuerst", "dann", "danach", "schließlich", "schritt"],  # German
+    "ar": ["أولاً", "ثم", "بعد ذلك", "أخيراً"],                    # Arabic
+}
+
+
+def detect_language(text: str) -> str:
+    """Detect the language of the input text. Returns ISO 639-1 language code."""
+    if not HAS_LANGDETECT or not text or not text.strip():
+        return "en"
+    try:
+        return detect(text.strip())
+    except Exception:
+        return "en"
+
+
+def translate_to_english(text: str, src_lang: str) -> str:
+    """Translate text from src_lang to English. Falls back to original on error."""
+    if not HAS_GOOGLETRANS or src_lang == "en" or not text.strip():
+        return text
+    try:
+        translator = Translator()
+        result = translator.translate(text, src=src_lang, dest="en")
+        return result.text if result and result.text else text
+    except Exception:
+        return text  # Graceful fallback — keep original text
+
+
+def decompose_prompt(prompt: str, lang: str = "en") -> dict:
+    """
+    Intelligently decompose a prompt into sequential subtasks.
+    Works for any language using keyword detection and sentence splitting.
+
+    Returns a DAG dict with nodes for use in the orchestrator.
+    """
+    # Step 1: Sentence segmentation
+    if HAS_SPACY and lang == "en" and _nlp:
+        doc = _nlp(prompt)
+        sentences = [sent.text.strip() for sent in doc.sents if sent.text.strip()]
+    else:
+        sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', prompt) if s.strip()]
+
+    if not sentences:
+        sentences = [prompt]
+
+    # Step 2: Get sequential keywords for detected language
+    lang_keywords = SEQUENTIAL_KEYWORDS.get(lang.lower(), SEQUENTIAL_KEYWORDS["en"])
+
+    # Step 3: Group sentences into tasks by sequential markers
+    tasks = []
+    current_task = []
+    for sent in sentences:
+        sent_lower = sent.lower()
+        is_step_start = any(kw in sent_lower for kw in lang_keywords)
+        if is_step_start and current_task:
+            tasks.append(" ".join(current_task).strip())
+            current_task = [sent]
+        else:
+            current_task.append(sent)
+    if current_task:
+        tasks.append(" ".join(current_task).strip())
+
+    # Step 4: If no sequential split found, chunk by sentence count
+    if len(tasks) == 1 and len(sentences) > 2:
+        mid = max(1, len(sentences) // 2)
+        tasks = [
+            " ".join(sentences[:mid]).strip(),
+            " ".join(sentences[mid:]).strip(),
+        ]
+        tasks = [t for t in tasks if t]
+
+    # Step 5: Build DAG nodes
+    nodes = []
+    for i, task_text in enumerate(tasks):
+        node_id = f"n{i+1}"
+        nodes.append({
+            "id": node_id,
+            "task": task_text,
+            "model": "qwen",
+            "route": "Hybrid",
+            "depends_on": [f"n{i}"] if i > 0 else [],
+        })
+
+    return {"nodes": nodes, "language": lang}
+
+
+# ── Load model (zero-shot or fine-tuned) ────────────────────────────────────
 # Helper to get config from Streamlit Secrets or Environment
 def get_config(key, default=None):
-    # 1. Try Streamlit Secrets (Cloud)
     try:
         import streamlit as st
         if key in st.secrets:
             return st.secrets[key]
     except (ImportError, Exception):
         pass
-    
-    # 2. Try Environment (Local / Docker)
     return os.getenv(key, default)
 
-# ── Load model (zero-shot or fine-tuned) ────────────────────────────────────
 # Set CLASSIFIER_MODEL_PATH in .env after running training/train_classifier.py
 _CUSTOM_PATH = get_config("CLASSIFIER_MODEL_PATH", "").strip()
 _MODEL_ID    = _CUSTOM_PATH if _CUSTOM_PATH and os.path.isdir(_CUSTOM_PATH) \
