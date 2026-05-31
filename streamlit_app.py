@@ -396,177 +396,173 @@ with tab1:
 
     explain_mode = st.checkbox("🔍 Explain Mode", help="Show intermediate reasoning steps")
 
-    # --- Minimalist Chatbox (Exact Pill Design) ---
-    st.markdown("""
-    <style>
-        /* The container wrapper shouldn't have background anymore */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) {
+    # --- Minimalist Chatbox (Exact Pill Design + Draggable) ---
+    import streamlit.components.v1 as components
+    components.html("""
+    <script>
+    const doc = window.parent.document;
+    
+    // Inject styles explicitly bypassing Streamlit's Markdown parser
+    if (!doc.getElementById('custom-chat-style')) {
+        const style = doc.createElement('style');
+        style.id = 'custom-chat-style';
+        style.innerHTML = `
+        .custom-chat-pill {
+            position: fixed !important;
+            bottom: 10% !important;
+            left: 25% !important;
+            width: 50% !important;
+            background: rgba(20, 20, 20, 0.95) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 20px !important;
+            padding: 8px 16px !important;
+            display: flex !important;
+            align-items: center !important;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6) !important;
+            z-index: 99999 !important;
+            gap: 6px !important;
+            backdrop-filter: blur(10px) !important;
+            cursor: grab;
+            transition: box-shadow 0.2s ease;
+        }
+        .custom-chat-pill:active { cursor: grabbing; box-shadow: 0 5px 20px rgba(0,0,0,0.8) !important; }
+        
+        .custom-chat-pill-wrapper {
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
             padding: 0 !important;
-            backdrop-filter: none !important;
         }
-
-        /* Pill Container */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="stHorizontalBlock"] {
-            position: fixed;
-            bottom: 30px;
-            left: 20%;
-            right: 20%;
-            background: #111111 !important;
-            border: 1px solid rgba(255, 255, 255, 0.05) !important;
-            border-radius: 16px !important;
-            padding: 6px 12px !important;
-            display: flex !important;
-            align-items: center !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
-            z-index: 9999 !important;
-            gap: 4px !important;
-        }
-
-        /* Clean Text Input */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) input {
+        
+        /* Input */
+        .custom-chat-pill input {
             background: transparent !important;
             border: none !important;
             padding: 12px 10px !important;
             color: #eeeeee !important;
-            font-size: 1rem !important;
+            font-size: 1.05rem !important;
+            width: 100% !important;
         }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) input:focus {
-            box-shadow: none !important;
+        .custom-chat-pill input:focus { box-shadow: none !important; }
+        .custom-chat-pill [data-baseweb="input"] { background: transparent !important; border: none !important; }
+        .custom-chat-pill input::placeholder { color: #888 !important; }
+        
+        /* Buttons */
+        .custom-chat-pill .stButton > button {
+            background: transparent !important; border: none !important; color: transparent !important; font-size: 0 !important;
+            padding: 0 !important; width: 36px !important; height: 36px !important; display: flex !important;
+            align-items: center !important; justify-content: center !important; box-shadow: none !important;
+            background-repeat: no-repeat !important; background-position: center !important; transition: all 0.2s ease !important;
         }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-baseweb="input"] {
-            background: transparent !important;
-            border: none !important;
-        }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) input::placeholder {
-            color: #666 !important;
-        }
-
-        /* Reset all buttons inside chatbox */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) .stButton > button {
-            background: transparent !important;
-            border: none !important;
-            color: transparent !important;
-            font-size: 0 !important;
-            padding: 0 !important;
-            width: 32px !important;
-            height: 32px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            box-shadow: none !important;
-            background-repeat: no-repeat !important;
-            background-position: center !important;
-            transition: all 0.2s ease !important;
-        }
-
-        /* Mic Button (Column 4) */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="column"]:nth-child(4) .stButton > button {
+        
+        .custom-chat-pill .mic-column .stButton > button {
             background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ODg4ODgiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgMmEzIDMgMCAwIDAtMyAzdjdhMyAzIDAgMCAwIDYgMFY1YTMgMyAwIDAgMC0zLTN6Ij48L3BhdGg+PHBhdGggZD0iTTE5IDEwdjJhNyA3IDAgMCAxLTE0IDB2LTIiPjwvcGF0aD48bGluZSB4MT0iMTIiIHkxPSIxOSIgeDI9IjEyIiB5Mj0iMjIiPjwvbGluZT48L3N2Zz4=') !important;
         }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="column"]:nth-child(4) .stButton > button:hover {
-            background-color: rgba(255, 255, 255, 0.05) !important;
-            border-radius: 8px !important;
-        }
-
-        /* Send Button (Column 5) */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="column"]:nth-child(5) .stButton > button {
+        .custom-chat-pill .mic-column .stButton > button:hover { background-color: rgba(255, 255, 255, 0.05) !important; border-radius: 8px !important; }
+        
+        .custom-chat-pill .send-column .stButton > button {
             background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGxpbmUgeDE9IjEyIiB5MT0iMTkiIHgyPSIxMiIgeTI9IjUiPjwvbGluZT48cG9seWxpbmUgcG9pbnRzPSI1IDEyIDEyIDUgMTkgMTIiPjwvcG9seWxpbmU+PC9zdmc+') !important;
-            background-color: #2a2a2a !important;
-            border-radius: 8px !important;
+            background-color: #2a2a2a !important; border-radius: 8px !important;
         }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="column"]:nth-child(5) .stButton > button:hover {
-            background-color: #444 !important;
+        .custom-chat-pill .send-column .stButton > button:hover { background-color: #444 !important; }
+        
+        /* Show send button only when typing */
+        .custom-chat-pill .send-column { display: none !important; }
+        .custom-chat-pill:has(input:not(:placeholder-shown)) .send-column { display: flex !important; }
+        
+        /* Plus / File Uploader */
+        .custom-chat-pill [data-testid="stFileUploader"] {
+            width: 36px !important; height: 36px !important;
         }
-
-        /* Dynamic visibility for Send Button: hide if input empty */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="stHorizontalBlock"] > div[data-testid="column"]:nth-child(5) {
-            display: none !important;
+        .custom-chat-pill [data-testid="stFileUploaderDropzone"] {
+            background: transparent !important; border: 1px solid rgba(255,255,255,0.15) !important; border-radius: 8px !important;
+            width: 36px !important; height: 36px !important; min-height: 36px !important; padding: 0 !important;
+            position: relative !important; cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important;
         }
-        /* Show send button when typing */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) div[data-testid="stHorizontalBlock"]:has(input:not(:placeholder-shown)) > div[data-testid="column"]:nth-child(5) {
-            display: flex !important;
-        }
-
-        /* Transform File Uploader (+ Icon) */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploader"] {
-            width: 32px !important;
-            height: 32px !important;
-        }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"] {
-            background: transparent !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            border-radius: 8px !important;
-            width: 32px !important;
-            height: 32px !important;
-            min-height: 32px !important;
-            padding: 0 !important;
-            position: relative !important;
-            cursor: pointer !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"]:hover {
-            background: rgba(255, 255, 255, 0.05) !important;
-        }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"] > div {
-            display: none !important; 
-        }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"]::before {
-            content: "";
-            position: absolute;
-            width: 16px;
-            height: 16px;
+        .custom-chat-pill [data-testid="stFileUploaderDropzone"]:hover { background: rgba(255,255,255,0.05) !important; }
+        .custom-chat-pill [data-testid="stFileUploaderDropzone"] > div { display: none !important; }
+        .custom-chat-pill [data-testid="stFileUploaderDropzone"]::before {
+            content: ""; position: absolute; width: 16px; height: 16px;
             background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ODg4ODgiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48bGluZSB4MT0iMTIiIHkxPSI1IiB4Mj0iMTIiIHkyPSIxOSI+PC9saW5lPjxsaW5lIHgxPSI1IiB5MT0iMTIiIHgyPSIxOSIgeTI9IjEyIj48L2xpbmU+PC9zdmc+');
-            background-repeat: no-repeat;
-            background-position: center;
+            background-repeat: no-repeat; background-position: center;
         }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploader"] section {
-            display: none !important; 
-        }
-
-        /* "Think v" Text */
+        .custom-chat-pill [data-testid="stFileUploader"] section { display: none !important; }
+        
         .think-text {
-            color: #888;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            height: 44px;
-            white-space: nowrap;
-            margin-right: 4px;
+            color: #888; font-size: 0.95rem; display: flex; align-items: center; justify-content: flex-end;
+            height: 44px; white-space: nowrap; margin-right: 4px;
         }
-
-        /* Message Bubbles */
+        
+        .chat-messages-wrap { padding-bottom: 120px; }
+        
+        /* Message Bubbles - add them back since we replaced the block */
         .user-message {
             background: rgba(76, 151, 240, 0.8);
-            color: white;
-            padding: 10px 14px;
-            border-radius: 8px;
-            margin: 8px 0;
-            max-width: 70%;
-            float: right;
-            clear: both;
+            color: white; padding: 10px 14px; border-radius: 8px; margin: 8px 0; max-width: 70%; float: right; clear: both;
         }
         .bot-message {
             background: rgba(255, 255, 255, 0.1);
-            color: white;
-            padding: 10px 14px;
-            border-radius: 8px;
-            margin: 8px 0;
-            max-width: 70%;
-            float: left;
-            clear: both;
+            color: white; padding: 10px 14px; border-radius: 8px; margin: 8px 0; max-width: 70%; float: left; clear: both;
         }
-        
-        .chat-messages-wrap {
-            padding-bottom: 120px;
+        `;
+        doc.head.appendChild(style);
+    }
+    
+    // Find elements and apply JS logic
+    function initDraggablePill() {
+        const anchors = doc.querySelectorAll('.minimalist-chat-anchor');
+        if(anchors.length > 0) {
+            const anchor = anchors[anchors.length - 1];
+            const vert = anchor.closest('div[data-testid="stVerticalBlock"]');
+            if(vert) {
+                vert.classList.add('custom-chat-pill-wrapper');
+                const horiz = vert.querySelector('div[data-testid="stHorizontalBlock"]');
+                if(horiz && !horiz.classList.contains('custom-chat-pill')) {
+                    horiz.classList.add('custom-chat-pill');
+                    const cols = horiz.querySelectorAll('div[data-testid="column"]');
+                    if(cols.length >= 5) {
+                        cols[3].classList.add('mic-column');
+                        cols[4].classList.add('send-column');
+                    }
+                    
+                    let isDragging = false;
+                    let currentX, currentY, initialX, initialY;
+                    let xOffset = parseFloat(sessionStorage.getItem('chatX')) || 0;
+                    let yOffset = parseFloat(sessionStorage.getItem('chatY')) || 0;
+                    
+                    if (xOffset !== 0 || yOffset !== 0) {
+                        horiz.style.transform = `translate3d(${xOffset}px, ${yOffset}px, 0)`;
+                    }
+                    
+                    horiz.addEventListener('mousedown', (e) => {
+                        // Prevent drag on inputs/buttons
+                        if(e.target.tagName.toLowerCase() === 'input' || e.target.closest('button') || e.target.closest('[data-testid="stFileUploader"]')) return;
+                        initialX = e.clientX - xOffset;
+                        initialY = e.clientY - yOffset;
+                        isDragging = true;
+                    });
+                    
+                    doc.addEventListener('mouseup', () => { isDragging = false; });
+                    doc.addEventListener('mousemove', (e) => {
+                        if(isDragging) {
+                            e.preventDefault();
+                            currentX = e.clientX - initialX;
+                            currentY = e.clientY - initialY;
+                            xOffset = currentX;
+                            yOffset = currentY;
+                            horiz.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+                            sessionStorage.setItem('chatX', currentX);
+                            sessionStorage.setItem('chatY', currentY);
+                        }
+                    });
+                }
+            }
         }
-    </style>
-    """, unsafe_allow_html=True)
+    }
+    
+    setInterval(initDraggablePill, 500);
+    </script>
+    """, height=0)
 
     # --- Chat Messages ---
     st.markdown('<div class="chat-messages-wrap">', unsafe_allow_html=True)
