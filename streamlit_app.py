@@ -399,8 +399,8 @@ with tab1:
     # --- Minimalist Chatbox UI (Streamlit Compatible CSS Hack) ---
     st.markdown("""
     <style>
-        /* Target the chat container using :has() */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) {
+        /* Target the chat container safely using :has() and exclude the main page container */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) {
             position: fixed;
             bottom: 20px;
             left: 5%;
@@ -418,7 +418,7 @@ with tab1:
         }
 
         /* Clean Text Input */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) input {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) input {
             background: rgba(255, 255, 255, 0.05) !important;
             border: none !important;
             border-radius: 8px !important;
@@ -427,18 +427,17 @@ with tab1:
             height: 44px !important;
             line-height: 44px !important;
         }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) input:focus {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) input:focus {
             background: rgba(255, 255, 255, 0.1) !important;
             box-shadow: none !important;
         }
-        /* Remove Streamlit's input wrapper borders */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-baseweb="input"] {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-baseweb="input"] {
             background: transparent !important;
             border: none !important;
         }
 
-        /* Fix Buttons (Override global styles) */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) .stButton > button {
+        /* Fix Buttons */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) .stButton > button {
             background: rgba(255, 255, 255, 0.1) !important;
             border: none !important;
             border-radius: 8px !important;
@@ -453,30 +452,30 @@ with tab1:
             font-size: 1.2rem !important;
             box-shadow: none !important;
         }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) .stButton > button:hover {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) .stButton > button:hover {
             background: rgba(255, 255, 255, 0.2) !important;
             transform: scale(1.05) !important;
         }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) .stButton > button:disabled {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) .stButton > button:disabled {
             background: rgba(255, 255, 255, 0.05) !important;
             color: rgba(255, 255, 255, 0.3) !important;
             cursor: not-allowed !important;
         }
 
-        /* Make Send button pop (it's the second button, i.e. col4) */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="column"]:nth-child(4) .stButton > button {
+        /* Make Send button pop */
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="column"]:nth-child(4) .stButton > button {
             background: #4C97F0 !important;
         }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="column"]:nth-child(4) .stButton > button:hover {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="column"]:nth-child(4) .stButton > button:hover {
             background: #3A7BC8 !important;
         }
 
         /* Transform File Uploader into a simple icon button */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="stFileUploader"] {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploader"] {
             width: 44px !important;
             height: 44px !important;
         }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="stFileUploaderDropzone"] {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"] {
             background: rgba(255, 255, 255, 0.1) !important;
             border: none !important;
             border-radius: 8px !important;
@@ -490,22 +489,19 @@ with tab1:
             align-items: center !important;
             justify-content: center !important;
         }
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="stFileUploaderDropzone"]:hover {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"]:hover {
             background: rgba(255, 255, 255, 0.2) !important;
         }
-        /* Hide default dropzone text */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="stFileUploaderDropzone"] > div {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"] > div {
             display: none !important; 
         }
-        /* Insert the clip emoji */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="stFileUploaderDropzone"]::before {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploaderDropzone"]::before {
             content: "📎";
             font-size: 1.2rem;
             position: absolute;
             color: white;
         }
-        /* Hide uploaded file details summary */
-        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor) [data-testid="stFileUploader"] section {
+        div[data-testid="stVerticalBlock"]:has(.minimalist-chat-anchor):not(:has(h3)) [data-testid="stFileUploader"] section {
             display: none !important; 
         }
 
@@ -598,6 +594,8 @@ with tab1:
             # Send Button
             send_disabled = not user_input and not st.session_state.get("uploaded_file")
             send_pressed = st.button("→", key="send_button", disabled=send_disabled, use_container_width=False)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
     if (user_input or st.session_state.get("uploaded_file")) and (send_pressed or user_input):
         st.session_state.current_pdf_text = None
