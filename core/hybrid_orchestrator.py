@@ -75,12 +75,9 @@ class HybridOrchestrator:
                 )
                 self.HAS_DISTILBERT = True
             except Exception as e:
-                import streamlit as st
-                st.warning(f"⚠️ DistilBERT disabled: {str(e)}")
+                print(f"[INFO] DistilBERT disabled: {str(e)}")
                 self.HAS_DISTILBERT = False
         else:
-            import streamlit as st
-            st.warning("⚠️ DistilBERT disabled: transformers not available")
             self.HAS_DISTILBERT = False
 
         self.executor       = TaskExecutor(qwen_path, grok_api_key)

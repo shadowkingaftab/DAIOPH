@@ -191,13 +191,6 @@ if grok_api_key and orchestrator:
 st.markdown('<p class="main-header">🤖 Edge AI Orchestrator</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">DistilBERT Orchestrator • Qwen2-0.5B Execution • Grok Cloud Fallback</p>', unsafe_allow_html=True)
 
-if not ORCHESTRATOR_AVAILABLE:
-    st.error("❌ Critical components missing. Some features will not be available.")
-
-if orchestrator and getattr(orchestrator, 'executor', None) and not getattr(orchestrator.executor, 'HAS_QWEN', True):
-    st.error(f"⚠️ **Qwen2-0.5B failed to load!** Reason: `{getattr(orchestrator.executor, 'qwen_error', 'Unknown Error')}`")
-    st.info("💡 You can still use the Cloud LLM route if you provide a Grok API Key in the sidebar.")
-
 # --- Sidebar: Model Routes ---
 with st.sidebar:
     # Environment Badge
