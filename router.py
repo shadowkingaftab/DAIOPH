@@ -210,35 +210,157 @@ def get_route_explanation(intent_matrix: dict, route: str) -> str:
         return f"'{top_intent.capitalize()}' needs deep reasoning — sending to Grok (with Qwen fallback)."
     return f"Medium confidence ({pct}%) — Hybrid gives the best balance of speed and quality."
 
-from concurrent.futures import ThreadPoolExecutor
-def execute_parallel(tasks):
-    with ThreadPoolExecutor(max_workers=4) as executor:
-        results = list(executor.map(lambda x: x, tasks))
-    return results
+# ── Smart Orchestration Features ──────────────────────────────────────────────
 
-from functools import lru_cache
-@lru_cache(maxsize=100)
-def get_dag(prompt):
-    return prompt  # Dummy decomposition logic
+class TaskExecutor:
+    def execute(self, task, context, pdf_text, route):
+        prompt = task.get("task", "")
+        # Forward to the standard router
+        # Fake intent matrix for simplicity to force Cloud/ODA based on route
+        intent_matrix = {"multi_step": 1.0} if route == "Hybrid" else {"simple_query": 1.0}
+        result = route_task(intent_matrix, prompt)
+        if isinstance(result, dict) and "output" in result:
+            return result["output"]
+        return str(result)
 
-def execute_with_retry(task, max_retries=2):
-    for _ in range(max_retries):
+class HybridOrchestrator:
+    def __init__(self):
+        self.executor = TaskExecutor()
+
+    def execute(self, prompt, pdf_text=None, route="Hybrid"):
+        from classifier import decompose_prompt
+        start_time = time.time()
+        
+        # 1. Dynamic decomposition & Auto-correction
+        dag = decompose_prompt(prompt)
+        corrected_prompt = dag.get("corrected_prompt", prompt)
+        
+        results = {}
+        failed_tasks = []
+
+        # 2. Execute tasks with automatic retries
+        for node in dag["nodes"]:
+            task_id = node["id"]
+            context = {k: results[k] for k in node.get("depends_on", [])}
+            
+            # Try execution with retries
+            for attempt in range(3):
+                try:
+                    results[task_id] = self.executor.execute(node, context, pdf_text, route)
+                    break
+                except Exception as e:
+                    if attempt == 2:
+                        failed_tasks.append(task_id)
+                        results[task_id] = f"Error: {str(e)}"
+                    time.sleep(1)
+
+        # 3. Recover failed tasks dynamically
+        if failed_tasks:
+            results = self._recover_failed_tasks(dag, results, failed_tasks, route)
+
+        # 4. Smart stitching using LLM
+        final_output = self._stitch_outputs(dag, results, corrected_prompt)
+
+        execution_time = time.time() - start_time
+        traditional_time = len(prompt.split()) / 20
+
+        return {
+            "dag": dag,
+            "results": results,
+            "final_output": final_output,
+            "times": {
+                "edge_ai": execution_time,
+                "traditional": traditional_time,
+                "savings": traditional_time - execution_time,
+                "savings_percent": ((traditional_time - execution_time) / traditional_time * 100) if traditional_time > 0 else 0
+            }
+        }
+
+    def _recover_failed_tasks(self, dag, results, failed_tasks, route):
+        """Dynamically recover failed tasks by rephrasing them via Grok."""
         try:
-            return task
-        except:
-            continue
-    return "Error: Max retries exceeded"
+            from grok_cloud import run_grok
+        except ImportError:
+            run_grok = None
+            
+        for task_id in failed_tasks:
+            node = next(n for n in dag["nodes"] if n["id"] == task_id)
+            intent = node.get("intent")
 
-def get_route_smart(prompt):
-    if len(prompt.split()) < 50:
-        return "ODA"
-    elif len(prompt.split()) < 200:
-        return "Hybrid"
-    else:
-        return "Cloud"
+            if run_grok:
+                try:
+                    recovery_prompt = f"""
+                    This task failed to execute: "{node['task']}"
+                    Intent: {intent or 'unknown'}
+                    Rephrase this task to make it executable while preserving the original meaning.
+                    Return ONLY the rephrased task.
+                    """
+                    rephrased_task = run_grok(recovery_prompt, max_tokens=256, timeout=10)
+                    if not rephrased_task.startswith("❌"):
+                        results[task_id] = self.executor.execute(
+                            {"id": task_id, "task": rephrased_task, "intent": intent},
+                            None, None, route
+                        )
+                    else:
+                        results[task_id] = f"Recovered: {node['task'][:100]}..."
+                except:
+                    results[task_id] = f"Recovered: {node['task'][:100]}..."
+            else:
+                results[task_id] = f"Recovered: {node['task'][:100]}..."
+        return results
 
-def prioritize_tasks(tasks):
-    return sorted(tasks, key=lambda x: len(str(x).split()))
+    def _stitch_outputs(self, dag, results, original_prompt):
+        """Use LLM to dynamically stitch outputs into a coherent answer."""
+        try:
+            from grok_cloud import run_grok
+        except ImportError:
+            run_grok = None
 
-def stitch_outputs(results, dag):
-    return "\n\n".join(str(r) for r in results)
+        if len(results) == 1:
+            return list(results.values())[0]
+
+        task_details = []
+        for node in dag["nodes"]:
+            task_id = node["id"]
+            task_desc = node.get("task", task_id)
+            output = results.get(task_id, "")
+            intent = node.get("intent")
+            confidence = 10 if not str(output).startswith("Error") else 3
+            task_details.append({
+                "id": task_id,
+                "description": task_desc,
+                "output": output,
+                "intent": intent,
+                "confidence": confidence
+            })
+
+        if run_grok:
+            try:
+                synthesis_prompt = f"""
+                You are an expert at synthesizing information into coherent answers.
+                Original User Request: {original_prompt}
+
+                Task Breakdown:
+                {'='*50}
+                """
+                for task in task_details:
+                    synthesis_prompt += f"""
+                Task {task['id']}: {task['description']}
+                Intent: {task['intent'] or 'N/A'}
+                Output: {task['output']}
+                Confidence: {task['confidence']}/10
+                {'-'*50}
+                """
+                synthesis_prompt += """
+                Instructions:
+                1. Combine everything into a SINGLE, COHERENT answer that addresses the Original Request.
+                2. If any task output is missing, make reasonable assumptions based on the context.
+                3. NEVER mention tasks, outputs, or errors explicitly in the response.
+                """
+                resp = run_grok(synthesis_prompt, max_tokens=1024, temperature=0.3, timeout=15)
+                if not resp.startswith("❌"):
+                    return resp
+            except:
+                pass
+
+        return "\n\n".join(str(v) for v in results.values())

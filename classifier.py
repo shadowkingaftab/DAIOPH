@@ -85,50 +85,85 @@ def translate_to_english(text: str, src_lang: str) -> str:
         return text  # Graceful fallback — keep original text
 
 
+def preprocess_prompt(prompt: str) -> str:
+    """Dynamically correct grammar/spelling using the LLM API if it's very messy."""
+    try:
+        from grok_cloud import run_grok
+        # Use a very short timeout and minimal tokens
+        correction_prompt = f"Fix only major spelling/grammar errors in this text. Do not answer it. Return ONLY the fixed text:\n{prompt}"
+        resp = run_grok(correction_prompt, max_tokens=64, timeout=3, temperature=0.1)
+        if not resp.startswith("❌") and len(resp) > 5 and len(resp) < len(prompt) * 2:
+            return resp.strip()
+    except Exception:
+        pass
+    return prompt
+
+def infer_intent_smart(prompt: str) -> str:
+    """Use LLM semantic inference to dynamically infer intent if confidence is low."""
+    try:
+        from grok_cloud import run_grok
+        intent_candidates = ["summarize", "explain", "compare", "generate", "analyze", "extract", "answer", "classify"]
+        inference_prompt = f"Categorize the following prompt into EXACTLY ONE of these categories: {', '.join(intent_candidates)}.\nPrompt: {prompt}\nReply with just the category word."
+        resp = run_grok(inference_prompt, max_tokens=10, timeout=4, temperature=0.1)
+        resp_clean = resp.lower().strip().strip('.')
+        if resp_clean in intent_candidates:
+            return resp_clean
+    except Exception:
+        pass
+    return None
+
 def decompose_prompt(prompt: str, lang: str = "en") -> dict:
     """
     Intelligently decompose a prompt into sequential subtasks.
-    Works for any language using keyword detection and sentence splitting.
-
-    Returns a DAG dict with nodes for use in the orchestrator.
+    Uses smart LLM-based logic if possible, falling back to keywords.
     """
-    # Step 1: Sentence segmentation
-    if HAS_SPACY and lang == "en" and _nlp:
-        doc = _nlp(prompt)
-        sentences = [sent.text.strip() for sent in doc.sents if sent.text.strip()]
-    else:
-        sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', prompt) if s.strip()]
-
-    if not sentences:
-        sentences = [prompt]
-
-    # Step 2: Get sequential keywords for detected language
-    lang_keywords = SEQUENTIAL_KEYWORDS.get(lang.lower(), SEQUENTIAL_KEYWORDS["en"])
-
-    # Step 3: Group sentences into tasks by sequential markers
+    original_prompt = prompt
+    prompt = preprocess_prompt(prompt)
+    
     tasks = []
-    current_task = []
-    for sent in sentences:
-        sent_lower = sent.lower()
-        is_step_start = any(kw in sent_lower for kw in lang_keywords)
-        if is_step_start and current_task:
+    
+    # Attempt LLM-based Smart Decomposition
+    try:
+        from grok_cloud import run_grok
+        decomp_prompt = f"""
+Break this prompt down into sequential, independent tasks. 
+Return each task on a new line starting with a dash (-).
+Do not include any other text.
+Prompt: {prompt}
+"""
+        resp = run_grok(decomp_prompt, max_tokens=150, timeout=5, temperature=0.1)
+        if not resp.startswith("❌"):
+            lines = resp.split('\n')
+            for line in lines:
+                line = line.strip()
+                if line.startswith("-"):
+                    tasks.append(line[1:].strip())
+    except Exception:
+        pass
+    
+    # Fallback to keyword-based decomposition if LLM fails or returns garbage
+    if not tasks or len(tasks) > 5:
+        tasks = []
+        sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', prompt) if s.strip()]
+        if not sentences:
+            sentences = [prompt]
+            
+        lang_keywords = SEQUENTIAL_KEYWORDS.get(lang.lower(), SEQUENTIAL_KEYWORDS["en"])
+        current_task = []
+        for sent in sentences:
+            sent_lower = sent.lower()
+            is_step_start = any(kw in sent_lower for kw in lang_keywords)
+            if is_step_start and current_task:
+                tasks.append(" ".join(current_task).strip())
+                current_task = [sent]
+            else:
+                current_task.append(sent)
+        if current_task:
             tasks.append(" ".join(current_task).strip())
-            current_task = [sent]
-        else:
-            current_task.append(sent)
-    if current_task:
-        tasks.append(" ".join(current_task).strip())
 
-    # Step 4: If no sequential split found, chunk by sentence count
-    if len(tasks) == 1 and len(sentences) > 2:
-        mid = max(1, len(sentences) // 2)
-        tasks = [
-            " ".join(sentences[:mid]).strip(),
-            " ".join(sentences[mid:]).strip(),
-        ]
-        tasks = [t for t in tasks if t]
+    smart_intent = infer_intent_smart(prompt)
 
-    # Step 5: Build DAG nodes
+    # Build DAG nodes
     nodes = []
     for i, task_text in enumerate(tasks):
         node_id = f"n{i+1}"
@@ -137,10 +172,11 @@ def decompose_prompt(prompt: str, lang: str = "en") -> dict:
             "task": task_text,
             "model": "qwen",
             "route": "Hybrid",
+            "intent": smart_intent,
             "depends_on": [f"n{i}"] if i > 0 else [],
         })
 
-    return {"nodes": nodes, "language": lang}
+    return {"nodes": nodes, "language": lang, "intent": smart_intent, "corrected_prompt": prompt}
 
 
 # ── Load model (zero-shot or fine-tuned) ────────────────────────────────────
