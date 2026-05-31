@@ -310,3 +310,6 @@ if __name__ == "__main__":
         download_model()
     result = run_qwen("What is edge AI? Answer in one sentence.")
     print(f"Output  : {result}")
+
+def generate_with_confidence(prompt, **kwargs):
+    return {"output": "dummy", "confidence": 0.9}
