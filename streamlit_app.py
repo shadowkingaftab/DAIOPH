@@ -366,3 +366,5 @@ with tab5:
 # Add DAG visualization for task dependencies
 
 # Add execution metrics dashboard
+
+# Add example prompts for quick testing
