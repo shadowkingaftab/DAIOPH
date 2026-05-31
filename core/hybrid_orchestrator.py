@@ -2,6 +2,7 @@ from typing import Dict, Tuple, Optional, List
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from core.grok_client import GrokClient
 from core.task_executor import TaskExecutor
+from utils.image_executor import ImageExecutor, requires_diagram, requires_image
 import re
 import json
 import nltk
@@ -45,9 +46,19 @@ class HybridOrchestrator:
             st.warning(f"⚠️ DistilBERT disabled: {str(e)}")
             self.HAS_DISTILBERT = False
 
-        self.executor = TaskExecutor(qwen_path, grok_api_key)
-        self.grok = GrokClient(grok_api_key) if grok_api_key else None
-        self.HAS_GROK = grok_api_key is not None
+        self.executor       = TaskExecutor(qwen_path, grok_api_key)
+        self.image_executor = ImageExecutor()          # 0 MB — cloud/graphviz only
+        self.grok           = GrokClient(grok_api_key) if grok_api_key else None
+        self.HAS_GROK       = grok_api_key is not None
+
+    # ── Task-type detection helpers ───────────────────────────────────────────
+    @staticmethod
+    def _requires_diagram(text: str) -> bool:
+        return requires_diagram(text)
+
+    @staticmethod
+    def _requires_image(text: str) -> bool:
+        return requires_image(text)
 
     def execute(self, prompt: str, pdf_text: Optional[str] = None, route: str = "Hybrid") -> Tuple[Dict, Dict]:
         """Execute a prompt through the orchestrator pipeline with full telemetry.
@@ -228,7 +239,9 @@ class HybridOrchestrator:
         return new_dag
 
     def _execute_parallel(self, dag: Dict, pdf_text: Optional[str] = None, route: str = "Hybrid") -> Dict:
-        """Execute DAG nodes in topological order, passing full dependency context to each child."""
+        """Execute DAG nodes in topological order, passing full dependency context to each child.
+        Diagram and image tasks are routed to ImageExecutor (0 MB) instead of text models.
+        """
         results = {}
         futures = {}
 
@@ -238,13 +251,12 @@ class HybridOrchestrator:
             for task_id in sorted_tasks:
                 node = next(t for t in dag["dag"]["nodes"] if t["id"] == task_id)
 
-                def run_node(n, deps):
+                def run_node(n, deps, _route=route):
                     # Build rich context from ALL dependency outputs
                     context_parts = []
                     for dep_id in deps:
-                        dep_res = futures[dep_id].result()  # blocks until parent done
+                        dep_res = futures[dep_id].result()
                         if isinstance(dep_res, str) and dep_res.strip():
-                            # Find the dependency task description for labelling
                             dep_node = next(
                                 (x for x in dag["dag"]["nodes"] if x["id"] == dep_id), None
                             )
@@ -254,7 +266,17 @@ class HybridOrchestrator:
                             )
 
                     context = "\n\n".join(context_parts) if context_parts else None
-                    return self.executor.execute(n, context, pdf_text, route)
+
+                    # ── Route: diagram? ───────────────────────────────────────
+                    if self._requires_diagram(n["task"]):
+                        return self.image_executor.execute(n["task"], _route)
+
+                    # ── Route: photorealistic image? ──────────────────────────
+                    if self._requires_image(n["task"]):
+                        return self.image_executor.execute(n["task"], _route)
+
+                    # ── Default: text model ───────────────────────────────────
+                    return self.executor.execute(n, context, pdf_text, _route)
 
                 deps = node.get("depends_on", [])
                 futures[task_id] = executor.submit(run_node, node, deps)

@@ -3,6 +3,7 @@ from core.hybrid_orchestrator import HybridOrchestrator
 from core.prompt_generator import PromptGenerator
 from utils.pdf_parser import extract_text_from_pdf, get_pdf_images
 from utils.logger import Logger
+from utils.image_executor import requires_diagram, requires_image
 import graphviz
 import pandas as pd
 from datetime import datetime
@@ -228,6 +229,59 @@ def show_dag(dag):
     """, unsafe_allow_html=True)
 
 
+def _render_task_result(task_id: str, result):
+    """
+    Render a single task result in the Streamlit UI.
+    Handles four result types from the orchestrator:
+      - dict with type="diagram"  → st.graphviz_chart
+      - dict with type="image"    → inline base64 PNG
+      - dict with type="error"    → st.error
+      - plain str                 → st.markdown
+    """
+    if isinstance(result, dict):
+        rtype = result.get("type", "")
+        data  = result.get("data", "")
+
+        if rtype == "diagram":
+            st.markdown(f"**🗺️ Diagram — Task `{task_id}`**")
+            try:
+                st.graphviz_chart(data)
+            except Exception as e:
+                st.warning(f"Could not render diagram: {e}")
+                st.code(str(data))
+
+        elif rtype == "image":
+            st.markdown(f"**🖼️ Generated Image — Task `{task_id}`**")
+            try:
+                import base64
+                from io import BytesIO
+                from PIL import Image as PILImage
+                img_bytes = base64.b64decode(data)
+                img = PILImage.open(BytesIO(img_bytes))
+                st.image(img, use_column_width=True)
+            except Exception:
+                # Fallback: markdown data URI
+                st.markdown(
+                    f'<img src="data:image/png;base64,{data}" style="max-width:100%;border-radius:0.8rem"/>',
+                    unsafe_allow_html=True,
+                )
+
+        elif rtype == "error":
+            st.error(data)
+
+        else:
+            # Unknown dict shape — just show JSON
+            st.json(result)
+
+    elif isinstance(result, str):
+        if result.strip():
+            st.markdown(result)
+        else:
+            st.caption("*(empty output)*")
+    else:
+        st.write(result)
+
+
 # --- Tab 1: Classify & Execute ---
 with tab1:
     st.markdown("### Classify & Execute a Prompt")
@@ -241,7 +295,15 @@ with tab1:
         "Explain edge AI, then list its advantages over cloud AI.",
         "पहले इस पाठ का सारांश दें। फिर मुख्य विचार बताएं।",  # Hindi
         "Primero resume el texto. Luego explica los puntos clave.",  # Spanish
+        # ── Diagram examples ──────────────────────────────────────────────────
+        "Create a workflow diagram: Data Collection -> Preprocessing -> Model Training -> Evaluation -> Deployment",
+        "Draw a flowchart: User Request -> Edge AI Classification -> ODA Route -> Qwen Inference -> Response",
+        "Visualize the steps: Idea -> Design -> Develop -> Test -> Deploy -> Monitor",
+        # ── Image generation examples (requires Hybrid/Cloud + Replicate token) ─
+        "Generate a photorealistic image of a futuristic edge AI server room with glowing circuits",
+        "Create a realistic illustration of a robot working alongside humans in a smart factory",
     ]
+
     selected_example = st.selectbox("📚 Example Prompts (pick one or type your own):", EXAMPLE_PROMPTS)
 
     route = st.selectbox(
@@ -342,11 +404,8 @@ with tab1:
                     if task_results:
                         st.markdown("#### 📋 Individual Task Outputs")
                         for task_id, result in task_results.items():
-                            if isinstance(result, dict) and "error" in result:
-                                st.error(f"**Task `{task_id}`:** {result['error']}")
-                            elif result:
-                                with st.expander(f"Task `{task_id}`"):
-                                    st.write(result)
+                            with st.expander(f"Task `{task_id}`"):
+                                _render_task_result(task_id, result)
 
                 # ── Explain Mode ───────────────────────────────────────────────────
                 if explain_mode:
