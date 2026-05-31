@@ -440,6 +440,7 @@ with tab1:
                     "content": user_input,
                     "type": "text"
                 })
+        st.session_state.chat_input = ""
         st.rerun()
 
     # After the chatbox UI code above, process logic

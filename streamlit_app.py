@@ -681,6 +681,7 @@ with tab1:
             else:
                 st.session_state.messages.append({"role": "user", "content": user_input, "type": "text"})
             
+            st.session_state.chat_input = ""
             st.session_state.trigger_execution = True
             st.rerun()
 

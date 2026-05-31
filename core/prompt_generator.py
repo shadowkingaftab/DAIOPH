@@ -19,8 +19,6 @@ class PromptGenerator:
                 print(f"Prompt generator disabled: {str(e)}")
 
     def generate(self) -> str:
-        if not self.HAS_MODEL:
-            return "Error: Prompt generator not available (missing Qwen2-0.5B)."
         prompt = """
         Generate a unique, complex prompt for testing an AI orchestration system.
         Requirements:
@@ -29,7 +27,24 @@ class PromptGenerator:
         3. Be realistic and human-like.
         4. Test both on-device and cloud capabilities.
         Example: "First, summarize this PDF about climate change. Then, write a tweet thread explaining the key points."
+        Return ONLY the prompt string, no other conversational text.
         """
+        
+        # Try Grok API fallback first if local model is unavailable
+        try:
+            import sys
+            import os
+            sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            from grok_cloud import run_grok
+            resp = run_grok(prompt, max_tokens=150, temperature=0.9, timeout=10)
+            if not resp.startswith("❌") and not resp.startswith("⚠️"):
+                return resp.strip()
+        except Exception as e:
+            pass
+            
+        if not self.HAS_MODEL:
+            return "Error: Prompt generator not available (missing Qwen2-0.5B). Set GROK_API_KEY to use cloud fallback."
+
         output = self.llm(
             prompt=prompt,
             max_tokens=150,
