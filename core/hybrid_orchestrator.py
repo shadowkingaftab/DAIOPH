@@ -5,20 +5,31 @@ from core.task_executor import TaskExecutor
 from utils.image_executor import ImageExecutor, requires_diagram, requires_image
 import re
 import json
-import nltk
 import copy
 import time
 import math
 from collections import defaultdict
-from nltk.tokenize import sent_tokenize
 from functools import lru_cache
 import numpy as np
 from sklearn.cluster import AgglomerativeClustering
 from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
 
-# Download NLTK data
-nltk.download('punkt', quiet=True)
-nltk.download('punkt_tab', quiet=True)
+# Download NLTK data EARLY with error handling
+try:
+    import nltk
+    nltk.download('punkt', quiet=True)
+    nltk.download('punkt_tab', quiet=True)
+    from nltk.tokenize import sent_tokenize
+    NLTK_AVAILABLE = True
+except Exception as e:
+    print(f"Warning: NLTK not available, using fallback tokenization: {e}")
+    NLTK_AVAILABLE = False
+
+    # Fallback sentence tokenizer if NLTK fails
+    def sent_tokenize(text):
+        # Split on periods followed by whitespace and uppercase letters
+        sentences = re.split(r'(?<=[.!?])\s+(?=[A-Z])', text)
+        return [s.strip() for s in sentences if s.strip()]
 
 # ── Multi-language support (graceful import) ──────────────────────────────────
 try:
