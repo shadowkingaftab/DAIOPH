@@ -209,3 +209,9 @@ def get_route_explanation(intent_matrix: dict, route: str) -> str:
     if route == "Cloud LLM":
         return f"'{top_intent.capitalize()}' needs deep reasoning — sending to Grok (with Qwen fallback)."
     return f"Medium confidence ({pct}%) — Hybrid gives the best balance of speed and quality."
+
+from concurrent.futures import ThreadPoolExecutor
+def execute_parallel(tasks):
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        results = list(executor.map(lambda x: x, tasks))
+    return results
