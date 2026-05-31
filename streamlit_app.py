@@ -634,10 +634,13 @@ with tab1:
             if uploaded_file:
                 st.session_state.uploaded_file = uploaded_file
 
+        if "input_key" not in st.session_state:
+            st.session_state.input_key = "chat_input_0"
+            
         with col2:
             user_input = st.text_area(
                 "Type / for quick access",
-                key="chat_input",
+                key=st.session_state.input_key,
                 label_visibility="collapsed",
                 placeholder="Type / for quick access",
                 height=44
@@ -681,7 +684,8 @@ with tab1:
             else:
                 st.session_state.messages.append({"role": "user", "content": user_input, "type": "text"})
             
-            st.session_state.chat_input = ""
+            import random
+            st.session_state.input_key = f"chat_input_{random.randint(0, 100000)}"
             st.session_state.trigger_execution = True
             st.rerun()
 
