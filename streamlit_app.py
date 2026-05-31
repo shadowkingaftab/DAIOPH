@@ -654,8 +654,7 @@ with tab1:
                                 user_input = r.recognize_google(audio)
                             except:
                                 user_input = None
-                                
-        with col5:
+        with col4:
             send_pressed = st.button("S", key="send_button", use_container_width=False)
 
     st.markdown('</div>', unsafe_allow_html=True)
