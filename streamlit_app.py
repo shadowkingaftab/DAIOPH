@@ -352,3 +352,5 @@ with tab5:
 # Fixed critical bugs in streamlit_app.py
 
 # Tested routes
+
+# Preload models at startup for faster execution
