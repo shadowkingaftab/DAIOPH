@@ -7,7 +7,7 @@ llama-cpp-python>=0.2.56
 streamlit>=1.32.0
 
 # DAG visualization
-graphviz>=0.20.1
+graphviz>=0.21
 
 # PDF parsing
 PyPDF2>=3.0.1
