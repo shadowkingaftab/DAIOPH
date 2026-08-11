@@ -33,7 +33,7 @@ jobs:
           pytest tests/ -v --cov=core --cov=liquid_core --cov=memory --cov=multi_modal --cov-report=term-missing --ignore=tests/test_federated.py
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
