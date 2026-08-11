@@ -1,0 +1,6 @@
+# Placeholder hardware profile configuration
+profiles:
+  cpu_small:
+    threads: 2
+  cpu_large:
+    threads: 8

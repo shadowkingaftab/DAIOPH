@@ -1,0 +1,4 @@
+# Placeholder configuration for federated learning
+federated:
+  enabled: false
+  rounds: 3
