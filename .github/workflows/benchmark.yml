@@ -30,7 +30,7 @@ jobs:
           python scripts/benchmark.py --output-dir benchmark-results || echo "Benchmark suite completed with warnings"
 
       - name: Upload benchmark results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: benchmark-results
           path: benchmark-results/
