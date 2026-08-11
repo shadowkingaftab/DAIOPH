@@ -1,0 +1,32 @@
+{
+  "JSON Object": {
+    "prefix": "jsonobj",
+    "body": [
+      "{",
+      "  \"${1:key}\": ${2:value}",
+      "}"
+    ],
+    "description": "Create a JSON object"
+  },
+  "JSON Array": {
+    "prefix": "jsonarr",
+    "body": [
+      "[",
+      "  ${1:item}",
+      "]"
+    ],
+    "description": "Create a JSON array"
+  },
+  "JSON Config": {
+    "prefix": "jsonconfig",
+    "body": [
+      "{",
+      "  \"name\": \"${1:name}\",",
+      "  \"version\": \"${2:1.0.0}\",",
+      "  \"description\": \"${3:description}\",",
+      "  \"enabled\": ${4:true}",
+      "}"
+    ],
+    "description": "Create a JSON config object"
+  }
+}

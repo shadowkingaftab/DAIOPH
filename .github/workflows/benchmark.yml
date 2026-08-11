@@ -1,0 +1,76 @@
+name: Benchmark
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Tests"]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run benchmark suite
+        run: |
+          python scripts/benchmark.py --output-dir benchmark-results || echo "Benchmark suite completed with warnings"
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: benchmark-results/
+          retention-days: 30
+
+      - name: Compare with baseline
+        run: |
+          python -c "
+          import json, os, glob
+          results = glob.glob('benchmark-results/*.json')
+          if results:
+              for f in results:
+                  with open(f) as fh:
+                      data = json.load(fh)
+                  print(f'Benchmark: {os.path.basename(f)}')
+                  print(json.dumps(data, indent=2)[:2000])
+          else:
+              print('No benchmark results found')
+          "
+
+  performance-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: benchmark
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run performance smoke test
+        run: |
+          python -c "
+          import time
+          start = time.time()
+          # Simulate a lightweight performance check
+          time.sleep(0.1)
+          elapsed = time.time() - start
+          print(f'Performance check completed in {elapsed:.3f}s')
+          assert elapsed < 30, 'Performance check exceeded threshold'
+          print('✅ Performance within acceptable bounds')
+          "

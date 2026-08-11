@@ -1,0 +1,24 @@
+# Default owners for the entire repository
+* @shadowkingaftab
+
+# Core orchestration and liquid intelligence
+/core/ @shadowkingaftab
+/liquid_core/ @shadowkingaftab
+/models/ @shadowkingaftab
+
+# Memory and learning systems
+/memory/ @shadowkingaftab
+/training/ @shadowkingaftab
+
+# Multi-modal and hardware layers
+/multi_modal/ @shadowkingaftab
+/hardware/ @shadowkingaftab
+
+# Deployment and CI/CD
+/.github/ @shadowkingaftab
+/Dockerfile @shadowkingaftab
+/docker-compose.yml @shadowkingaftab
+
+# Documentation
+/docs/ @shadowkingaftab
+/README.md @shadowkingaftab

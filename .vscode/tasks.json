@@ -1,0 +1,68 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Install Python Dependencies",
+      "type": "shell",
+      "command": "pip install -r requirements.txt",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": "pytest tests/ -v",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Lint",
+      "type": "shell",
+      "command": "flake8 core/ liquid_core/ memory/ multi_modal/ hardware/ execution/ utils/ federated/ --count --select=E9,F63,F7,F82 --show-source --statistics",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Format Code (Black)",
+      "type": "shell",
+      "command": "black core/ liquid_core/ memory/ multi_modal/ hardware/ execution/ utils/ federated/",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Streamlit App",
+      "type": "shell",
+      "command": "streamlit run streamlit_app.py",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Train Classifier",
+      "type": "shell",
+      "command": "python training/train_classifier.py --epochs 5 --eval",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Benchmarks",
+      "type": "shell",
+      "command": "python scripts/benchmark.py",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build Docker",
+      "type": "shell",
+      "command": "docker-compose up --build",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Typecheck (mypy)",
+      "type": "shell",
+      "command": "mypy core/ liquid_core/ memory/ multi_modal/ --ignore-missing-imports",
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}

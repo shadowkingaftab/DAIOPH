@@ -1,0 +1,16 @@
+{
+  "name": "DAIOPH Desktop",
+  "id": "com.daiph.desktop",
+  "version": "1.0.0",
+  "description": "DAIOPH Edge AI Desktop Client",
+  "author": "DAIOPH",
+  "icon": "icon.svg",
+  "permissions": [
+    "microphone",
+    "camera",
+    "storage",
+    "network"
+  ],
+  "main": "../src/main.py",
+  "dependencies": {}
+}

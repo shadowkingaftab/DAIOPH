@@ -1,0 +1,92 @@
+{
+  "Python Class": {
+    "prefix": "class",
+    "body": [
+      "class ${1:ClassName}:",
+      "    \"\"\"${2:Docstring for the class.}\"\"\"",
+      "",
+      "    def __init__(self, ${3:arg}):",
+      "        \"\"\"Initialize the class.\"\"\"",
+      "        self.${3:arg} = ${3:arg}",
+      ""
+    ],
+    "description": "Create a Python class"
+  },
+  "Python Method": {
+    "prefix": "def",
+    "body": [
+      "def ${1:method_name}(self, ${2:arg}):",
+      "    \"\"\"${3:Docstring for the method.}\"\"\"",
+      "    ${4:pass}",
+      ""
+    ],
+    "description": "Create a Python method"
+  },
+  "Python Function": {
+    "prefix": "func",
+    "body": [
+      "def ${1:function_name}(${2:arg}):",
+      "    \"\"\"${3:Docstring for the function.}\"\"\"",
+      "    ${4:pass}",
+      ""
+    ],
+    "description": "Create a Python function"
+  },
+  "Python Main Guard": {
+    "prefix": "main",
+    "body": [
+      "if __name__ == \"__main__\":",
+      "    ${1:main()}",
+      ""
+    ],
+    "description": "Add main guard"
+  },
+  "Python Import": {
+    "prefix": "imp",
+    "body": [
+      "import ${1:module}",
+      ""
+    ],
+    "description": "Import a module"
+  },
+  "Python Try Except": {
+    "prefix": "try",
+    "body": [
+      "try:",
+      "    ${1:pass}",
+      "except ${2:Exception} as e:",
+      "    ${3:print(f\"Error: {e}\")}",
+      ""
+    ],
+    "description": "Try-except block"
+  },
+  "Python Type Hint": {
+    "prefix": "typehint",
+    "body": [
+      "${1:var}: ${2:type} = ${3:value}",
+      ""
+    ],
+    "description": "Type-hinted variable"
+  },
+  "Python Dataclass": {
+    "prefix": "dataclass",
+    "body": [
+      "@dataclass",
+      "class ${1:ClassName}:",
+      "    \"\"\"${2:Docstring.}\"\"\"",
+      "    ${3:field}: ${4:type}",
+      ""
+    ],
+    "description": "Create a dataclass"
+  },
+  "Python Async Function": {
+    "prefix": "async",
+    "body": [
+      "async def ${1:function_name}(${2:arg}):",
+      "    \"\"\"${3:Docstring.}\"\"\"",
+      "    ${4:pass}",
+      ""
+    ],
+    "description": "Create an async function"
+  }
+}

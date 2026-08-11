@@ -1,0 +1,27 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.black-formatter",
+    "ms-python.flake8",
+    "ms-python.mypy-type-checker",
+    "ms-python.isort",
+    "charliermarsh.ruff",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "dbaeumer.vscode-eslint",
+    "streetsidesoftware.code-spell-checker",
+    "eamodio.gitlens",
+    "github.vscode-github-actions",
+    "yzhang.markdown-all-in-one",
+    "tamasfe.even-better-toml",
+    "redhat.vscode-yaml",
+    "ms-azuretools.vscode-docker",
+    "ms-python.debugpy",
+    "njpwerner.autodocstring",
+    "aaron-bond.better-comments"
+  ],
+  "unwantedRecommendations": [
+    "ms-python.python-extension-pack"
+  ]
+}

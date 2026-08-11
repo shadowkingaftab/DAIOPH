@@ -1,0 +1,61 @@
+name: Lint
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  python-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install linters
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 ruff black isort
+
+      - name: Run ruff
+        run: ruff check . --output-format=github || true
+
+      - name: Run flake8
+        run: flake8 core/ liquid_core/ memory/ multi_modal/ hardware/ execution/ utils/ federated/ --count --select=E9,F63,F7,F82 --show-source --statistics || true
+
+      - name: Check formatting (black)
+        run: black --check core/ liquid_core/ memory/ multi_modal/ --diff || true
+
+      - name: Check import sorting (isort)
+        run: isort --check-only --diff core/ liquid_core/ memory/ multi_modal/ || true
+
+  yaml-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate YAML configs
+        run: |
+          python -m pip install pyyaml
+          python -c "
+          import yaml, glob, sys
+          files = glob.glob('configs/*.yaml') + glob.glob('.github/workflows/*.yml')
+          for f in files:
+              try:
+                  with open(f) as fh:
+                      yaml.safe_load(fh)
+                  print(f'OK: {f}')
+              except Exception as e:
+                  print(f'FAIL: {f} - {e}')
+                  sys.exit(1)
+          "

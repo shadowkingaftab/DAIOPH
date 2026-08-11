@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      python: ${{ steps.filter.outputs.python }}
+      node: ${{ steps.filter.outputs.node }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            python:
+              - '**/*.py'
+              - 'requirements.txt'
+              - 'pyproject.toml'
+            node:
+              - 'corsair-plugin-edge-ai/**'
+              - '**/package.json'
+
+  python-ci:
+    needs: changes
+    if: needs.changes.outputs.python == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Verify imports
+        run: |
+          python -c "import sys; print(f'Python {sys.version}')"
+          python check_libs.py || true
+
+      - name: Run quick smoke test
+        run: |
+          python -c "
+          from core.hybrid_orchestrator import HybridOrchestrator
+          print('HybridOrchestrator importable')
+          "
+
+  node-ci:
+    needs: changes
+    if: needs.changes.outputs.node == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: corsair-plugin-edge-ai
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: corsair-plugin-edge-ai/package-lock.json
+      - run: npm ci
+      - run: npm run build --if-present
