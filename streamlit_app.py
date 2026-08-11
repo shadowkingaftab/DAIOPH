@@ -743,17 +743,7 @@ with tab1:
                         "intent": intent  # --- NEW: Log intent ---
                     })
                     logger.log(log_entry)
-                except Exception as e:
-                    end_time = datetime.now()
-                    log_entry.update({
-                        "status": "failed",
-                        "end_time": end_time.strftime("%Y-%m-%d %H:%M:%S.%f"),
-                        "duration": str(end_time - start_time),
-                        "error": str(e)
-                    })
-                    logger.log(log_entry)
-                    st.error(f"An error occurred while processing the prompt: {e}")
-                else:
+
                     # ── Detected Language badge ──────────────────────────────────────────
                     detected_lang = results.get("detected_language", dag.get("language", "en"))
                     lang_names = {"en": "English", "hi": "Hindi", "es": "Spanish", "fr": "French",
