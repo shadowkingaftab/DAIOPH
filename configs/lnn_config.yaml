@@ -1,0 +1,4 @@
+# Placeholder configuration for liquid neural networks
+models:
+  default: "qwen2-0.5b"
+  max_layers: 8

@@ -33,6 +33,10 @@ except Exception as e:
     print(f"Warning: PromptGenerator unavailable: {e}")
     PROMPT_GEN_AVAILABLE = False
 
+# --- NEW: LiquidEngine Import ---
+from liquid_core.liquid_engine import LiquidEngine
+# --- END NEW ---
+
 try:
     from utils.pdf_parser import extract_text_from_pdf, get_pdf_images
     PDF_PARSER_AVAILABLE = True
@@ -164,20 +168,19 @@ def ensure_local_model():
 @st.cache_resource(show_spinner="Loading AI Models (This happens once to save memory)...")
 def load_models():
     # Only instantiated once across all Streamlit reruns
-    
     if not ORCHESTRATOR_AVAILABLE:
         return None, None
-    
+
     # Check if we should even try to load the local model
     # On Streamlit Cloud, we might want to be more conservative
     has_local = ensure_local_model()
-    
+
     orch = HybridOrchestrator(
         distilbert_path="distilbert-base-uncased",
         qwen_path=MODEL_PATH,
         grok_api_key=None
     )
-    
+
     # Share the Qwen instance to cut RAM usage in half
     shared_llm = getattr(orch.executor, 'qwen', None)
     if PROMPT_GEN_AVAILABLE:
@@ -190,6 +193,10 @@ def load_models():
     return orch, pg
 
 orchestrator, prompt_generator = load_models()
+
+# --- NEW: Initialize Liquid Engine ---
+liquid_engine = LiquidEngine()
+# --- END NEW ---
 
 # Inject grok api key dynamically to avoid invalidating the cache
 if grok_api_key and orchestrator:
@@ -214,7 +221,7 @@ with st.sidebar:
         st.success("☁️ **Running on Streamlit Cloud**")
     else:
         st.info("💻 **Running Locally**")
-    
+
     st.markdown("### 🔄 Route → Model")
     st.markdown("""
     | **Route**   | **Primary Model**       | **Fallback**       |
@@ -247,14 +254,13 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "✨ Generate Prompts"
 ])
 
-
 # ── Colorful DAG with tooltips ─────────────────────────────────────────────────
 def show_dag(dag):
     """Render a colorful Graphviz DAG. Green=ODA, Gold=Cloud, LightBlue=Hybrid, Red=Error."""
     if not graphviz:
         st.json(dag.get("dag", dag))
         return
-    
+
     color_map = {
         "ODA":    "#2ecc71",      # Green
         "Cloud":  "#f1c40f",      # Gold
@@ -305,7 +311,6 @@ def show_dag(dag):
     </div>
     """, unsafe_allow_html=True)
 
-
 def _render_task_result(task_id: str, result):
     """
     Render a single task result in the Streamlit UI.
@@ -355,606 +360,3 @@ def _render_task_result(task_id: str, result):
             st.markdown(result)
         else:
             st.caption("*(empty output)*")
-    else:
-        st.write(result)
-
-
-# --- Session State Initialization ---
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-if "uploaded_file" not in st.session_state:
-    st.session_state.uploaded_file = None
-if "trigger_execution" not in st.session_state:
-    st.session_state.trigger_execution = False
-if "current_pdf_text" not in st.session_state:
-    st.session_state.current_pdf_text = None
-
-# --- Tab 1: Classify & Execute ---
-with tab1:
-    st.markdown("### Classify & Execute a Prompt")
-    st.info("DistilBERT splits prompts into tasks, then executes them using the selected route (ODA/Hybrid/Cloud). Supports multi-language input.")
-
-    # Example prompts dropdown
-    EXAMPLE_PROMPTS = [
-        "Custom (type below)",
-        "First, summarize this document. Then, extract 3 key points. Finally, write a tweet about it.",
-        "Analyze the main themes and then compare them with modern AI trends.",
-        "Explain edge AI, then list its advantages over cloud AI.",
-        "पहले इस पाठ का सारांश दें। फिर मुख्य विचार बताएं।",  # Hindi
-        "Primero resume el texto. Luego explica los puntos clave.",  # Spanish
-        # ── Diagram examples ──────────────────────────────────────────────────
-        "Create a workflow diagram: Data Collection -> Preprocessing -> Model Training -> Evaluation -> Deployment",
-        "Draw a flowchart: User Request -> Edge AI Classification -> ODA Route -> Qwen Inference -> Response",
-        "Visualize the steps: Idea -> Design -> Develop -> Test -> Deploy -> Monitor",
-        # ── Image generation examples (requires Hybrid/Cloud + Replicate token) ─
-        "Generate a photorealistic image of a futuristic edge AI server room with glowing circuits",
-        "Create a realistic illustration of a robot working alongside humans in a smart factory",
-    ]
-
-    selected_example = st.selectbox("📚 Example Prompts (pick one or type your own):", EXAMPLE_PROMPTS)
-
-    route = st.selectbox(
-        "Select execution route:",
-        ["ODA (Qwen2-0.5B only)", "Hybrid (Qwen + Grok)", "Cloud LLM (Grok + Qwen fallback)"],
-        index=1
-    )
-
-    explain_mode = st.checkbox("🔍 Explain Mode", help="Show intermediate reasoning steps")
-
-    # --- Minimalist Chatbox (Exact Pill Design + Draggable) ---
-    import streamlit.components.v1 as components
-    components.html("""
-    <script>
-    const doc = window.parent.document;
-    
-    // Inject styles explicitly bypassing Streamlit's Markdown parser
-    if (!doc.getElementById('custom-chat-style')) {
-        const style = doc.createElement('style');
-        style.id = 'custom-chat-style';
-        style.innerHTML = `
-        .custom-chat-pill {
-            position: fixed !important;
-            bottom: 10% !important;
-            left: 15% !important;
-            width: 70% !important;
-            background: rgba(20, 20, 20, 0.95) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 24px !important;
-            padding: 8px 16px !important;
-            display: flex !important;
-            align-items: flex-end !important;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6) !important;
-            z-index: 99999 !important;
-            gap: 6px !important;
-            backdrop-filter: blur(10px) !important;
-            cursor: grab;
-            transition: box-shadow 0.2s ease;
-        }
-        .custom-chat-pill:active { cursor: grabbing; box-shadow: 0 5px 20px rgba(0,0,0,0.8) !important; }
-        
-        .custom-chat-pill-wrapper {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-        }
-        
-        /* Input */
-        .custom-chat-pill textarea {
-            background: transparent !important;
-            border: none !important;
-            padding: 10px !important;
-            color: #eeeeee !important;
-            font-size: 1.05rem !important;
-            width: 100% !important;
-            resize: none !important;
-            min-height: 44px !important;
-            box-shadow: none !important;
-        }
-        .custom-chat-pill textarea:focus { box-shadow: none !important; outline: none !important; border: none !important; }
-        .custom-chat-pill [data-baseweb="textarea"] { background: transparent !important; border: none !important; box-shadow: none !important; }
-        .custom-chat-pill [data-baseweb="base-input"] { background: transparent !important; border: none !important; box-shadow: none !important; }
-        .custom-chat-pill textarea::placeholder { color: #888 !important; }
-        
-        /* Buttons */
-        .mic-column button {
-            background: transparent !important;
-            border: none !important;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ODg4ODgiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTIgMmEzIDMgMCAwIDAtMyAzdjdhMyAzIDAgMCAwIDYgMFY1YTMgMyAwIDAgMC0zLTN6Ij48L3BhdGg+PHBhdGggZD0iTTE5IDEwdjJhNyA3IDAgMCAxLTE0IDB2LTIiPjwvcGF0aD48bGluZSB4MT0iMTIiIHkxPSIxOSIgeDI9IjEyIiB5Mj0iMjIiPjwvbGluZT48L3N2Zz4=') !important;
-            background-repeat: no-repeat !important;
-            background-position: center !important;
-            width: 36px !important;
-            height: 36px !important;
-            padding: 0 !important;
-            min-width: 36px !important;
-            cursor: pointer !important;
-            margin-bottom: 2px !important;
-        }
-        .mic-column button * { display: none !important; }
-        .mic-column button:hover { background: rgba(255, 255, 255, 0.1) !important; border-radius: 8px !important; }
-        
-        .send-column button {
-            background: #2a2a2a !important;
-            border: none !important;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGxpbmUgeDE9IjEyIiB5MT0iMTkiIHgyPSIxMiIgeTI9IjUiPjwvbGluZT48cG9seWxpbmUgcG9pbnRzPSI1IDEyIDEyIDUgMTkgMTIiPjwvcG9seWxpbmU+PC9zdmc+') !important;
-            background-repeat: no-repeat !important;
-            background-position: center !important;
-            width: 36px !important;
-            height: 36px !important;
-            padding: 0 !important;
-            min-width: 36px !important;
-            cursor: pointer !important;
-            border-radius: 8px !important;
-            margin-bottom: 2px !important;
-        }
-        .send-column button * { display: none !important; }
-        .send-column button:hover { background-color: #444 !important; }
-        
-        /* Show send button only when typing */
-        .custom-chat-pill .send-column { display: none !important; }
-        .custom-chat-pill:has(textarea:not(:placeholder-shown)) .send-column { display: flex !important; }
-        
-        /* Plus / File Uploader */
-        .custom-chat-pill [data-testid="stFileUploader"] {
-            width: 36px !important; height: 36px !important; margin-bottom: 2px !important;
-        }
-        .custom-chat-pill [data-testid="stFileUploaderDropzone"] {
-            background: transparent !important; border: 1px solid rgba(255,255,255,0.15) !important; border-radius: 8px !important;
-            width: 36px !important; height: 36px !important; min-height: 36px !important; padding: 0 !important;
-            position: relative !important; cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important;
-        }
-        .custom-chat-pill [data-testid="stFileUploaderDropzone"]:hover { background: rgba(255,255,255,0.05) !important; }
-        .custom-chat-pill [data-testid="stFileUploaderDropzone"] * { display: none !important; }
-        .custom-chat-pill [data-testid="stFileUploaderDropzone"]::before {
-            content: ""; position: absolute; width: 16px; height: 16px;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM4ODg4ODgiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48bGluZSB4MT0iMTIiIHkxPSI1IiB4Mj0iMTIiIHkyPSIxOSI+PC9saW5lPjxsaW5lIHgxPSI1IiB5MT0iMTIiIHgyPSIxOSIgeTI9IjEyIj48L2xpbmU+PC9zdmc+');
-            background-repeat: no-repeat; background-position: center;
-        }
-        
-        .chat-messages-wrap { padding-bottom: 120px; }
-        
-        /* Message Bubbles - add them back since we replaced the block */
-        .user-message {
-            background: rgba(76, 151, 240, 0.8);
-            color: white; padding: 10px 14px; border-radius: 8px; margin: 8px 0; max-width: 70%; float: right; clear: both;
-        }
-        .bot-message {
-            background: rgba(255, 255, 255, 0.1);
-            color: white; padding: 10px 14px; border-radius: 8px; margin: 8px 0; max-width: 70%; float: left; clear: both;
-        }
-        `;
-        doc.head.appendChild(style);
-    }
-    
-    // Find elements and apply JS logic
-    function initDraggablePill() {
-        const anchors = doc.querySelectorAll('.minimalist-chat-anchor');
-        if(anchors.length > 0) {
-            const anchor = anchors[anchors.length - 1];
-            const vert = anchor.closest('div[data-testid="stVerticalBlock"]');
-            if(vert) {
-                vert.classList.add('custom-chat-pill-wrapper');
-                const horiz = vert.querySelector('div[data-testid="stHorizontalBlock"]');
-                if(horiz && !horiz.classList.contains('custom-chat-pill')) {
-                    horiz.classList.add('custom-chat-pill');
-                    const cols = horiz.querySelectorAll('div[data-testid="column"], div[data-testid="stColumn"]');
-                    if(cols.length >= 4) {
-                        cols[2].classList.add('mic-column');
-                        cols[3].classList.add('send-column');
-                    }
-                    
-                    let isDragging = false;
-                    let currentX, currentY, initialX, initialY;
-                    let xOffset = parseFloat(sessionStorage.getItem('chatX')) || 0;
-                    let yOffset = parseFloat(sessionStorage.getItem('chatY')) || 0;
-                    
-                    if (xOffset !== 0 || yOffset !== 0) {
-                        horiz.style.transform = `translate3d(${xOffset}px, ${yOffset}px, 0)`;
-                    }
-                    
-                    horiz.addEventListener('mousedown', (e) => {
-                        // Prevent drag on inputs/buttons
-                        if(e.target.tagName.toLowerCase() === 'textarea' || e.target.closest('button') || e.target.closest('[data-testid="stFileUploader"]')) return;
-                        initialX = e.clientX - xOffset;
-                        initialY = e.clientY - yOffset;
-                        isDragging = true;
-                    });
-                    
-                    doc.addEventListener('mouseup', () => { isDragging = false; });
-                    doc.addEventListener('mousemove', (e) => {
-                        if(isDragging) {
-                            e.preventDefault();
-                            currentX = e.clientX - initialX;
-                            currentY = e.clientY - initialY;
-                            xOffset = currentX;
-                            yOffset = currentY;
-                            horiz.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
-                            sessionStorage.setItem('chatX', currentX);
-                            sessionStorage.setItem('chatY', currentY);
-                        }
-                    });
-
-                    // Auto-expand textarea
-                    const textarea = horiz.querySelector('textarea');
-                    if(textarea) {
-                        textarea.addEventListener('input', function() {
-                            this.style.height = '44px';
-                            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
-                            if(this.scrollHeight > 150) {
-                                this.style.overflowY = 'auto';
-                            } else {
-                                this.style.overflowY = 'hidden';
-                            }
-                        });
-                        
-                        // Submit on enter without shift
-                        textarea.addEventListener('keydown', function(e) {
-                            if(e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                const sendBtn = horiz.querySelector('.send-column button');
-                                if(sendBtn) sendBtn.click();
-                            }
-                        });
-                    }
-                }
-            }
-        }
-    }
-    
-    setInterval(initDraggablePill, 500);
-    </script>
-    """, height=0)
-
-    # --- Chat Messages ---
-    st.markdown('<div class="chat-messages-wrap">', unsafe_allow_html=True)
-    for message in st.session_state.messages:
-        if message["role"] == "user":
-            st.markdown(f"""
-            <div class="user-message">
-                {message["content"]}
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown(f"""
-            <div class="bot-message">
-                {message["content"]}
-            </div>
-            """, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # --- Chatbox Input (Fixed at Bottom) ---
-    chat_container = st.container()
-    
-    with chat_container:
-        st.markdown('<div class="minimalist-chat-anchor"></div>', unsafe_allow_html=True)
-        col1, col2, col3, col4 = st.columns([0.6, 12, 0.7, 0.7], gap="small")
-
-        with col1:
-            uploaded_file = st.file_uploader(
-                "+",
-                type=["pdf", "jpg", "png", "jpeg"],
-                key="chat_file_uploader",
-                label_visibility="collapsed"
-            )
-            if uploaded_file:
-                st.session_state.uploaded_file = uploaded_file
-
-        if "input_key" not in st.session_state:
-            st.session_state.input_key = "chat_input_0"
-            
-        with col2:
-            user_input = st.text_area(
-                "Type / for quick access",
-                key=st.session_state.input_key,
-                label_visibility="collapsed",
-                placeholder="Type / for quick access",
-                height=44
-            )
-                            
-        with col3:
-            if st.button("M", key="mic_button", use_container_width=False):
-                with st.spinner("Listening..."):
-                    if sr:
-                        r = sr.Recognizer()
-                        with sr.Microphone() as source:
-                            try:
-                                audio = r.listen(source, timeout=10)
-                                user_input = r.recognize_google(audio)
-                            except:
-                                user_input = None
-        with col4:
-            send_pressed = st.button("S", key="send_button", use_container_width=False)
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    if user_input or send_pressed or st.session_state.get("uploaded_file"):
-        # Use user_input as the trigger for submission. If only file is uploaded, wait for text.
-        if user_input:
-            st.session_state.current_pdf_text = None
-            if st.session_state.get("uploaded_file"):
-                file = st.session_state.uploaded_file
-                if file.type.startswith("image/"):
-                    try:
-                        image = PILImage.open(file)
-                        img_text = pytesseract.image_to_string(image) if pytesseract else ""
-                        st.session_state.messages.append({"role": "user", "content": f"![Uploaded Image]({file.name})\n\n{img_text}\n\n{user_input}", "type": "image"})
-                    except:
-                        st.session_state.messages.append({"role": "user", "content": f"![Uploaded Image]({file.name})\n\n{user_input}", "type": "image"})
-                elif file.type == "application/pdf":
-                    pdf_path = f"temp_{file.name}"
-                    with open(pdf_path, "wb") as f: f.write(file.getbuffer())
-                    st.session_state.current_pdf_text = extract_text_from_pdf(pdf_path)
-                    st.session_state.messages.append({"role": "user", "content": f"[Uploaded PDF: {file.name}]\n\n{user_input}", "type": "pdf"})
-                st.session_state.uploaded_file = None
-            else:
-                st.session_state.messages.append({"role": "user", "content": user_input, "type": "text"})
-            
-            import random
-            st.session_state.input_key = f"chat_input_{random.randint(0, 100000)}"
-            st.session_state.trigger_execution = True
-            st.rerun()
-
-    pdf_text = st.session_state.current_pdf_text
-    user_prompt = st.session_state.messages[-1]["content"] if st.session_state.get("messages") and st.session_state.messages[-1]["role"] == "user" else None
-
-    if st.session_state.trigger_execution:
-        st.session_state.trigger_execution = False
-        if not user_prompt:
-            st.warning("Please enter a prompt.")
-        elif not orchestrator:
-            st.error("❌ Orchestrator not available. Please check your dependencies.")
-        else:
-            with st.spinner("🧠 Processing your prompt..."):
-                start_time = datetime.now()
-                log_entry = {
-                    "timestamp": start_time.strftime("%Y-%m-%d %H:%M:%S.%f"),
-                    "prompt": user_prompt,
-                    "route": route.split(" ")[0],
-                    "status": "started",
-                    "model": f"{route} (DistilBERT + Qwen/Grok)"
-                }
-                logger.log(log_entry)
-
-                route_map = {
-                    "ODA (Qwen2-0.5B only)": "ODA",
-                    "Hybrid (Qwen + Grok)": "Hybrid",
-                    "Cloud LLM (Grok + Qwen fallback)": "Cloud"
-                }
-                try:
-                    dag, results = orchestrator.execute(user_prompt, pdf_text, route_map[route])
-                except Exception as e:
-                    st.error(f"Execution error: {e}")
-                    dag, results = {"dag": {"nodes": []}}, {}
-
-                end_time = datetime.now()
-                log_entry.update({
-                    "status": "completed",
-                    "end_time": end_time.strftime("%Y-%m-%d %H:%M:%S.%f"),
-                    "duration": str(end_time - start_time),
-                    "dag": dag,
-                    "results": results
-                })
-                logger.log(log_entry)
-
-                # ── Detected Language badge ──────────────────────────────────────────
-                detected_lang = results.get("detected_language", dag.get("language", "en"))
-                lang_names = {"en": "English", "hi": "Hindi", "es": "Spanish", "fr": "French",
-                              "de": "German", "ar": "Arabic", "zh": "Chinese", "ja": "Japanese"}
-                lang_label = lang_names.get(detected_lang, detected_lang.upper())
-                st.info(f"🌍 Detected Language: **{lang_label}**")
-
-                # ── PRIMARY: Synthesized Final Answer ────────────────────────────────
-                final_output = results.get("final_output", "")
-                if final_output:
-                    st.markdown("""
-                    <div style="background:linear-gradient(135deg,rgba(76,201,240,0.08),rgba(123,47,190,0.08));
-                                border:1px solid rgba(76,201,240,0.25);border-radius:1rem;
-                                padding:1.2rem 1.5rem;margin:0.8rem 0">
-                        <div style="font-size:0.8rem;font-weight:700;color:#4CC9F0;
-                                    letter-spacing:0.05em;margin-bottom:0.6rem">
-                            🤖 SYNTHESIZED ANSWER
-                        </div>
-                    """, unsafe_allow_html=True)
-                    st.markdown(final_output)
-                    st.markdown("</div>", unsafe_allow_html=True)
-                else:
-                    st.warning("No output was generated. Check that at least one model route is available.")
-
-                # ── Task Breakdown (expandable) ───────────────────────────────────────
-                task_results = {k: v for k, v in results.items()
-                                if k not in ("final_output", "times", "retry_counts",
-                                             "detected_language")}
-                n_tasks = len(dag.get("dag", dag).get("nodes", []))
-                with st.expander(f"🔍 View Task Breakdown ({n_tasks} task{'s' if n_tasks != 1 else ''})", expanded=False):
-                    st.markdown("#### 🔗 Task DAG")
-                    show_dag(dag)
-
-                    if task_results:
-                        st.markdown("#### 📋 Individual Task Outputs")
-                        for task_id, result in task_results.items():
-                            with st.expander(f"Task `{task_id}`"):
-                                _render_task_result(task_id, result)
-
-                # ── Explain Mode ───────────────────────────────────────────────────
-                if explain_mode:
-                    st.markdown("#### 🔍 Reasoning Steps (Explain Mode)")
-                    nodes = dag.get("dag", dag).get("nodes", [])
-                    for node in nodes:
-                        with st.expander(f"Task `{node['id']}`: {node['task'][:60]}…"):
-                            st.write(f"**Route:** {node.get('route', 'Hybrid')}")
-                            st.write(f"**Depends on:** {node.get('depends_on', [])}")
-                            raw_out = results.get(node['id'], 'N/A')
-                            st.write(f"**Raw Output:** {raw_out}")
-
-                # ── Time Comparison ─────────────────────────────────────────────────
-                times = results.get("times", {})
-                if times:
-                    st.markdown("#### ⏱️ Time Comparison: Edge AI vs Traditional")
-                    tc1, tc2, tc3 = st.columns(3)
-                    with tc1:
-                        st.metric("Traditional (Sequential)", f"{times.get('traditional', 0):.2f}s",
-                                  help="Estimated time if all tasks ran sequentially on a single cloud model")
-                    with tc2:
-                        st.metric("Edge AI (Parallel)", f"{times.get('edge_ai', 0):.2f}s",
-                                  help="Actual time with DAG-parallel execution + synthesis")
-                    with tc3:
-                        savings = times.get('savings_percent', 0)
-                        delta_str = f"{abs(savings):.1f}% {'faster' if savings >= 0 else 'slower'}"
-                        st.metric("Time Saved", delta_str,
-                                  delta=f"{savings:.1f}%" if savings >= 0 else None)
-                
-                # Save the final output to the chat history
-                st.session_state.messages.append({
-                    "role": "bot",
-                    "content": final_output or "No output generated.",
-                    "type": "text"
-                })
-
-                # ── Retry Statistics ─────────────────────────────────────────────────
-                retry_counts = results.get("retry_counts", {})
-                if retry_counts:
-                    st.markdown("#### 🔄 Retry Statistics")
-                    for task_id, count in retry_counts.items():
-                        st.warning(f"Task `{task_id}` required **{count} retr{'y' if count==1 else 'ies'}** before succeeding.")
-
-                # ── PDF Image Preview ────────────────────────────────────────────────
-                if pdf_path:
-                    with st.expander("🖼️ PDF Image Preview"):
-                        images = get_pdf_images(pdf_path)
-                        if images:
-                            for i, img in enumerate(images[:5]):
-                                st.image(img, caption=f"Page {i+1}", use_column_width=True)
-                        else:
-                            st.info("No images found or pdf2image not installed.")
-
-# --- Tab 2: Analytics ---
-with tab2:
-    st.markdown("### 📊 Execution Analytics")
-    logs = logger.get_logs()
-    if not logs:
-        st.warning("No execution data yet. Run some prompts first!")
-    else:
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            st.metric("Total Prompts", len(logs))
-        with col2:
-            avg_time = sum(
-                (datetime.strptime(log["end_time"], "%Y-%m-%d %H:%M:%S.%f") -
-                 datetime.strptime(log["start_time"], "%Y-%m-%d %H:%M:%S.%f")).total_seconds()
-                for log in logs
-            ) / len(logs)
-            st.metric("Avg Execution Time", f"{avg_time:.2f}s")
-        with col3:
-            success_rate = sum(1 for log in logs if log["status"] == "completed") / len(logs) * 100
-            st.metric("Success Rate", f"{success_rate:.1f}%")
-        with col4:
-            route_counts = pd.Series([log["route"] for log in logs]).value_counts()
-            st.metric("Most Used Route", route_counts.index[0] if len(route_counts) > 0 else "None")
-
-        st.markdown("#### ⏱️ Execution Time Over Time")
-        data = []
-        for log in logs:
-            start = datetime.strptime(log["start_time"], "%Y-%m-%d %H:%M:%S.%f")
-            end = datetime.strptime(log["end_time"], "%Y-%m-%d %H:%M:%S.%f")
-            duration = (end - start).total_seconds()
-            data.append({"Time": start, "Duration (s)": duration, "Route": log["route"]})
-        df = pd.DataFrame(data)
-        st.line_chart(df.set_index("Time"))
-
-        st.markdown("#### 📈 Route Usage")
-        route_counts = pd.Series([log["route"] for log in logs]).value_counts()
-        st.bar_chart(route_counts)
-
-# --- Tab 3: Logs ---
-with tab3:
-    st.markdown("### 📜 Execution Logs")
-    logs = logger.get_logs()
-    if not logs:
-        st.warning("No logs yet. Execute some prompts first!")
-    else:
-        route_filter = st.selectbox("Filter by route:", ["All", "ODA", "Hybrid", "Cloud"])
-        filtered_logs = [log for log in logs if route_filter == "All" or log["route"] == route_filter]
-
-        for log in reversed(filtered_logs):
-            with st.expander(f"📅 {log['timestamp']} | Route: {log['route']} | Status: {log['status']}"):
-                st.markdown(f"**Prompt:** {log['prompt']}")
-                st.markdown(f"**Model:** {log['model']}")
-                st.markdown(f"**Duration:** {log['duration']}")
-                if "dag" in log:
-                    st.json(log["dag"])
-                if "results" in log:
-                    st.json(log["results"])
-
-# --- Tab 4: ODA Insights ---
-with tab4:
-    st.markdown("### 🔍 ODA (On-Device AI) Insights")
-    oda_logs = [log for log in logger.get_logs() if log["route"] == "ODA"]
-    if not oda_logs:
-        st.warning("No ODA executions yet. Use the 'ODA' route to test local Qwen2-0.5B.")
-    else:
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("ODA Executions", len(oda_logs))
-        with col2:
-            oda_avg_time = sum(
-                (datetime.strptime(log["end_time"], "%Y-%m-%d %H:%M:%S.%f") -
-                 datetime.strptime(log["start_time"], "%Y-%m-%d %H:%M:%S.%f")).total_seconds()
-                for log in oda_logs
-            ) / len(oda_logs)
-            st.metric("ODA Avg Time", f"{oda_avg_time:.2f}s")
-        with col3:
-            oda_success_rate = sum(1 for log in oda_logs if log["status"] == "completed") / len(oda_logs) * 100
-            st.metric("ODA Success Rate", f"{oda_success_rate:.1f}%")
-
-        st.markdown("#### ⚡ ODA Performance Over Time")
-        oda_data = []
-        for log in oda_logs:
-            start = datetime.strptime(log["start_time"], "%Y-%m-%d %H:%M:%S.%f")
-            end = datetime.strptime(log["end_time"], "%Y-%m-%d %H:%M:%S.%f")
-            duration = (end - start).total_seconds()
-            oda_data.append({"Time": start, "Duration (s)": duration})
-        oda_df = pd.DataFrame(oda_data)
-        st.line_chart(oda_df.set_index("Time"))
-
-# --- Tab 5: Generate Prompts ---
-with tab5:
-    st.markdown("### ✨ Generate Test Prompts")
-    st.info("Use Qwen2-0.5B (on-device) to generate prompts showcasing orchestration.")
-
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        num_prompts = st.number_input("Number of prompts to generate:", min_value=1, max_value=5, value=1)
-    with col2:
-        route = st.selectbox("Route for generated prompts:", ["ODA", "Hybrid", "Cloud"])
-
-    if st.button("🎲 Generate Prompts", use_container_width=True):
-        with st.spinner("Generating..."):
-            prompts = [prompt_generator.generate() for _ in range(num_prompts)]
-            for i, prompt in enumerate(prompts, 1):
-                st.markdown(f"#### 📝 Prompt {i}")
-                st.success(prompt)
-                if st.button(f"⚡ Execute Prompt {i}", key=f"exec_{i}"):
-                    with st.spinner(f"Executing prompt {i}..."):
-                        dag, results = orchestrator.execute(prompt, None, route)
-                        st.json(dag)
-                        st.json(results)
-
-# Fixed critical bugs in streamlit_app.py
-
-# Tested routes
-
-# Preload models at startup for faster execution
-
-# Add loading spinners for better UX
-
-# Add progress bars for task execution
-
-# Add explain mode for transparency
-
-# Add dark mode toggle for better UX
-
-# Add DAG visualization for task dependencies
-
-# Add execution metrics dashboard
-
-# Add example prompts for quick testing

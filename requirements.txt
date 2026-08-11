@@ -37,3 +37,8 @@ numpy
 # have been intentionally removed to keep memory under 1GB on Streamlit Cloud.
 # The chatbot_app.py uses llama-cpp-python + Grok API only (no PyTorch needed).
 # Also removed pandas and pytesseract to avoid compatibility issues
+scikit-learn>=1.2.0
+joblib>=1.2.0
+# sqlite3 is part of the Python stdlib; do not install via pip
+whisper>=1.0.0
+pydub>=0.25.1

@@ -1,0 +1,4 @@
+# Placeholder privacy configuration
+privacy:
+  differential_privacy: false
+  epsilon: 0.5
