@@ -88,5 +88,6 @@
     "multimodal",
     "orchestrator",
     "liquid"
-  ]
+  ],
+  "alibabacloud-openapi.vscode-alicloud-api.displayLanguage": "English"
 }
