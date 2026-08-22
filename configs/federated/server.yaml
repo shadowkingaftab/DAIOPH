@@ -1,1 +1,51 @@
+# DAIOPH Federated Learning Server Configuration
+server:
+  host: 0.0.0.0
+  port: 50051
+  max_workers: 10
 
+rounds:
+  min_clients: 3
+  max_clients: 100
+  round_timeout_seconds: 300
+  max_rounds: 1000
+  min_available_clients: 3
+
+aggregation:
+  strategy: fedavg
+  weighted_by_data_size: true
+  momentum: 0.9
+
+validation:
+  enabled: true
+  min_accuracy_threshold: 0.5
+  outlier_detection: true
+  outlier_threshold_std: 3.0
+
+privacy:
+  differential_privacy:
+    enabled: true
+    epsilon: 1.0
+    delta: 0.00001
+    noise_multiplier: 1.1
+
+  secure_aggregation:
+    enabled: true
+    min_clients: 3
+
+reputation:
+  enabled: true
+  initial_score: 0.5
+  decay_factor: 0.95
+  min_score_threshold: 0.3
+
+poisoning_detection:
+  enabled: true
+  method: norm_clipping
+  max_update_norm: 10.0
+  cosine_similarity_threshold: 0.5
+
+storage:
+  checkpoint_dir: /data/federated/checkpoints
+  save_every_rounds: 10
+  max_checkpoints: 5

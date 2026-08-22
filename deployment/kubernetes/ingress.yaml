@@ -1,1 +1,35 @@
-
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: daioph-ingress
+  namespace: daioph
+  labels:
+    app.kubernetes.io/name: daioph
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - daioph.example.com
+      secretName: daioph-tls
+  rules:
+    - host: daioph.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: daioph-api
+                port:
+                  number: 8000
+          - path: /memory
+            pathType: Prefix
+            backend:
+              service:
+                name: daioph-memory
+                port:
+                  number: 8001

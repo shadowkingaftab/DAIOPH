@@ -1,1 +1,43 @@
+# DAIOPH Development Configuration
+mode: development
+debug: true
+log_level: debug
 
+server:
+  host: 0.0.0.0
+  port: 8000
+  workers: 1
+  reload: true
+
+database:
+  url: sqlite:///./data/dev.db
+  echo: true
+
+redis:
+  url: redis://localhost:6379/0
+  enabled: false
+
+memory:
+  short_term:
+    max_size: 1000
+    ttl: 3600
+  episodic:
+    enabled: true
+    storage_path: ./data/episodic
+  semantic:
+    enabled: true
+    storage_path: ./data/semantic
+
+models:
+  default_provider: local
+  cache_dir: ./data/models
+  auto_download: true
+
+security:
+  encryption_enabled: false
+  sandbox_enabled: false
+
+features:
+  federated_learning: false
+  multimodal: true
+  hardware_adaptation: true

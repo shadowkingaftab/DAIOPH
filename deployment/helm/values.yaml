@@ -1,1 +1,97 @@
+# Default values for daioph Helm chart
 
+replicaCount: 3
+
+image:
+  repository: daioph/api
+  pullPolicy: IfNotPresent
+  tag: latest
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: false
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: daioph.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: daioph-tls
+      hosts:
+        - daioph.example.com
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Application configuration
+config:
+  mode: production
+  logLevel: info
+  database:
+    url: postgresql://daioph:daioph@postgres:5432/daioph
+  redis:
+    url: redis://redis:6379/0
+
+# External dependencies
+postgres:
+  enabled: true
+  image: postgres:15-alpine
+  auth:
+    username: daioph
+    password: daioph
+    database: daioph
+  persistence:
+    size: 10Gi
+
+redis:
+  enabled: true
+  image: redis:7-alpine
+  persistence:
+    size: 5Gi

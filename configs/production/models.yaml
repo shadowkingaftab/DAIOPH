@@ -1,1 +1,46 @@
+# DAIOPH Production Models Configuration
+models:
+  qwen:
+    enabled: true
+    provider: local
+    model_name: Qwen/Qwen2.5-1.5B-Instruct
+    device: auto
+    quantization: int8
+    max_tokens: 2048
+    temperature: 0.7
 
+  llama:
+    enabled: true
+    provider: local
+    model_name: meta-llama/Llama-3.2-3B-Instruct
+    device: auto
+    quantization: int8
+
+  whisper:
+    enabled: true
+    provider: local
+    model_name: openai/whisper-base
+    device: auto
+
+  vision:
+    enabled: true
+    provider: local
+    model_name: google/siglip-base-patch16-224
+    device: auto
+
+remote:
+  grok:
+    enabled: false
+    api_key_env: GROK_API_KEY
+    base_url: https://api.x.ai/v1
+
+  openai:
+    enabled: false
+    api_key_env: OPENAI_API_KEY
+    base_url: https://api.openai.com/v1
+
+routing:
+  strategy: hardware_aware
+  fallback_to_remote: true
+  timeout_seconds: 60
+  max_concurrent_requests: 10

@@ -1,1 +1,39 @@
+# DAIOPH Federated Learning Client Configuration
+client:
+  id: ${DAIOPH_CLIENT_ID}
+  name: daioph-edge-client
 
+server:
+  url: ${FEDERATED_SERVER_URL}
+  api_key_env: FEDERATED_API_KEY
+  timeout_seconds: 30
+
+training:
+  local_epochs: 1
+  batch_size: 32
+  learning_rate: 0.001
+  max_steps_per_round: 100
+
+privacy:
+  differential_privacy:
+    enabled: true
+    epsilon: 1.0
+    delta: 0.00001
+    noise_multiplier: 1.1
+    gradient_clipping_norm: 1.0
+
+  secure_aggregation:
+    enabled: true
+    min_clients: 3
+
+communication:
+  protocol: grpc
+  compression: gzip
+  retry_attempts: 3
+  backoff_seconds: 5
+
+participation:
+  strategy: random
+  participation_rate: 0.5
+  min_battery_percent: 20
+  wifi_only: false

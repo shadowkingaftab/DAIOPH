@@ -1,1 +1,43 @@
+# DAIOPH Testing Configuration
+mode: testing
+debug: false
+log_level: warning
 
+server:
+  host: 127.0.0.1
+  port: 8000
+  workers: 1
+  reload: false
+
+database:
+  url: sqlite:///:memory:
+  echo: false
+
+redis:
+  url: redis://localhost:6379/1
+  enabled: false
+
+memory:
+  short_term:
+    max_size: 100
+    ttl: 60
+  episodic:
+    enabled: true
+    storage_path: /tmp/daioph_test/episodic
+  semantic:
+    enabled: true
+    storage_path: /tmp/daioph_test/semantic
+
+models:
+  default_provider: local
+  cache_dir: /tmp/daioph_test/models
+  auto_download: false
+
+security:
+  encryption_enabled: false
+  sandbox_enabled: true
+
+features:
+  federated_learning: false
+  multimodal: true
+  hardware_adaptation: false

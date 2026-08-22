@@ -1,1 +1,51 @@
+# DAIOPH Edge Configuration
+mode: edge
+debug: false
+log_level: info
 
+server:
+  host: 0.0.0.0
+  port: 8000
+  workers: 1
+  reload: false
+
+database:
+  url: sqlite:///./data/edge.db
+  echo: false
+
+redis:
+  url: redis://localhost:6379/0
+  enabled: false
+
+memory:
+  short_term:
+    max_size: 500
+    ttl: 3600
+  episodic:
+    enabled: true
+    storage_path: ./data/episodic
+    max_episodes: 1000
+  semantic:
+    enabled: true
+    storage_path: ./data/semantic
+    max_concepts: 5000
+
+models:
+  default_provider: local
+  cache_dir: ./data/models
+  auto_download: false
+  max_model_size_mb: 1024
+
+security:
+  encryption_enabled: true
+  sandbox_enabled: true
+
+features:
+  federated_learning: true
+  multimodal: false
+  hardware_adaptation: true
+
+energy:
+  power_saving_mode: true
+  max_cpu_percent: 70
+  idle_sleep_seconds: 5

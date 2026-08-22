@@ -1,1 +1,48 @@
+# DAIOPH Edge Hardware Configuration
+hardware:
+  detection:
+    auto_detect: true
+    refresh_interval_seconds: 60
 
+  cpu:
+    enabled: true
+    max_threads: 4
+    quantization: int8
+
+  gpu:
+    enabled: false
+    memory_limit_mb: 512
+
+  npu:
+    enabled: true
+    preferred: true
+
+profiles:
+  raspberry_pi_4:
+    cpu_cores: 4
+    ram_gb: 4
+    models:
+      - qwen-0.5b-int8
+    max_concurrent: 1
+
+  jetson_nano:
+    cpu_cores: 4
+    ram_gb: 4
+    gpu: true
+    models:
+      - qwen-0.5b-int8
+      - whisper-tiny
+    max_concurrent: 2
+
+  intel_nuc:
+    cpu_cores: 8
+    ram_gb: 16
+    models:
+      - qwen-1.5b-int8
+      - whisper-base
+    max_concurrent: 3
+
+scaling:
+  adaptive_batching: true
+  dynamic_quantization: true
+  thermal_throttling_protection: true

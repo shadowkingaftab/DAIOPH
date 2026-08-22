@@ -1,1 +1,6 @@
-
+# Devices benchmark configuration
+benchmark_name: devices
+parameters:
+  iterations: 100
+  warmup_iterations: 10
+  timeout: 5s

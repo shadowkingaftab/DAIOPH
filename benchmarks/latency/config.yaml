@@ -1,1 +1,6 @@
-
+# Latency benchmark configuration
+benchmark_name: latency
+parameters:
+  iterations: 100
+  warmup_iterations: 10
+  timeout: 5s
