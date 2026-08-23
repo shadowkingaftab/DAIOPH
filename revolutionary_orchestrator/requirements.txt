@@ -4,7 +4,7 @@ torch>=2.1.0
 llama-cpp-python>=0.2.56
 
 # Streamlit UI
-streamlit>=1.32.0
+streamlit>=1.61.1
 
 # DAG visualization
 graphviz>=0.20.1
