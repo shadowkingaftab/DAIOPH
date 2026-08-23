@@ -1,1 +1,108 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# pyproject.toml — DAIOPH project configuration
+#
+# DAIOPH — Distributed Adaptive Intelligence Orchestration Platform
+# Edge AI intent classifier dashboard: Qwen2-0.5B (GGUF via llama.cpp)
+# on-device + Grok cloud fallback, served through a Streamlit UI.
+#
+# Dependency source of truth: requirements.txt (mirrored below).
+# Lockfile: uv.lock — regenerate with `uv lock` after changing deps.
+# ═══════════════════════════════════════════════════════════════════════════
 
+[project]
+name = "daioph"
+version = "0.1.0"
+description = "Distributed Adaptive Intelligence Orchestration Platform — edge AI intent classifier (Qwen2-0.5B GGUF + Grok) with Streamlit dashboard"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "DAIOPH Contributors" }]
+keywords = [
+    "edge-ai",
+    "llm",
+    "llama-cpp",
+    "qwen",
+    "streamlit",
+    "intent-classification",
+    "orchestration",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# Matches .python-version and the python:3.11-slim Docker base image
+requires-python = ">=3.11"
+
+dependencies = [
+    # ── Core framework ──────────────────────────────────────────────────────
+    "streamlit>=1.35.0",
+    "requests==2.31.0",
+
+    # ── PDF processing ──────────────────────────────────────────────────────
+    "PyPDF2==3.0.1",
+    "pdf2image==1.16.3",
+
+    # ── OCR + image support ─────────────────────────────────────────────────
+    "Pillow==10.1.0",
+
+    # ── On-device LLM (Qwen2-0.5B GGUF) ─────────────────────────────────────
+    # Pre-compiled CPU wheels are pulled from the supplemental index below;
+    # no CUDA toolchain required.
+    "llama-cpp-python==0.2.5",
+
+    # ── Graph visualization ─────────────────────────────────────────────────
+    "graphviz==0.20.1",
+
+    # ── Model download helper ───────────────────────────────────────────────
+    "huggingface_hub>=0.19.0",
+
+    # ── System metrics (memory monitor) ─────────────────────────────────────
+    "psutil>=5.9.0",
+
+    # ── Analytics / visualization ───────────────────────────────────────────
+    "plotly>=5.18.0",
+
+    # ── NLP utilities ───────────────────────────────────────────────────────
+    # numpy kept <2: llama-cpp-python 0.2.5 wheels are compiled against the
+    # NumPy 1.x C-API and crash under NumPy 2.x (binary incompatibility).
+    "numpy>=1.24.0,<2",
+
+    # ── ML utilities ────────────────────────────────────────────────────────
+    "scikit-learn>=1.2.0",
+    "joblib>=1.2.0",
+
+    # ── Voice / audio ───────────────────────────────────────────────────────
+    "whisper>=1.0.0",
+    "pydub>=0.25.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.4.0",
+    "mypy>=1.8.0",
+]
+
+# ── uv configuration ───────────────────────────────────────────────────────
+[tool.uv]
+# Application repo (not an installable library) — do not build/install the
+# project itself into environments; manage dependencies only.
+package = false
+
+# Supplemental wheel index with pre-built CPU wheels for llama-cpp-python,
+# avoiding local compilation (gcc/cmake/CUDA). PyPI remains available as a
+# fallback because this index is not marked explicit.
+[[tool.uv.index]]
+name = "llama-cpp-cpu"
+url = "https://abetlen.github.io/llama-cpp-python/whl/cpu"
+
+# ── Tooling ────────────────────────────────────────────────────────────────
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
