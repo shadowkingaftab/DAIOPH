@@ -1,0 +1,1 @@
+"""Per-OS capability declarations."""
