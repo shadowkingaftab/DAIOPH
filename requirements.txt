@@ -40,5 +40,5 @@ numpy
 scikit-learn>=1.2.0
 joblib>=1.2.0
 # sqlite3 is part of the Python stdlib; do not install via pip
-whisper>=1.0.0
+whisper>=1.1.10
 pydub>=0.25.1
