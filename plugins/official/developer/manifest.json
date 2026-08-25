@@ -1,1 +1,8 @@
-
+{
+  "name": "daioph-developer",
+  "version": "0.1.0",
+  "title": "Developer",
+  "domain": "developer",
+  "entry": "plugin.py",
+  "register": "register"
+}

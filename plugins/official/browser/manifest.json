@@ -1,1 +1,8 @@
-
+{
+  "name": "daioph-browser",
+  "version": "0.1.0",
+  "title": "Browser",
+  "domain": "web",
+  "entry": "plugin.py",
+  "register": "register"
+}
