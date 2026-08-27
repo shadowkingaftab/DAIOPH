@@ -1,50 +1,27 @@
-"""Encryption - encrypts and decrypts memory data."""
+"""Memory encryption boundary (injected encryptor)."""
 
-from typing import Any, Dict, Optional
+from __future__ import annotations
+
+from typing import Any, Callable, Dict, Optional
+
+__all__ = ["MemoryEncryption"]
 
 
-class Encryption:
-    """Encrypts and decrypts memory data."""
+class MemoryEncryption:
+    """Encrypts/decrypts memory values via an injected encryptor."""
 
-    def __init__(self, key: str = "") -> None:
-        """Initialize encryption.
+    def __init__(
+        self,
+        encrypt: Callable[[bytes], bytes],
+        decrypt: Callable[[bytes], bytes],
+    ) -> None:
+        self._encrypt = encrypt
+        self._decrypt = decrypt
 
-        Args:
-            key: Encryption key.
-        """
-        self._key = key
+    def encrypt_value(self, value: bytes) -> bytes:
+        """Encrypt a value."""
+        return self._encrypt(value)
 
-    def encrypt(self, data: str) -> str:
-        """Encrypt data.
-
-        Args:
-            data: Data to encrypt.
-
-        Returns:
-            str: Encrypted data.
-        """
-        return f"encrypted:{data}"
-
-    def decrypt(self, data: str) -> str:
-        """Decrypt data.
-
-        Args:
-            data: Data to decrypt.
-
-        Returns:
-            str: Decrypted data.
-        """
-        if data.startswith("encrypted:"):
-            return data[len("encrypted:"):]
-        return data
-
-    def get_key(self) -> str:
-        """Get the encryption key.
-
-        Returns:
-            str: Key.
-        """
-        return self._key
-
-</final_file_content>
-</write_to_file></tool_call>
+    def decrypt_value(self, token: bytes) -> bytes:
+        """Decrypt a token."""
+        return self._decrypt(token)
