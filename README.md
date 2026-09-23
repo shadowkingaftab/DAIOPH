@@ -1,81 +1,112 @@
 # DAIOPH
 
-**Distributed Adaptive Intelligence Orchestration Platform**
+### Local-first AI, with the pieces to think, route, and act.
 
-DAIOPH is a modular Python platform for routing and executing AI tasks across local models and cloud services. Its initial applications focus on intent classification, hybrid edge/cloud inference, and decomposition of multi-step prompts into executable task graphs. The repository has since grown to include supporting components for agents, tools and plugins, memory, learning, knowledge retrieval, security, resilience, and deployment.
+**DAIOPH (Distributed Adaptive Intelligence Operating Platform)** is an evolving Python platform for running AI workflows across local models and cloud services. It began with edge intent classification and hybrid inference; its current architecture brings that workflow into a wider system of planners, agents, tools, memory, learning, and platform services.
 
-The project is under active development. The architecture and module layout describe the intended platform scope; individual components may have different levels of implementation and integration. See [ARCHITECTURE.md](ARCHITECTURE.md) for the system design and [IMPLEMENTATION_REPORT.md](IMPLEMENTATION_REPORT.md) for the original orchestration development history.
+The goal is practical: keep routine and privacy-sensitive work close to the device, bring in remote models when configured, and give complex requests a path from planning through execution to a composed result. DAIOPH includes four user-facing orchestration applications alongside a growing set of reusable platform modules.
 
-## Project progress
+> **Project status:** Active development. The repository contains components at different levels of maturity; platform-wide integration and evaluation are ongoing. This README describes the intended architecture and available entry points, not a claim that every subsystem is production-ready.
 
-- Established a Python project foundation with dependency configuration and a lockfile.
-- Developed four application paths spanning intent routing, hybrid task orchestration, telemetry, and offline prompt planning and refinement.
-- Added modular agent, developer, filesystem, communication, and productivity tools, with a plugin framework.
-- Built platform foundations for authentication, authorization, privacy, audit logging, retries, fallback, health monitoring, and recovery.
-- Expanded the codebase into knowledge, learning, memory, multimodal, federated, and hardware-aware subsystems; integration and development are ongoing.
+## Progress so far
 
-## Design overview
+- Established the Python project foundation, dependency configuration, and application entry points.
+- Built four orchestration experiences, from intent-based routing to hybrid DAG execution and local planning with refinement.
+- Added agent roles, a tool framework, and plugin scaffolding for extending the platform.
+- Developed security and resilience foundations, including access control, privacy, audit events, retries, fallbacks, and recovery.
+- Expanded the architecture across memory, knowledge retrieval, learning, multimodal processing, federation, and hardware adaptation; integration continues.
 
-DAIOPH is organized around a request flow that can classify an input, select an execution route, decompose complex work, run dependent tasks, and assemble a response. Depending on the application and configuration, execution can use local inference, cloud services, or a hybrid route. The orchestration applications include:
+## How the platform fits together
 
-- **Intent classifier and dashboard** (`streamlit_app.py`): routes individual requests using intent classification and presents execution telemetry.
-- **Unified orchestrator** (`unified_orchestrator/app.py`): decomposes multi-step prompts and supports parallel DAG execution.
-- **Smart orchestrator** (`smart_orchestrator/app.py`): combines prompt decomposition, task routing, and execution metrics.
-- **Prompt bifurcation application** (`revolutionary_orchestrator/app.py`): provides a local planner, executor, and refinement workflow.
+DAIOPH is organized as layers, with a request moving from an interface into routing and orchestration, then through model execution and supporting platform services.
 
-Shared platform areas are separated into modules for core runtime and contracts, models, orchestration, agents, memory, learning, knowledge, multimodal processing, tools, security, resilience, observability, hardware, APIs, and deployment. The design emphasizes modular interfaces, hardware-aware execution, privacy-conscious local processing, and explicit fallback behavior. See [ARCHITECTURE.md](ARCHITECTURE.md) for the repository map and request-flow details.
+```mermaid
+flowchart LR
+    U[Apps and interfaces] --> A[API layer]
+    A --> O[Orchestration and agents]
+    O --> P[Planning and task DAG]
+    P --> X[Hybrid execution]
+    X --> M[Local or remote models]
+    M --> S[Result synthesis]
+    S --> U
+    O -. uses .-> C[Core runtime and contracts]
+    X -. protected by .-> R[Security and resilience]
+    O -. supported by .-> K[Memory, learning, and knowledge]
+    X -. observed by .-> T[Telemetry and evaluation]
+    X -. adapts to .-> H[Hardware and OS layer]
+```
 
-## Repository layout
+At a high level, a request can be classified and routed to an edge, cloud, or hybrid path. More involved prompts can be decomposed into a task graph, whose independent work can run in parallel. Execution results are then assembled for the user. The selected path depends on the application, configuration, available models, and credentials.
 
-- `core/`, `runtime/`, `execution/`, and `orchestration/` contain runtime, scheduling, planning, and execution foundations.
-- `agents/`, `tools/`, and `plugins/` contain agent roles, permissioned tool modules, and plugin scaffolding.
-- `models/`, `intelligence/`, `multi_modal/`, and `multimodal/` cover model integrations and AI capabilities.
-- `memory/`, `learning/`, and `knowledge/` cover state, adaptation, indexing, retrieval, and provenance.
-- `security/`, `resilience/`, and `observability/` provide cross-cutting platform services.
-- `APIs/`, `apps/`, and `user_interface/` contain service and user-facing entry points.
-- `configs/`, `deployment/`, `hardware/`, and `os_layer/` support configuration and deployment environments.
-- `tests/`, `evaluation/`, and `benchmarks/` contain test and evaluation materials.
+The design is guided by a few principles:
 
-## Requirements
+- **Local-first execution:** support on-device inference and offline workflows where the selected application and model permit them.
+- **Adaptive routing:** choose an execution path based on task intent and available compute or services.
+- **Composable subsystems:** keep orchestration, models, memory, tools, and platform services in separate modules with defined contracts.
+- **Resilient operation:** provide mechanisms such as retries, circuit breakers, fallback, health monitoring, and recovery.
+- **Explicit capabilities:** integrations depend on their configured services and dependencies; availability should be surfaced rather than assumed.
+
+For the detailed layer map and request flow, see [ARCHITECTURE.md](ARCHITECTURE.md). For the history of the original four orchestration phases, see [IMPLEMENTATION_REPORT.md](IMPLEMENTATION_REPORT.md).
+
+## Applications
+
+The repository carries forward four related orchestration applications:
+
+- **Intent classifier and dashboard** — `streamlit_app.py` classifies individual prompts, routes requests, and presents telemetry.
+- **Unified orchestrator** — `unified_orchestrator/app.py` coordinates multi-step work using task decomposition and parallel execution.
+- **Smart orchestrator** — `smart_orchestrator/app.py` combines prompt decomposition, task routing, and execution metrics.
+- **Prompt bifurcation / LLMCompiler** — `revolutionary_orchestrator/app.py` explores a planner–executor–refiner workflow designed for local execution.
+
+The broader platform also includes REST, WebSocket, event, and gRPC API areas; Streamlit, CLI, web, desktop, and mobile app modules; and an MCP server entry point. Some surfaces are scaffolding or evolving integrations. Review their configuration and implementation before relying on them in a deployment.
+
+## Platform map
+
+- **Runtime and execution:** `core/`, `runtime/`, `execution/`, `orchestration/` — boot, contracts, scheduling, planning, DAG execution, routing, and synthesis.
+- **Agents and extensions:** `agents/`, `tools/`, `plugins/` — role-based agents, categorized tools, and plugin scaffolding.
+- **Models and intelligence:** `models/`, `intelligence/`, `liquid_core/` — model providers, intent and reasoning components, and adaptive model work.
+- **Context and adaptation:** `memory/`, `knowledge/`, `learning/`, `federated/` — state, retrieval and provenance, feedback and continual learning, and federated learning components.
+- **Input and environment:** `multi_modal/`, `multimodal/`, `hardware/`, `os_layer/`, `network/` — modality-specific processing, hardware awareness, OS integration, and distributed connectivity.
+- **Platform quality:** `security/`, `resilience/`, `observability/`, `evaluation/`, `benchmarks/`, `tests/` — security controls, recovery mechanisms, telemetry, and evaluation resources.
+- **Interfaces and operations:** `APIs/`, `apps/`, `user_interface/`, `configs/`, `deployment/` — service surfaces, user applications, configuration, and deployment assets.
+
+## Get started
+
+### Requirements
 
 - Python 3.11 or later
-- Git
-- Optional: an xAI API key for cloud inference
-- Optional: local model files and the runtime dependencies required by the selected local inference path
+- The dependencies for the application you plan to run
+- Optional: an xAI API key for cloud-backed inference
+- Optional: local model files and inference dependencies for on-device workflows
 
-## Setup
-
-Create and activate a virtual environment, then install the project dependencies:
+### Install
 
 ```bash
 python -m venv .venv
 ```
 
-On Windows PowerShell:
+Activate the environment, then install dependencies:
 
 ```powershell
+# Windows PowerShell
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-On macOS or Linux:
-
 ```bash
+# macOS or Linux
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Copy `.env.example` to `.env` and set only the values needed for the chosen application. For cloud-backed inference, configure the API credential documented by the example file. Keep credentials out of source control. Local model paths and optional integrations depend on the selected workflow.
+Copy `.env.example` to `.env` and configure the values needed by your selected workflow. For Grok-backed inference, set `GROK_API_KEY`. Local inference settings such as Qwen quantization and hardware tuning are documented in the example file. Keep credentials and private data out of version control.
 
-## Run an application
-
-Launch the primary dashboard:
+### Launch an orchestration app
 
 ```bash
 streamlit run streamlit_app.py
 ```
 
-Other orchestration applications can be launched directly:
+Or start one of the other applications:
 
 ```bash
 streamlit run unified_orchestrator/app.py
@@ -83,28 +114,17 @@ streamlit run smart_orchestrator/app.py
 streamlit run revolutionary_orchestrator/app.py
 ```
 
-The repository also includes API and MCP entry points; their configuration and dependencies may differ from the Streamlit applications. Docker configuration is available in `Dockerfile` and `docker-compose.yml`.
-
-## Configuration and data
-
-Environment examples are provided in `.env.example`, with additional profiles under `configs/`. Model availability, cloud credentials, and optional system dependencies determine which inference paths are usable in a given environment. Review the relevant application and configuration before deployment. Do not commit API keys, downloaded model weights, or user data.
+Docker assets are provided in `Dockerfile` and `docker-compose.yml`. Model availability, credentials, and optional system dependencies determine which routes are usable in a given environment.
 
 ## Development and evaluation
 
-The repository includes tests, evaluation modules, and benchmarks. Their presence does not imply that every subsystem has been validated end to end. Run checks appropriate to the component and environment being changed, and report the exact scope and results when publishing measurements. Dependency configuration is maintained in `requirements.txt` and `pyproject.toml`, with `uv.lock` as the uv lockfile.
+Dependency configuration is maintained in `requirements.txt` and `pyproject.toml`; `uv.lock` records the uv lock state. The repository includes test, evaluation, and benchmark areas. Since subsystem coverage and integration vary, report the specific application, model, configuration, and evaluation procedure alongside any performance or quality result.
 
-## Documentation
+## Further reading
 
-- [Architecture overview](ARCHITECTURE.md)
+- [Architecture](ARCHITECTURE.md)
 - [Implementation report](IMPLEMENTATION_REPORT.md)
 - [Changelog](CHANGELOG.md)
 - [Contributing](CONTRIBUTING.md)
-- [Security notes](SECURITY.md)
-
-## Project status
-
-DAIOPH is an actively evolving research and engineering codebase. Its orchestration applications and platform modules are developed incrementally; compatibility, integration, and operational readiness should be assessed for the specific paths in use. Claims about model quality, latency, reliability, or deployment readiness should be supported by reproducible evaluations for the relevant configuration.
-
-## License
-
-See [LICENSE](LICENSE).
+- [Security](SECURITY.md)
+- [License](LICENSE)
