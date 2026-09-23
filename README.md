@@ -1,140 +1,110 @@
-# Edge AI Intent Classifier & Orchestration Ecosystem
-### Production-Grade Hybrid Inference & Prompt Bifurcation Suite
+# DAIOPH
 
-A comprehensive suite of intelligence-routing frameworks and task compilers designed to orchestrate complex prompt workflows across local **Edge AI (Qwen2-0.5B / Qwen-1.8B GGUF)** and **Cloud AI (xAI Grok API)**. Features multi-stage task decomposition, dynamic DAG parallel execution, real-time visual telemetry, and offline self-refining dual-role agent compilers.
+**Distributed Adaptive Intelligence Orchestration Platform**
 
-## Project Progress (September 2026)
+DAIOPH is a modular Python platform for routing and executing AI tasks across local models and cloud services. Its initial applications focus on intent classification, hybrid edge/cloud inference, and decomposition of multi-step prompts into executable task graphs. The repository has since grown to include supporting components for agents, tools and plugins, memory, learning, knowledge retrieval, security, resilience, and deployment.
 
-- Built the core platform structure and added packaging configuration for managing the project as a Python codebase.
-- Added developer, communication, filesystem, and productivity tools, with a plugin framework for extending capabilities.
-- Implemented security foundations for authentication, access control, encryption, privacy, and audit logging.
-- Added resilience components for health checks, retries, circuit breaking, graceful fallback, and recovery.
-- Expanded work into knowledge retrieval and ontology, continual learning, and liquid neural network modules; these areas are under active development.
+The project is under active development. The architecture and module layout describe the intended platform scope; individual components may have different levels of implementation and integration. See [ARCHITECTURE.md](ARCHITECTURE.md) for the system design and [IMPLEMENTATION_REPORT.md](IMPLEMENTATION_REPORT.md) for the original orchestration development history.
 
----
+## Project progress
 
-## 🚀 Key Features
+- Established a Python project foundation with dependency configuration and a lockfile.
+- Developed four application paths spanning intent routing, hybrid task orchestration, telemetry, and offline prompt planning and refinement.
+- Added modular agent, developer, filesystem, communication, and productivity tools, with a plugin framework.
+- Built platform foundations for authentication, authorization, privacy, audit logging, retries, fallback, health monitoring, and recovery.
+- Expanded the codebase into knowledge, learning, memory, multimodal, federated, and hardware-aware subsystems; integration and development are ongoing.
 
-*   **Four Orchestration Architectures**: Explore the evolution from baseline zero-shot intent routing to a highly sophisticated offline-first self-refining task compiler.
-*   **Dual-Role LLMCompiler & Self-Refine**: 100% offline planner-executor-refiner pipelines that decompose, execute, and self-correct complex workflows.
-*   **Graphviz-Powered DAG Visualization**: View generated Task Bifurcation Directed Acyclic Graphs (DAGs) in real-time as tasks execute.
-*   **Multi-Stage Task Decomposition**: Automated sentence tokenization, coreference resolution, and clustering to parallelize multi-step prompts.
-*   **Seamless Cloud-to-Local Fallback**: Primary cloud pipelines degrade gracefully to local offline engines if APIs fail or credentials are missing.
-*   **Production Telemetry Dashboard**: Track success rates, execution latencies, prompt logs, and routing distributions using Plotly and Pandas.
-*   **Agent & Protocol Ready**: Built-in Model Context Protocol (MCP) server support for external agent discovery.
+## Design overview
 
----
+DAIOPH is organized around a request flow that can classify an input, select an execution route, decompose complex work, run dependent tasks, and assemble a response. Depending on the application and configuration, execution can use local inference, cloud services, or a hybrid route. The orchestration applications include:
 
-## 📁 Ecosystem Structure
+- **Intent classifier and dashboard** (`streamlit_app.py`): routes individual requests using intent classification and presents execution telemetry.
+- **Unified orchestrator** (`unified_orchestrator/app.py`): decomposes multi-step prompts and supports parallel DAG execution.
+- **Smart orchestrator** (`smart_orchestrator/app.py`): combines prompt decomposition, task routing, and execution metrics.
+- **Prompt bifurcation application** (`revolutionary_orchestrator/app.py`): provides a local planner, executor, and refinement workflow.
 
-The repository is structured into four progressive orchestration frameworks:
+Shared platform areas are separated into modules for core runtime and contracts, models, orchestration, agents, memory, learning, knowledge, multimodal processing, tools, security, resilience, observability, hardware, APIs, and deployment. The design emphasizes modular interfaces, hardware-aware execution, privacy-conscious local processing, and explicit fallback behavior. See [ARCHITECTURE.md](ARCHITECTURE.md) for the repository map and request-flow details.
 
-```
-├── core/                     # Shared core logic (Grok clients, Task Executors, Prompts)
-├── utils/                    # PDF parsers, thread loggers, and visualizers
-├── models/                   # Local GGUF models and HuggingFace download target
-│
-├── streamlit_app.py          # Framework 1: Real-time Intent Classifier & Dashboard (Production)
-├── unified_orchestrator/     # Framework 2: Hierarchical Parallel DAG Orchestrator
-├── smart_orchestrator/       # Framework 3: Bartender-Decomposition & Telemetry Router
-└── revolutionary_orchestrator/ # Framework 4: 100% Offline LLMCompiler + Self-Refining Pipeline
-```
+## Repository layout
 
----
+- `core/`, `runtime/`, `execution/`, and `orchestration/` contain runtime, scheduling, planning, and execution foundations.
+- `agents/`, `tools/`, and `plugins/` contain agent roles, permissioned tool modules, and plugin scaffolding.
+- `models/`, `intelligence/`, `multi_modal/`, and `multimodal/` cover model integrations and AI capabilities.
+- `memory/`, `learning/`, and `knowledge/` cover state, adaptation, indexing, retrieval, and provenance.
+- `security/`, `resilience/`, and `observability/` provide cross-cutting platform services.
+- `APIs/`, `apps/`, and `user_interface/` contain service and user-facing entry points.
+- `configs/`, `deployment/`, `hardware/`, and `os_layer/` support configuration and deployment environments.
+- `tests/`, `evaluation/`, and `benchmarks/` contain test and evaluation materials.
 
-## 🛠 Quick Setup
+## Requirements
 
-### 1. Prerequisite Packages
-Install the required Python dependencies:
+- Python 3.11 or later
+- Git
+- Optional: an xAI API key for cloud inference
+- Optional: local model files and the runtime dependencies required by the selected local inference path
+
+## Setup
+
+Create and activate a virtual environment, then install the project dependencies:
+
 ```bash
+python -m venv .venv
+```
+
+On Windows PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-### 2. Environment Configuration
-Copy the `.env.example` file to `.env` and fill in your keys:
+On macOS or Linux:
+
 ```bash
-GROK_API_KEY=your_xai_grok_api_key
-CLASSIFIER_MODEL_PATH=models/fine_tuned_classifier  # Optional fine-tuned target
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
----
+Copy `.env.example` to `.env` and set only the values needed for the chosen application. For cloud-backed inference, configure the API credential documented by the example file. Keep credentials out of source control. Local model paths and optional integrations depend on the selected workflow.
 
-## 🚀 Running the Orchestrator Frameworks
+## Run an application
 
-Choose the orchestrator architecture you want to launch using Streamlit:
+Launch the primary dashboard:
 
-### 1. Framework 1: Intent Classifier & Dashboard (Baseline)
-Deterministic zero-shot classifier routing single prompts between edge and cloud based on intent classification.
 ```bash
 streamlit run streamlit_app.py
 ```
 
-### 2. Framework 2: Unified Hybrid Orchestrator
-Extracts tasks using NLTK sentence parsing, maps coreferences, parallelizes executions, and displays Graphviz DAGs.
+Other orchestration applications can be launched directly:
+
 ```bash
 streamlit run unified_orchestrator/app.py
-```
-
-### 3. Framework 3: Smart LLM Orchestrator
-Decomposes complex flows using template-based Bartender logic and tracks live task metrics.
-```bash
 streamlit run smart_orchestrator/app.py
-```
-
-### 4. Framework 4: Revolutionary Prompt Bifurcation (LLMCompiler)
-Runs entirely offline. Planning, Execution, and Self-Refining correction nodes run locally on CPU, sharing a single model context to optimize RAM usage.
-```bash
 streamlit run revolutionary_orchestrator/app.py
 ```
 
----
+The repository also includes API and MCP entry points; their configuration and dependencies may differ from the Streamlit applications. Docker configuration is available in `Dockerfile` and `docker-compose.yml`.
 
-## 🐳 Docker Deployment
+## Configuration and data
 
-To build and run the entire suite in a unified container:
-```bash
-docker-compose up --build
-```
-Access the primary dashboard at `http://localhost:8501`.
+Environment examples are provided in `.env.example`, with additional profiles under `configs/`. Model availability, cloud credentials, and optional system dependencies determine which inference paths are usable in a given environment. Review the relevant application and configuration before deployment. Do not commit API keys, downloaded model weights, or user data.
 
----
+## Development and evaluation
 
-## 🎯 Classifier Fine-Tuning Pipeline
+The repository includes tests, evaluation modules, and benchmarks. Their presence does not imply that every subsystem has been validated end to end. Run checks appropriate to the component and environment being changed, and report the exact scope and results when publishing measurements. Dependency configuration is maintained in `requirements.txt` and `pyproject.toml`, with `uv.lock` as the uv lockfile.
 
-To fine-tune the intent classifier model (`typeform/distilbert-base-uncased-mnli`) on custom enterprise data to achieve classification confidences above 95%:
-1. Add custom intent training samples in `training/domain_dataset.json`.
-2. Launch the trainer script:
-   ```bash
-   python training/train_classifier.py --epochs 5 --eval
-   ```
-3. Update `.env` to point `CLASSIFIER_MODEL_PATH` to the generated `models/fine_tuned_classifier` directory.
+## Documentation
 
----
+- [Architecture overview](ARCHITECTURE.md)
+- [Implementation report](IMPLEMENTATION_REPORT.md)
+- [Changelog](CHANGELOG.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security notes](SECURITY.md)
 
-## ☁️ Streamlit Cloud Deployment Notes
+## Project status
 
-The entire workspace is optimized for seamless zero-config deployment on **Streamlit Community Cloud**:
-*   **Lazy Loading**: Local GGUF models and DistilBERT are dynamically downloaded on first load if missing.
-*   **Fallback Protections**: If C++ compilers are restricted, the system catches import errors and routes traffic gracefully to Grok without disrupting server uptime.
-*   **Thread Safety**: Local inference requests are sequentially locked (`threading.Lock`) to prevent memory corruption under high multi-tenant traffic.
+DAIOPH is an actively evolving research and engineering codebase. Its orchestration applications and platform modules are developed incrementally; compatibility, integration, and operational readiness should be assessed for the specific paths in use. Claims about model quality, latency, reliability, or deployment readiness should be supported by reproducible evaluations for the relevant configuration.
 
----
+## License
 
-## 🆕 What's New (May 31, 2026)
-
-### 12 New Features Added in the Supercharged Blitz
-
-| Feature | Description |
-|---------|-------------|
-| 🌍 **Multi-Language Support** | Auto-detects Hindi, Spanish, French, German, Arabic and translates to English for ODA/Hybrid routes |
-| 🖼️ **PDF Image OCR** | Extracts text from images inside PDFs using `pytesseract` + `pdf2image` |
-| 🔄 **Never-Give-Up Execution** | Exponential backoff retry (1s → 2s → 4s) with automatic ODA→Cloud route fallback |
-| 🧠 **Universal Prompt Decomposition** | spaCy-powered smart decomposition that works for any language and prompt style |
-| ⏱️ **Time Comparison Timer** | Shows Edge AI execution time vs estimated traditional sequential cloud time |
-| 🎨 **Colorful DAG Graph** | Green=ODA, Gold=Cloud, Blue=Hybrid, Red=Failed — with node tooltips |
-| 🌐 **Language Detection UI** | Displays detected input language badge after every execution |
-| 📄 **PDF Image Preview** | Renders extracted PDF page images in the UI |
-| 📊 **Retry Statistics** | Transparently shows how many retries each task required |
-| 🔍 **Explain Mode** | Checkbox to reveal intermediate reasoning steps per task |
-| 💡 **Example Prompts Dropdown** | Pre-loaded multi-language example prompts for quick testing |
-| 🎨 **Premium Dark UI** | Glassmorphism gradient design with Inter font and animated buttons |
+See [LICENSE](LICENSE).
