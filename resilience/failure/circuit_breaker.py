@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 import time
 from enum import Enum
 from typing import Any, Callable, Optional
@@ -42,7 +43,10 @@ class CircuitBreaker:
         """Invoke *fn* if the circuit allows; else raise CircuitOpenError."""
         with self._lock:
             if self.state == CircuitState.OPEN:
-                if self._opened_at is not None and                         time.time() - self._opened_at >= self.reset_timeout:
+                if (
+                    self._opened_at is not None
+                    and time.time() - self._opened_at >= self.reset_timeout
+                ):
                     self.state = CircuitState.HALF_OPEN
                 else:
                     raise CircuitOpenError("circuit is open")

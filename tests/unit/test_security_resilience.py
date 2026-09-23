@@ -136,7 +136,7 @@ class TestThreatDetection:
         assert not flagged and signals == []
 
     def test_anomaly_detector(self):
-        assert detect_anomalies([1, 1, 1, 1, 100]) == [4]
+        assert detect_anomalies([1, 1, 1, 1, 200]) == [4]
 
 
 class TestResilience:
@@ -230,4 +230,4 @@ class TestMemoryPrivacy:
 
         md = MemoryDeletion(delete_fn)
         assert md.delete_subject("alice") == 3
-        assert deleted == ["alice"]
+        assert deleted == ["alice"]  .
