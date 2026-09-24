@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="340" viewBox="0 0 1200 340" role="img" aria-labelledby="title desc">
+  <title id="title">DAIOPH — Local-first adaptive intelligence</title>
+  <desc id="desc">A gradient banner showing connected local, orchestration, and cloud nodes.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#10172A"/>
+      <stop offset="0.56" stop-color="#172554"/>
+      <stop offset="1" stop-color="#312E81"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="340" rx="28" fill="url(#bg)"/>
+  <circle cx="1040" cy="66" r="120" fill="#7C3AED" opacity=".15"/>
+  <circle cx="810" cy="330" r="175" fill="#06B6D4" opacity=".09"/>
+  <path d="M700 176H842M922 176H1050M880 135V91M880 217V265" fill="none" stroke="url(#accent)" stroke-width="3" opacity=".82"/>
+  <path d="M700 176H842M922 176H1050M880 135V91M880 217V265" fill="none" stroke="#67E8F9" stroke-width="8" opacity=".18" filter="url(#glow)"/>
+  <circle cx="880" cy="176" r="39" fill="#4F46E5" stroke="#C4B5FD" stroke-width="2"/>
+  <circle cx="673" cy="176" r="27" fill="#0891B2" stroke="#67E8F9" stroke-width="2"/>
+  <circle cx="1080" cy="176" r="27" fill="#7C3AED" stroke="#C4B5FD" stroke-width="2"/>
+  <circle cx="880" cy="76" r="20" fill="#0E7490" stroke="#67E8F9" stroke-width="2"/>
+  <circle cx="880" cy="276" r="20" fill="#6D28D9" stroke="#C4B5FD" stroke-width="2"/>
+  <text x="70" y="82" fill="#A5F3FC" font-family="Segoe UI,Arial,sans-serif" font-size="16" font-weight="700" letter-spacing="4">DISTRIBUTED ADAPTIVE INTELLIGENCE</text>
+  <text x="64" y="169" fill="#FFFFFF" font-family="Segoe UI,Arial,sans-serif" font-size="76" font-weight="750" letter-spacing="-3">DAIOPH</text>
+  <rect x="70" y="195" width="130" height="5" rx="2.5" fill="url(#accent)"/>
+  <text x="70" y="247" fill="#D8E4FF" font-family="Segoe UI,Arial,sans-serif" font-size="25">Local-first AI, built to think, route, and act.</text>
+  <text x="648" y="224" text-anchor="middle" fill="#CFFAFE" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="1">EDGE</text>
+  <text x="880" y="183" text-anchor="middle" fill="#FFFFFF" font-family="Segoe UI,Arial,sans-serif" font-size="12" font-weight="700">DAIOPH</text>
+  <text x="1080" y="224" text-anchor="middle" fill="#EDE9FE" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="1">CLOUD</text>
+  <text x="880" y="48" text-anchor="middle" fill="#A5F3FC" font-family="Segoe UI,Arial,sans-serif" font-size="12" font-weight="600">PLAN</text>
+  <text x="880" y="317" text-anchor="middle" fill="#DDD6FE" font-family="Segoe UI,Arial,sans-serif" font-size="12" font-weight="600">LEARN</text>
+</svg>
