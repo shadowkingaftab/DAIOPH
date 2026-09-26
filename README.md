@@ -114,4 +114,4 @@ Dependencies are listed in `requirements.txt` and `pyproject.toml`; `uv.lock` re
 
 ## Project links
 
-[Architecture](ARCHITECTURE.md) · [Implementation report](IMPLEMENTATION_REPORT.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [License](LICENSE)
+[Super README / complete project guide](docs/PROJECT_GUIDE.md) · [Architecture](ARCHITECTURE.md) · [Implementation report](IMPLEMENTATION_REPORT.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [License](LICENSE)

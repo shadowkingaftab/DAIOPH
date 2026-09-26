@@ -47,9 +47,11 @@ credit reporters in the release notes unless anonymity is requested.
 
 ## Secure Defaults in This Project
 
-- **Secrets**: provided only via environment variables (`.env`, never committed;
-  excluded from Docker build context via `.dockerignore`). No key material is
-  hardcoded anywhere in the codebase.
+- **Secrets**: provide credentials through deployment secrets, Streamlit secrets,
+  or environment variables (`.env` is ignored by Git and excluded from Docker
+  build context). Do not place credentials in source code. Historical commits
+  may contain credentials that have since been removed from the working tree;
+  rotate any such credentials and do not reuse them.
 - **Least privilege**: tools declare required permissions; destructive actions
   require explicit authorization before execution.
 - **Sandboxing**: filesystem and process policies under `security/sandbox/`
@@ -80,3 +82,8 @@ credit reporters in the release notes unless anonymity is requested.
   directly to the public internet without an authenticating reverse proxy.
 - Local GGUF inference executes native code; only load model files from sources
   you trust.
+- Provider credentials were found in obfuscated form in older application
+  source and removed from the current `app.py` and `streamlit_app.py` working
+  tree on 2026-09-26. This source edit does not revoke them or remove old Git
+  objects. Rotate the affected Grok and Replicate credentials; if the repository
+  is shared, coordinate history cleanup with collaborators after rotation.
