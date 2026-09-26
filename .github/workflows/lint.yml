@@ -26,13 +26,13 @@ jobs:
         run: ruff check . --output-format=github || true
 
       - name: Run flake8
-        run: flake8 core/ liquid_core/ memory/ multi_modal/ hardware/ execution/ utils/ federated/ --count --select=E9,F63,F7,F82 --show-source --statistics || true
+        run: flake8 Backend/core/ liquid_Backend/core/ Backend/memory/ Backend/multi_modal/ Backend/hardware/ Backend/execution/ Backend/utils/ Backend/federated/ --count --select=E9,F63,F7,F82 --show-source --statistics || true
 
       - name: Check formatting (black)
-        run: black --check core/ liquid_core/ memory/ multi_modal/ --diff || true
+        run: black --check Backend/core/ liquid_Backend/core/ Backend/memory/ Backend/multi_modal/ --diff || true
 
       - name: Check import sorting (isort)
-        run: isort --check-only --diff core/ liquid_core/ memory/ multi_modal/ || true
+        run: isort --check-only --diff Backend/core/ liquid_Backend/core/ Backend/memory/ Backend/multi_modal/ || true
 
   yaml-lint:
     runs-on: ubuntu-latest
@@ -49,7 +49,7 @@ jobs:
           python -m pip install pyyaml
           python -c "
           import yaml, glob, sys
-          files = glob.glob('configs/*.yaml') + glob.glob('.github/workflows/*.yml')
+          files = glob.glob('Operations/configs/*.yaml') + glob.glob('.github/workflows/*.yml')
           for f in files:
               try:
                   with open(f) as fh:

@@ -3,12 +3,12 @@
 #
 # Applies to every image built from this directory:
 #   • ./Dockerfile                          (Streamlit dashboard, selective COPY)
-#   • ./deployment/docker/Dockerfile.edge   (REST API, `COPY . .`)
+#   • ./Operations/deployment/docker/Dockerfile.edge   (REST API, `COPY . .`)
 #
 # Goals: small build context, faster uploads, stable layer cache, and zero
 # secrets / model weights / dev artifacts baked into images.
 #
-# IMPORTANT: `models/` is deliberately NOT excluded as a directory — it is
+# IMPORTANT: `Backend/models/` is deliberately NOT excluded as a directory — it is
 # also a Python source package (models.registry, models.local, ...) imported
 # at runtime. Only model *weight binaries* are excluded below. Real weights
 # are downloaded at runtime into the `qwen_models` volume (see
@@ -72,18 +72,18 @@ htmlcov/
 coverage.xml
 
 # ── Tests & benchmarks (not needed in production images) ────────────────────
-tests/
-benchmarks/
+Quality/tests/
+Research/benchmarks/
 
 # ── Docs, research & release metadata ───────────────────────────────────────
 *.md
 LICENSE
 VERSION
-docs/
-research/
+Documentation/docs/
+Research/research/
 
 # ── Deployment & infra configs (host-side only; not needed inside images) ───
-deployment/
+Operations/deployment/
 Dockerfile
 Dockerfile.*
 .dockerignore
@@ -93,9 +93,9 @@ Makefile
 
 # ── Frontend / Node (TS plugin & web/mobile apps — not for Python images) ───
 node_modules/
-corsair-plugin-edge-ai/
-apps/web/
-apps/mobile/
+Frontend/corsair-plugin-edge-ai/
+Frontend/apps/web/
+Frontend/apps/mobile/
 *.tsbuildinfo
 
 # ── Model weight binaries (fetched at runtime into the qwen_models volume) ──
@@ -112,9 +112,9 @@ apps/mobile/
 *.bin
 
 # ── Runtime data, logs & local state (mounted as volumes instead) ───────────
-data/
-runtime_data/
-experiments/
+Research/data/
+Operations/runtime_Research/data/
+Research/experiments/
 logs/
 logs.csv
 *.log

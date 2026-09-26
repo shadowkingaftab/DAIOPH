@@ -41,7 +41,7 @@ COPY --from=builder /install /usr/local
 COPY classifier.py router.py logger.py evaluator.py ./
 COPY qwen_oda.py grok_cloud.py mcp_server.py ./
 COPY streamlit_app.py gradio_app.py ./
-COPY training/ ./training/
+COPY Research/training/ ./Research/training/
 COPY .env.example .env.example
 
 # Create directories
@@ -56,7 +56,7 @@ EXPOSE 8501
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8501/_stcore/health || exit 1
+    CMD curl -f http://localhost:8501/_stBackend/core/health || exit 1
 
 # Environment defaults (override with docker-compose or -e flags)
 ENV PYTHONUNBUFFERED=1

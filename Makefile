@@ -34,23 +34,23 @@ run-dashboard: ## Framework 1: intent classifier dashboard (production default)
 	streamlit run streamlit_app.py
 
 run-unified: ## Framework 2: unified hybrid DAG orchestrator
-	streamlit run unified_orchestrator/app.py
+	streamlit run Backend/unified_orchestrator/app.py
 
 run-smart: ## Framework 3: smart decomposition + telemetry router
-	streamlit run smart_orchestrator/app.py
+	streamlit run Backend/smart_orchestrator/app.py
 
 run-revolutionary: ## Framework 4: fully offline LLMCompiler + self-refine
-	streamlit run revolutionary_orchestrator/app.py
+	streamlit run Backend/revolutionary_orchestrator/app.py
 
 # ── Quality gates (configured in pyproject.toml) ───────────────────────────
-test: ## Run the full pytest suite (tests/ per pyproject testpaths)
+test: ## Run the full pytest suite (Quality/tests/ per pyproject testpaths)
 	pytest
 
 test-unit: ## Run only the fast unit tests
-	pytest tests/unit -q
+	pytest Quality/tests/unit -q
 
 test-integration: ## Run integration tests
-	pytest tests/integration -q
+	pytest Quality/tests/integration -q
 
 lint: ## Ruff lint check (line length 100, py311)
 	ruff check .
@@ -68,9 +68,9 @@ docker-up: ## Build and start the dashboard at http://localhost:8501
 docker-down: ## Stop and remove containers
 	docker compose down
 
-# ── Classifier fine-tuning (training/train_classifier.py) ──────────────────
-train-classifier: ## Fine-tune the intent classifier on training/domain_dataset.json
-	python training/train_classifier.py --epochs 5 --eval
+# ── Classifier fine-tuning (Research/training/train_classifier.py) ──────────────────
+train-classifier: ## Fine-tune the intent classifier on Research/training/domain_dataset.json
+	python Research/training/train_classifier.py --epochs 5 --eval
 
 # ── Housekeeping ───────────────────────────────────────────────────────────
 clean: ## Remove Python caches and build artifacts

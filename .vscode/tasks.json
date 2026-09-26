@@ -11,21 +11,21 @@
     {
       "label": "Run Tests",
       "type": "shell",
-      "command": "pytest tests/ -v",
+      "command": "pytest Quality/tests/ -v",
       "group": "test",
       "problemMatcher": []
     },
     {
       "label": "Run Lint",
       "type": "shell",
-      "command": "flake8 core/ liquid_core/ memory/ multi_modal/ hardware/ execution/ utils/ federated/ --count --select=E9,F63,F7,F82 --show-source --statistics",
+      "command": "flake8 Backend/core/ liquid_Backend/core/ Backend/memory/ Backend/multi_modal/ Backend/hardware/ Backend/execution/ Backend/utils/ Backend/federated/ --count --select=E9,F63,F7,F82 --show-source --statistics",
       "group": "build",
       "problemMatcher": []
     },
     {
       "label": "Format Code (Black)",
       "type": "shell",
-      "command": "black core/ liquid_core/ memory/ multi_modal/ hardware/ execution/ utils/ federated/",
+      "command": "black Backend/core/ liquid_Backend/core/ Backend/memory/ Backend/multi_modal/ Backend/hardware/ Backend/execution/ Backend/utils/ Backend/federated/",
       "group": "build",
       "problemMatcher": []
     },
@@ -39,14 +39,14 @@
     {
       "label": "Train Classifier",
       "type": "shell",
-      "command": "python training/train_classifier.py --epochs 5 --eval",
+      "command": "python Research/training/train_classifier.py --epochs 5 --eval",
       "group": "build",
       "problemMatcher": []
     },
     {
       "label": "Run Benchmarks",
       "type": "shell",
-      "command": "python scripts/benchmark.py",
+      "command": "python Operations/scripts/benchmark.py",
       "group": "build",
       "problemMatcher": []
     },
@@ -60,7 +60,7 @@
     {
       "label": "Typecheck (mypy)",
       "type": "shell",
-      "command": "mypy core/ liquid_core/ memory/ multi_modal/ --ignore-missing-imports",
+      "command": "mypy Backend/core/ liquid_Backend/core/ Backend/memory/ Backend/multi_modal/ --ignore-missing-imports",
       "group": "build",
       "problemMatcher": []
     }

@@ -23,14 +23,14 @@ Describe how you envision this feature working.
 - [ ] New module required
 
 ## Affected Components
-- [ ] `core/`
-- [ ] `liquid_core/`
-- [ ] `memory/`
-- [ ] `multi_modal/`
-- [ ] `federated/`
-- [ ] `hardware/`
-- [ ] `tools/`
-- [ ] `utils/`
+- [ ] `Backend/core/`
+- [ ] `liquid_Backend/core/`
+- [ ] `Backend/memory/`
+- [ ] `Backend/multi_modal/`
+- [ ] `Backend/federated/`
+- [ ] `Backend/hardware/`
+- [ ] `Backend/tools/`
+- [ ] `Backend/utils/`
 - [ ] `config/`
 - [ ] Other (specify below)
 

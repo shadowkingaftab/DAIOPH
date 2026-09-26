@@ -28,7 +28,7 @@
       "name": "Python: Liquid Engine Test",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/tests/test_liquid_engine.py",
+      "program": "${workspaceFolder}/Quality/tests/test_liquid_engine.py",
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
       "env": {
@@ -39,7 +39,7 @@
       "name": "Python: Train Classifier",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/training/train_classifier.py",
+      "program": "${workspaceFolder}/Research/training/train_classifier.py",
       "args": ["--epochs", "5", "--eval"],
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
@@ -73,7 +73,7 @@
       "name": "Node: Edge Plugin",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/corsair-plugin-edge-ai/index.ts",
+      "program": "${workspaceFolder}/Frontend/corsair-plugin-edge-ai/index.ts",
       "runtimeArgs": ["-r", "ts-node/register"],
       "cwd": "${workspaceFolder}/corsair-plugin-edge-ai",
       "console": "integratedTerminal"

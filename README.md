@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/readme-banner.svg" alt="DAIOPH — Local-first AI, built to think, route, and act" width="100%" />
+  <img src="Frontend/assets/readme-banner.svg" alt="DAIOPH — Local-first AI, built to think, route, and act" width="100%" />
 </div>
 
 <div align="center">
@@ -59,9 +59,9 @@ Core design themes are local-first inference where supported, adaptive routing, 
 | Workflow | Entry point | What it explores |
 |---|---|---|
 | Intent routing | `streamlit_app.py` | Classify prompts, select a route, and inspect execution telemetry. |
-| Unified orchestration | `unified_orchestrator/app.py` | Decompose multi-step work and coordinate parallel tasks. |
-| Smart orchestration | `smart_orchestrator/app.py` | Combine decomposition, routing, and task metrics. |
-| Prompt bifurcation | `revolutionary_orchestrator/app.py` | Explore local planning, execution, and refinement. |
+| Unified orchestration | `Backend/unified_orchestrator/app.py` | Decompose multi-step work and coordinate parallel tasks. |
+| Smart orchestration | `Backend/smart_orchestrator/app.py` | Combine decomposition, routing, and task metrics. |
+| Prompt bifurcation | `Backend/revolutionary_orchestrator/app.py` | Explore local planning, execution, and refinement. |
 
 The repository also contains REST, WebSocket, event, and gRPC API areas; Streamlit, CLI, web, desktop, and mobile application modules; and an MCP server entry point. Some are evolving or scaffolded surfaces.
 
@@ -98,13 +98,13 @@ Other orchestration apps can be started with `streamlit run <entry-point>`. Dock
 <details>
 <summary><strong>Explore the codebase</strong></summary>
 
-- **Runtime & orchestration:** `core/`, `runtime/`, `execution/`, `orchestration/`
-- **Agents & extensions:** `agents/`, `tools/`, `plugins/`
-- **Models & intelligence:** `models/`, `intelligence/`, `liquid_core/`
-- **Context & adaptation:** `memory/`, `knowledge/`, `learning/`, `federated/`
-- **Modalities & environment:** `multi_modal/`, `multimodal/`, `hardware/`, `os_layer/`, `network/`
-- **Trust & evaluation:** `security/`, `resilience/`, `observability/`, `evaluation/`, `benchmarks/`, `tests/`
-- **Interfaces & operations:** `APIs/`, `apps/`, `user_interface/`, `configs/`, `deployment/`
+- **Runtime & orchestration:** `Backend/core/`, `Backend/runtime/`, `Backend/execution/`, `Backend/orchestration/`
+- **Agents & extensions:** `Backend/agents/`, `Backend/tools/`, `Backend/plugins/`
+- **Models & intelligence:** `Backend/models/`, `Backend/intelligence/`, `liquid_Backend/core/`
+- **Context & adaptation:** `Backend/memory/`, `Backend/knowledge/`, `Backend/learning/`, `Backend/federated/`
+- **Modalities & environment:** `Backend/multi_modal/`, `Backend/multimodal/`, `Backend/hardware/`, `Backend/os_layer/`, `Backend/network/`
+- **Trust & evaluation:** `Backend/security/`, `Backend/resilience/`, `Backend/observability/`, `Research/evaluation/`, `Research/benchmarks/`, `Quality/tests/`
+- **Interfaces & operations:** `Backend/APIs/`, `Frontend/apps/`, `Frontend/user_interface/`, `Operations/configs/`, `Operations/deployment/`
 
 </details>
 
@@ -114,4 +114,4 @@ Dependencies are listed in `requirements.txt` and `pyproject.toml`; `uv.lock` re
 
 ## Project links
 
-[Super README / complete project guide](docs/PROJECT_GUIDE.md) · [Architecture](ARCHITECTURE.md) · [Implementation report](IMPLEMENTATION_REPORT.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [License](LICENSE)
+[Super README / complete project guide](Documentation/docs/PROJECT_GUIDE.md) · [Architecture](ARCHITECTURE.md) · [Implementation report](IMPLEMENTATION_REPORT.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [License](LICENSE)

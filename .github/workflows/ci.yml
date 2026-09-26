@@ -27,7 +27,7 @@ jobs:
               - 'requirements.txt'
               - 'pyproject.toml'
             node:
-              - 'corsair-plugin-edge-ai/**'
+              - 'Frontend/corsair-plugin-edge-ai/**'
               - '**/package.json'
 
   python-ci:
@@ -73,6 +73,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: corsair-plugin-edge-ai/package-lock.json
+          cache-dependency-path: Frontend/corsair-plugin-edge-ai/package-lock.json
       - run: npm ci
       - run: npm run build --if-present

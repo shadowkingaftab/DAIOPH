@@ -27,7 +27,7 @@ jobs:
 
       - name: Run benchmark suite
         run: |
-          python scripts/benchmark.py --output-dir benchmark-results || echo "Benchmark suite completed with warnings"
+          python Operations/scripts/benchmark.py --output-dir benchmark-results || echo "Benchmark suite completed with warnings"
 
       - name: Upload benchmark results
         uses: actions/upload-artifact@v4

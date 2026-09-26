@@ -37,7 +37,7 @@ Closes #(issue)
 - [ ] Code follows project style conventions
 - [ ] Self-reviewed my code
 - [ ] Tests added/updated (if applicable)
-- [ ] All tests pass (`pytest tests/`)
+- [ ] All tests pass (`pytest Quality/tests/`)
 - [ ] Docs updated (if applicable)
 - [ ] No hardcoded secrets/API keys committed
 - [ ] Checked for graceful fallbacks (cloud → edge)

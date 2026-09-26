@@ -25,7 +25,7 @@ jobs:
 
       - name: Train & validate intent classifier
         run: |
-          python training/train_classifier.py --epochs 3 --eval || echo "Classifier training skipped (model download may be slow)"
+          python Research/training/train_classifier.py --epochs 3 --eval || echo "Classifier training skipped (model download may be slow)"
 
       - name: Generate classification report
         run: |

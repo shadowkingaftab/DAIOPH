@@ -59,8 +59,8 @@
   "files.watcherExclude": {
     "**/.venv/**": true,
     "**/node_modules/**": true,
-    "**/models/**": true,
-    "**/runtime_data/**": true
+    "**/Backend/models/**": true,
+    "**/Operations/runtime_Research/data/**": true
   },
   "search.exclude": {
     "**/.venv": true,

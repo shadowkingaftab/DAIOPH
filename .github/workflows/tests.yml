@@ -30,7 +30,7 @@ jobs:
 
       - name: Run unit tests
         run: |
-          pytest tests/ -v --cov=core --cov=liquid_core --cov=memory --cov=multi_modal --cov-report=term-missing --ignore=tests/test_federated.py
+          pytest Quality/tests/ -v --cov=core --cov=liquid_core --cov=memory --cov=multi_modal --cov-report=term-missing --ignore=Quality/tests/test_federated.py
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
@@ -57,7 +57,7 @@ jobs:
 
       - name: Run integration tests
         run: |
-          pytest tests/test_federated.py tests/test_multi_modal.py -v || echo "Integration tests skipped (dependencies may be unavailable)"
+          pytest Quality/tests/test_federated.py Quality/tests/test_multi_modal.py -v || echo "Integration tests skipped (dependencies may be unavailable)"
 
   model-tests:
     runs-on: ubuntu-latest
@@ -78,4 +78,4 @@ jobs:
 
       - name: Run liquid engine tests
         run: |
-          pytest tests/test_liquid_engine.py tests/test_hardware_optimizer.py -v || echo "Model tests skipped (heavy deps unavailable)"
+          pytest Quality/tests/test_liquid_engine.py Quality/tests/test_hardware_optimizer.py -v || echo "Model tests skipped (heavy deps unavailable)"
