@@ -37,6 +37,30 @@ def _grok():
 
 
 # ── Main router ───────────────────────────────────────────────────────────────
+def choose_route(intent_matrix: dict, text: str) -> str:
+    """Select a route without calling a model.
+
+    This pure decision function is used by the benchmark runner so routing can
+    be measured without sending evaluation prompts to an inference provider.
+    """
+    if not intent_matrix:
+        return "Cloud LLM"
+
+    top_intent, top_confidence = max(intent_matrix.items(), key=lambda x: x[1])
+    text_lower = text.lower()
+    if "urgent" in text_lower or intent_matrix.get("urgent", 0) > 0.5:
+        return "Cloud LLM"
+    if intent_matrix.get("multi_step", 0) > 0.3:
+        return "Hybrid"
+    if top_confidence < 0.55:
+        return "Cloud LLM"
+    if top_confidence >= 0.75 and top_intent in ["summarize", "translate", "simple_query"]:
+        return "ODA"
+    if top_confidence >= 0.75:
+        return "Cloud LLM"
+    return "Hybrid"
+
+
 def route_task(intent_matrix: dict, text: str) -> dict:
     try:
         pass
@@ -68,22 +92,7 @@ def route_task(intent_matrix: dict, text: str) -> dict:
         }
 
     start_time = time.time()
-    top_intent, top_confidence = max(intent_matrix.items(), key=lambda x: x[1])
-    text_lower = text.lower()
-
-    # ── Routing decision ──────────────────────────────────────────────────────
-    if "urgent" in text_lower or intent_matrix.get("urgent", 0) > 0.5:
-        route = "Cloud LLM"
-    elif intent_matrix.get("multi_step", 0) > 0.3:
-        route = "Hybrid"
-    elif top_confidence < 0.55:
-        route = "Cloud LLM"
-    elif top_confidence >= 0.75 and top_intent in ["summarize", "translate", "simple_query"]:
-        route = "ODA"
-    elif top_confidence >= 0.75:
-        route = "Cloud LLM"
-    else:
-        route = "Hybrid"
+    route = choose_route(intent_matrix, text)
 
     # ── Get module references ─────────────────────────────────────────────────
     run_qwen = _qwen()

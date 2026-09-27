@@ -1,0 +1,2 @@
+id,category,prompt,expected_intent,predicted_intent,predicted_confidence,expected_route,actual_route,intent_correct,route_correct,safety_tag,classification_latency_ms,intent_scores,error
+SL01,Simple local tasks,"Translate 'Good morning, how are you?' into Hindi.",translate,translate,0.5453,ODA,Cloud LLM,True,False,local_eligible,6024.99,"{""ambiguous"": 0.003, ""analyze_data"": 0.0003, ""generate_code"": 0.0004, ""multi_step"": 0.0008, ""simple_query"": 0.0002, ""summarize"": 0.4496, ""translate"": 0.5453, ""urgent"": 0.0004}",

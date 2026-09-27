@@ -219,7 +219,43 @@ INTENT_LABELS = [
     "multi_step", "ambiguous", "urgent", "simple_query"
 ]
 
-def classify_prompt(prompt: str) -> dict:
+
+def detect_routing_intent(prompt: str) -> str | None:
+    """Return a high-precision routing intent when the wording is explicit.
+
+    The zero-shot model remains the fallback for open-ended prompts.  These
+    signals cover task characteristics that should be preserved by routing even
+    when a general-purpose NLI model prefers an unrelated semantic label.
+    """
+    text = prompt.lower().strip()
+    tokens = re.findall(r"\b\w+\b", text)
+
+    if re.search(r"\b(urgent|asap|immediately|critical|outage|malware|unauthorized)\b", text):
+        return "urgent"
+    if re.search(r"\b(first|then|next|after that|finally)\b", text):
+        return "multi_step"
+    if re.search(r"\b(python|javascript|typescript|sql|code|script|function|program)\b", text):
+        return "generate_code"
+    if re.search(r"\btranslate\b|\binto\s+(english|hindi|spanish|french|german|arabic|kannada)\b", text):
+        return "translate"
+    if re.search(r"\b(summarize|summary|condense|concise summary)\b", text):
+        return "summarize"
+    if re.search(r"\b(analy[sz]e|analysis|csv|dataset|data|table|metrics|error rates|budget)\b", text):
+        return "analyze_data"
+    if re.match(r"^(what is|what does|how many|define|explain what|what is the purpose)", text):
+        return "simple_query"
+    if (
+        re.search(r"\b(not sure|unclear)\b", text)
+        or (
+            len(tokens) <= 14
+            and re.search(r"\b(this|it|thing|issue|request|information|problem|task)\b", text)
+            and re.search(r"\b(help|process|review|make|do|solve|tell|need|advice)\b", text)
+        )
+    ):
+        return "ambiguous"
+    return None
+
+def classify_prompt(prompt: str, use_routing_rules: bool = True) -> dict:
     """
     Takes a raw text prompt.
     Returns a dictionary with:
@@ -255,6 +291,14 @@ def classify_prompt(prompt: str) -> dict:
         
     if "urgent" in text_lower or "asap" in text_lower:
         intent_probs["urgent"] *= 1.5
+
+    # Preserve explicit operational signals before the model scores are
+    # normalized.  The NLI model is semantic, not a dedicated router, and can
+    # otherwise assign high confidence to "summarize" for code or chained work.
+    rule_intent = detect_routing_intent(prompt) if use_routing_rules else None
+    if rule_intent:
+        intent_probs = {label: 0.01 for label in INTENT_LABELS}
+        intent_probs[rule_intent] = 0.93
 
     # Normalize probabilities
     total = sum(intent_probs.values())

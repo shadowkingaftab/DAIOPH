@@ -1,0 +1,46 @@
+{
+  "run_metadata": {
+    "run_at_utc": "2026-09-27T05:54:31.429472+00:00",
+    "classifier_model": "typeform/distilbert-base-uncased-mnli",
+    "python": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "benchmark_mode": "local decision-only",
+    "routing_rules_enabled": false
+  },
+  "category_results": [
+    {
+      "category": "Simple local tasks",
+      "prompts": 20,
+      "route_correct": 11,
+      "routing_accuracy_percent": 55.0
+    },
+    {
+      "category": "Complex and multi-step tasks",
+      "prompts": 20,
+      "route_correct": 5,
+      "routing_accuracy_percent": 25.0
+    },
+    {
+      "category": "Critical, urgent, and uncertain tasks",
+      "prompts": 20,
+      "route_correct": 14,
+      "routing_accuracy_percent": 70.0
+    }
+  ],
+  "overall": {
+    "prompts": 60,
+    "route_correct": 30,
+    "routing_accuracy_percent": 50.0,
+    "intent_correct": 24,
+    "intent_accuracy_percent": 40.0,
+    "mean_classification_latency_ms": 992.57,
+    "p95_classification_latency_ms": 1248.2,
+    "local_eligible_local_rate_percent": 55.0,
+    "risk_route_compliance_percent": 47.5,
+    "actual_route_distribution": {
+      "ODA": 29,
+      "Hybrid": 8,
+      "Cloud LLM": 23
+    }
+  }
+}

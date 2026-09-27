@@ -1,0 +1,3 @@
+Loading classifier: typeform/distilbert-base-uncased-mnli
+Loading weights:   0%|          | 0/104 [00:00<?, ?it/s]Loading weights: 100%|##########| 104/104 [00:00<00:00, 3804.13it/s]
+Classifier loaded successfully!
