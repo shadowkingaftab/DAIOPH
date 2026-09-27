@@ -81,7 +81,7 @@ Results feed back into the scaler's selection tables.
 
 ## Evaluation Metrics
 
-From `Research/evaluation/Backend/models/efficiency.py`:
+From `Research/evaluation/models/efficiency.py`:
 - Tokens/sec/watt (energy efficiency)
 - Quality-per-latency trade-off curves
 - Adaptation convergence time after hardware change

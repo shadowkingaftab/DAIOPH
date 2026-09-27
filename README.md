@@ -58,7 +58,7 @@ Core design themes are local-first inference where supported, adaptive routing, 
 
 | Workflow | Entry point | What it explores |
 |---|---|---|
-| Intent routing | `streamlit_app.py` | Classify prompts, select a route, and inspect execution telemetry. |
+| Intent routing | `Frontend/streamlit_app.py` | Classify prompts, select a route, and inspect execution telemetry. |
 | Unified orchestration | `Backend/unified_orchestrator/app.py` | Decompose multi-step work and coordinate parallel tasks. |
 | Smart orchestration | `Backend/smart_orchestrator/app.py` | Combine decomposition, routing, and task metrics. |
 | Prompt bifurcation | `Backend/revolutionary_orchestrator/app.py` | Explore local planning, execution, and refinement. |
@@ -90,7 +90,7 @@ pip install -r requirements.txt
 Copy `.env.example` to `.env`. Set `GROK_API_KEY` for Grok-backed inference; local Qwen settings are also described in the example. Then launch the primary dashboard:
 
 ```bash
-streamlit run streamlit_app.py
+streamlit run Frontend/streamlit_app.py
 ```
 
 Other orchestration apps can be started with `streamlit run <entry-point>`. Docker files are provided in `Dockerfile` and `docker-compose.yml`.
@@ -100,7 +100,7 @@ Other orchestration apps can be started with `streamlit run <entry-point>`. Dock
 
 - **Runtime & orchestration:** `Backend/core/`, `Backend/runtime/`, `Backend/execution/`, `Backend/orchestration/`
 - **Agents & extensions:** `Backend/agents/`, `Backend/tools/`, `Backend/plugins/`
-- **Models & intelligence:** `Backend/models/`, `Backend/intelligence/`, `liquid_Backend/core/`
+- **Models & intelligence:** `Backend/models/`, `Backend/intelligence/`, `Backend/liquid_core/`
 - **Context & adaptation:** `Backend/memory/`, `Backend/knowledge/`, `Backend/learning/`, `Backend/federated/`
 - **Modalities & environment:** `Backend/multi_modal/`, `Backend/multimodal/`, `Backend/hardware/`, `Backend/os_layer/`, `Backend/network/`
 - **Trust & evaluation:** `Backend/security/`, `Backend/resilience/`, `Backend/observability/`, `Research/evaluation/`, `Research/benchmarks/`, `Quality/tests/`
@@ -114,4 +114,4 @@ Dependencies are listed in `requirements.txt` and `pyproject.toml`; `uv.lock` re
 
 ## Project links
 
-[Super README / complete project guide](Documentation/docs/PROJECT_GUIDE.md) · [Architecture](ARCHITECTURE.md) · [Implementation report](IMPLEMENTATION_REPORT.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [License](LICENSE)
+[Super README / complete project guide](Documentation/docs/PROJECT_GUIDE.md) · [Architecture](Documentation/ARCHITECTURE.md) · [Implementation report](Documentation/IMPLEMENTATION_REPORT.md) · [Changelog](Documentation/CHANGELOG.md) · [Contributing](Documentation/CONTRIBUTING.md) · [Security](Documentation/SECURITY.md) · [License](LICENSE)

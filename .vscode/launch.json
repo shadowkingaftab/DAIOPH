@@ -6,7 +6,7 @@
       "type": "debugpy",
       "request": "launch",
       "module": "streamlit",
-      "args": ["run", "streamlit_app.py", "--server.port", "8501"],
+      "args": ["run", "Frontend/streamlit_app.py", "--server.port", "8501"],
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
       "env": {
@@ -17,7 +17,7 @@
       "name": "Python: Hybrid Orchestrator",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/app.py",
+      "program": "${workspaceFolder}/Backend/unified_orchestrator/app.py",
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
       "env": {
@@ -51,7 +51,7 @@
       "name": "Python: MCP Server",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/mcp_server.py",
+      "program": "${workspaceFolder}/Backend/mcp_server.py",
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
       "env": {
@@ -75,7 +75,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/Frontend/corsair-plugin-edge-ai/index.ts",
       "runtimeArgs": ["-r", "ts-node/register"],
-      "cwd": "${workspaceFolder}/corsair-plugin-edge-ai",
+      "cwd": "${workspaceFolder}/Frontend/corsair-plugin-edge-ai",
       "console": "integratedTerminal"
     }
   ]

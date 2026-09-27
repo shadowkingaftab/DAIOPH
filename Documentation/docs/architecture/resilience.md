@@ -60,7 +60,7 @@ Primary local model
 - `/health`: Liveness (is the process running?)
 - `/ready`: Readiness (can we serve requests?)
 
-## Chaos Testing (`Quality/tests/Backend/resilience/`)
+## Chaos Testing (`Quality/tests/resilience/`)
 
 Resilience is validated through:
 - **Fallback tests**: Verify each fallback activates correctly

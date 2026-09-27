@@ -16,6 +16,16 @@ To run:
   Then open http://localhost:7860 in your browser
 """
 
+
+from pathlib import Path as _Path
+import sys as _sys
+
+for _candidate in _Path(__file__).resolve().parents:
+    _backend_dir = _candidate / "Backend"
+    if _backend_dir.is_dir():
+        _sys.path.insert(0, str(_backend_dir))
+        break
+
 import gradio as gr
 from classifier import classify_prompt
 from router import get_route, get_route_explanation, get_route_color

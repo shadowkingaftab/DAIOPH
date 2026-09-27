@@ -18,21 +18,21 @@
     {
       "label": "Run Lint",
       "type": "shell",
-      "command": "flake8 Backend/core/ liquid_Backend/core/ Backend/memory/ Backend/multi_modal/ Backend/hardware/ Backend/execution/ Backend/utils/ Backend/federated/ --count --select=E9,F63,F7,F82 --show-source --statistics",
+      "command": "flake8 Backend/core/ Backend/liquid_core/ Backend/memory/ Backend/multi_modal/ Backend/hardware/ Backend/execution/ Backend/utils/ Backend/federated/ --count --select=E9,F63,F7,F82 --show-source --statistics",
       "group": "build",
       "problemMatcher": []
     },
     {
       "label": "Format Code (Black)",
       "type": "shell",
-      "command": "black Backend/core/ liquid_Backend/core/ Backend/memory/ Backend/multi_modal/ Backend/hardware/ Backend/execution/ Backend/utils/ Backend/federated/",
+      "command": "black Backend/core/ Backend/liquid_core/ Backend/memory/ Backend/multi_modal/ Backend/hardware/ Backend/execution/ Backend/utils/ Backend/federated/",
       "group": "build",
       "problemMatcher": []
     },
     {
       "label": "Run Streamlit App",
       "type": "shell",
-      "command": "streamlit run streamlit_app.py",
+      "command": "streamlit run Frontend/streamlit_app.py",
       "group": "build",
       "problemMatcher": []
     },
@@ -60,7 +60,7 @@
     {
       "label": "Typecheck (mypy)",
       "type": "shell",
-      "command": "mypy Backend/core/ liquid_Backend/core/ Backend/memory/ Backend/multi_modal/ --ignore-missing-imports",
+      "command": "mypy Backend/core/ Backend/liquid_core/ Backend/memory/ Backend/multi_modal/ --ignore-missing-imports",
       "group": "build",
       "problemMatcher": []
     }

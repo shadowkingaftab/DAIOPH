@@ -31,7 +31,7 @@ lock: ## Regenerate uv.lock after changing pyproject.toml dependencies
 
 # ── Run the four orchestration frameworks (Streamlit) ──────────────────────
 run-dashboard: ## Framework 1: intent classifier dashboard (production default)
-	streamlit run streamlit_app.py
+	streamlit run Frontend/streamlit_app.py
 
 run-unified: ## Framework 2: unified hybrid DAG orchestrator
 	streamlit run Backend/unified_orchestrator/app.py

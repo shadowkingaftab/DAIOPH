@@ -17,7 +17,7 @@ Research on enabling DAIOPH to learn continuously from interactions without cata
 - `Backend/learning/continual/incremental_learning.py` — online updates
 - `Backend/learning/Research/training/trainer.py` — LoRA/PEFT pipelines
 - `Backend/learning/evolution/regression_guard.py` — update safety
-- `Research/evaluation/Backend/learning/forgetting.py` — forgetting metrics
+- `Research/evaluation/learning/forgetting.py` — forgetting metrics
 
 ## Related Documentation
 

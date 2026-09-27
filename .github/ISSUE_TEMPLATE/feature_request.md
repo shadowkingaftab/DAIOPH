@@ -24,7 +24,7 @@ Describe how you envision this feature working.
 
 ## Affected Components
 - [ ] `Backend/core/`
-- [ ] `liquid_Backend/core/`
+- [ ] `Backend/liquid_core/`
 - [ ] `Backend/memory/`
 - [ ] `Backend/multi_modal/`
 - [ ] `Backend/federated/`

@@ -61,7 +61,7 @@ Converts plans into directed acyclic graphs:
 - **Verifier**: Validates outputs
 - **Researcher/Coder/Analyst**: Specialized workers
 
-## Routing (`Research/evaluation/Backend/orchestration/routing.py`)
+## Routing (`Research/evaluation/orchestration/routing.py`)
 
 Model routing strategies:
 1. **Local-first**: Prefer on-device models
@@ -69,7 +69,7 @@ Model routing strategies:
 3. **Quality-first**: Use best available model
 4. **Cost-aware**: Minimize API costs when online
 
-## Recovery (`Research/evaluation/Backend/orchestration/recovery.py`)
+## Recovery (`Research/evaluation/orchestration/recovery.py`)
 
 Failure recovery patterns:
 - Retry with backoff for transient failures

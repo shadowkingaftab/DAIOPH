@@ -28,7 +28,7 @@ DAIOPH implements defense-in-depth security: local data protection, sandboxed ex
 - User grants/revokes per capability
 - Least-privilege defaults
 
-### Sandbox (`Quality/tests/Backend/security/test_sandbox.py` validates)
+### Sandbox (`Quality/tests/security/test_sandbox.py` validates)
 - Tool execution in isolated environments
 - Filesystem restrictions (scoped paths)
 - Network restrictions per tool
@@ -48,7 +48,7 @@ DAIOPH implements defense-in-depth security: local data protection, sandboxed ex
 4. **CORS**: Restricted origins in production
 5. **Security Headers**: HSTS, CSP, X-Frame-Options
 
-## Injection Defense (`Quality/tests/Backend/security/test_injection.py`)
+## Injection Defense (`Quality/tests/security/test_injection.py`)
 
 - SQL injection: Parameterized queries only
 - XSS: Output encoding in web interfaces

@@ -104,5 +104,6 @@ line-length = 100
 target-version = "py311"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["Quality/tests"]
+pythonpath = ["Backend", "Research"]
 addopts = "-ra"

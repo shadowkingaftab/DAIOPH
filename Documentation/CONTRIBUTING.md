@@ -67,7 +67,7 @@ ruff check .
 ## Testing
 
 Tests live under `Quality/tests/` (unit, integration, system, end-to-end, security,
-resilience). pytest is configured with `testpaths = ["tests"]`.
+resilience). pytest is configured with `testpaths = ["Quality/tests"]`.
 
 ```bash
 pytest                       # full suite

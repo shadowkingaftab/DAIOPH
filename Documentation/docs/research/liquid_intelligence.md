@@ -50,7 +50,7 @@ Cognition itself adapts to hardware constraints:
 
 ## Evaluation
 
-Metrics tracked in `Research/evaluation/Backend/intelligence/` and `Research/evaluation/Backend/learning/`:
+Metrics tracked in `Research/evaluation/intelligence/` and `Research/evaluation/learning/`:
 - Adaptation speed (interactions to converge on user preference)
 - Stability (performance variance over time)
 - Forgetting rate (old task performance after new learning)

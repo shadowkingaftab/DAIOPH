@@ -53,7 +53,7 @@ Combines continual learning with federation:
 
 ## Forgetting Measurement
 
-`Research/evaluation/Backend/learning/forgetting.py` tracks:
+`Research/evaluation/learning/forgetting.py` tracks:
 
 ```
 Forgetting = max_performance_before - performance_after
@@ -63,7 +63,7 @@ Across a task suite, reported as average forgetting (BWT metric).
 
 ## Drift Detection
 
-`Research/evaluation/Backend/learning/drift.py` detects distribution shift:
+`Research/evaluation/learning/drift.py` detects distribution shift:
 - Input embedding drift (are queries changing?)
 - Performance drift (is accuracy declining?)
 - Triggers increased plasticity when drift detected

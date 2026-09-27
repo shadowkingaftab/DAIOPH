@@ -36,7 +36,7 @@ jobs:
 
       - name: Run bandit security scan
         run: |
-          bandit -r Backend/core/ liquid_Backend/core/ Backend/memory/ Backend/multi_modal/ Backend/hardware/ Backend/federated/ Backend/execution/ -f json -o bandit_report.json || true
+          bandit -r Backend/core/ Backend/liquid_core/ Backend/memory/ Backend/multi_modal/ Backend/hardware/ Backend/federated/ Backend/execution/ -f json -o bandit_report.json || true
 
       - name: Upload bandit report
         uses: actions/upload-artifact@v4

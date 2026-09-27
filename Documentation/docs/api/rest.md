@@ -66,8 +66,8 @@ Response:
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/api/models` | List available models |
-| POST | `/api/Backend/models/load` | Load a model |
-| POST | `/api/Backend/models/unload` | Unload a model |
+| POST | `/api/models/load` | Load a model |
+| POST | `/api/models/unload` | Unload a model |
 
 ## Error Format
 

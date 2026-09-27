@@ -8,7 +8,7 @@ DAIOPH is expanded in current docs as **Distributed Adaptive Intelligence Operat
 
 The version marker is `0.1.0`; Python is pinned to 3.11. The repository is best understood as two related bodies of work:
 
-1. **Original runnable application lineage:** root Streamlit apps and modules (`streamlit_app.py`, `app.py`, `classifier.py`, `router.py`, `Backend/core/hybrid_orchestrator.py`, `qwen_oda.py`, `grok_cloud.py`) implement prompt routing, local/cloud model calls, task decomposition, and dashboards. They have their own assumptions and duplicated logic.
+1. **Original runnable application lineage:** Frontend Streamlit apps and Backend modules (`Frontend/streamlit_app.py`, `Frontend/app.py`, `Backend/classifier.py`, `Backend/router.py`, `Backend/core/hybrid_orchestrator.py`, `Backend/qwen_oda.py`, `Backend/grok_cloud.py`) implement prompt routing, local/cloud model calls, task decomposition, and dashboards. They have their own assumptions and duplicated logic.
 2. **Platform architecture and subsystem modules:** `Backend/core/`, `Backend/intelligence/`, `Backend/orchestration/`, `Backend/memory/`, `Backend/learning/`, `Backend/knowledge/`, `Backend/security/`, and related packages define a broader system. Some modules have concrete logic and tests; other modules remain placeholders or are not wired into the older apps.
 
 The architecture is therefore a direction and a collection of building blocks, not evidence that every capability is available through one unified production runtime.
@@ -165,7 +165,7 @@ flowchart TD
 | Cloud failure | No key, network timeout, provider error/model retirement, rate limit. | Grok model failover/retries and local Qwen fallback in original helper path. | Current key must be configured; fallback quality/context limits differ; retries add latency. |
 | Too little context | Document truncation, long parent outputs, large graph consume small context windows. | Chunking, selected parent context and explicit truncation in old path. | Important evidence can be cut; citations/evidence linkage is not universal. |
 | Contradictory outputs | Independent branches/models can return incompatible claims. | Conflict detection/resolution and synthesis helpers. | Heuristic conflict detection can miss subtle contradictions; a model synthesizer can smooth over a real disagreement. |
-| Unusable multimodal input | OCR errors, unsupported codecs, absent Tesseract/audio packages, sensor permissions. | Optional import fallbacks in some apps and text/OCR/document processors. | Root `app.py` imports some optional modules directly; fallback coverage is inconsistent. |
+| Unusable multimodal input | OCR errors, unsupported codecs, absent Tesseract/audio packages, sensor permissions. | Optional import fallbacks in some apps and text/OCR/document processors. | Root `Frontend/app.py` imports some optional modules directly; fallback coverage is inconsistent. |
 | Memory misuse or leak | Persistent state can retain sensitive or stale data; consolidation can over-promote. | Separate tiers, retention, permissions, encryption/deletion modules in the platform design. | Older apps may store session data separately; policy integration and deletion paths need end-to-end proof. |
 | Learning harms old behavior | Noisy feedback, drift, poisoning or overfitting. | Replay, stability, regression guard, rollback and federated defenses are represented in packages/docs. | Experiment logs are planned/TBD; do not enable autonomous model updates on trust alone. |
 | API/tool abuse | Direct OS tools or APIs can have broad effects. | Auth, authorization, tool permissions, sandbox and audit components are present. | Presence is not enforcement; REST bootstrap and security integration are incomplete. |
@@ -262,7 +262,7 @@ This workflow synthesizes the intended components from `Backend/learning/`, `Bac
 
 ## Project history and prior interventions
 
-The history below is summarized from Git commit subjects, `CHANGELOG.md`, and `IMPLEMENTATION_REPORT.md`. It records work that happened; it does not claim every feature still works or remains in the default route.
+The history below is summarized from Git commit subjects, `Documentation/CHANGELOG.md`, and `Documentation/IMPLEMENTATION_REPORT.md`. It records work that happened; it does not claim every feature still works or remains in the default route.
 
 ```mermaid
 timeline
@@ -284,13 +284,13 @@ timeline
 
 | Stage | Change | Code/evidence | Why it was done |
 |---|---|---|---|
-| Baseline router | Added an intent classifier, route selection, Streamlit dashboard, and request logging. | `classifier.py`, `router.py`, `streamlit_app.py`, `logger.py`; first commits in history. | Choose a local or cloud path instead of sending all prompts to one model. |
+| Baseline router | Added an intent classifier, route selection, Streamlit dashboard, and request logging. | `classifier.py`, `router.py`, `Frontend/streamlit_app.py`, `logger.py`; first commits in history. | Choose a local or cloud path instead of sending all prompts to one model. |
 | Local/cloud inference | Added Qwen GGUF inference and Grok API access, then model/configuration and download handling. | `qwen_oda.py`, `grok_cloud.py`, `.env.example`, `requirements.txt`. | Provide local inference with an optional remote route and fallback behavior. |
-| Deployment repair | Iterated on Python version, native wheels, dependency size, Streamlit build limits, lazy loading, and model reuse. | May 9–24 commits; `IMPLEMENTATION_REPORT.md`; cached model loading in app code. | Run within constrained hosting and avoid repeated model allocations. |
+| Deployment repair | Iterated on Python version, native wheels, dependency size, Streamlit build limits, lazy loading, and model reuse. | May 9–24 commits; `Documentation/IMPLEMENTATION_REPORT.md`; cached model loading in app code. | Run within constrained hosting and avoid repeated model allocations. |
 | Multi-step execution | Added decomposers, dependency graphs, parallel branches, retry/fallback, output stitching, progress/metrics, and graph visualizations. | `Backend/core/hybrid_orchestrator.py`, `Backend/unified_orchestrator/`, `Backend/smart_orchestrator/`, `Backend/execution/`; report and history. | Handle compound prompts and expose intermediate execution. |
 | Multimodal app input | Added or explored PDF/image/voice paths, OCR, conversation context, and language helpers. | `chatbot_app.py`, `Backend/utils/`, `Backend/multi_modal/`, `Backend/multimodal/`. | Let users supply documents and other input types beyond plain text. |
 | Platform expansion | Added typed contracts, kernel, agent roles, Backend/memory/Backend/knowledge/learning, hardware, APIs, Backend/tools/plugins, security, resilience, evaluation, deployment, and research trees. | August commits; `Documentation/docs/architecture/`, `Documentation/docs/decisions/`, package folders. | Explore a more modular and portable platform beyond the initial dashboard. |
-| Documentation refresh | Reworked public project orientation and architecture notes. | September commits; `README.md`, `ARCHITECTURE.md`. | Explain breadth and maturity more clearly. |
+| Documentation refresh | Reworked public project orientation and architecture notes. | September commits; `README.md`, `Documentation/ARCHITECTURE.md`. | Explain breadth and maturity more clearly. |
 
 The implementation report describes four generations: (1) classifier/router, (2) unified DAG orchestrator, (3) smart decomposer/router with telemetry, and (4) local planner/executor/refiner. These are separate implementations, not four stages executed in series. The report’s “pinnacle” language is historical opinion, not a validation result.
 
@@ -298,7 +298,7 @@ The implementation report describes four generations: (1) classifier/router, (2)
 
 ### The original application path
 
-The older path is centered on root-level scripts and model clients. There is not one universally used chain: `streamlit_app.py`, `app.py`, `chatbot_app.py`, and the subdirectory apps have separate UI/runtime code. The path below summarizes the intended hybrid workflow represented in `Backend/core/hybrid_orchestrator.py` and the implementation report.
+The older path is centered on root-level scripts and model clients. There is not one universally used chain: `Frontend/streamlit_app.py`, `Frontend/app.py`, `chatbot_app.py`, and the subdirectory apps have separate UI/runtime code. The path below summarizes the intended hybrid workflow represented in `Backend/core/hybrid_orchestrator.py` and the implementation report.
 
 ```mermaid
 flowchart LR
@@ -355,7 +355,7 @@ The newer `Backend/orchestration/planning/planner.py` has two actual strategies:
 | Implementation | What code/docs indicate | Important distinction |
 |---|---|---|
 | Root `router.py` | Intent matrix route choice, Qwen/Grok helper access, a local `HybridOrchestrator`, failed-task recovery, output stitching. | Legacy app-specific implementation, distinct from the similarly named class in `Backend/core/`. |
-| `Backend/core/hybrid_orchestrator.py` | More feature-rich original orchestrator; handles decomposition, route execution, special diagram/image work, synthesis/conflict handling. | Used by `app.py`; optional dependencies have fallbacks that may reduce functionality. |
+| `Backend/core/hybrid_orchestrator.py` | More feature-rich original orchestrator; handles decomposition, route execution, special diagram/image work, synthesis/conflict handling. | Used by `Frontend/app.py`; optional dependencies have fallbacks that may reduce functionality. |
 | `Backend/unified_orchestrator/` | Older hierarchical/task decomposition app and support modules. | Separate code lineage; its app setup and model calls differ from core orchestration. |
 | `Backend/smart_orchestrator/` | Another decomposition/routing/telemetry application with its own requirements. | Prototype/application, not a facade guaranteed to unify all orchestrators. |
 | `Backend/revolutionary_orchestrator/` | Local planner, executor, and refiner classes around a shared GGUF model context (per report/source). | Experimental offline approach with separate planner/executor contracts. |
@@ -368,14 +368,14 @@ The newer `Backend/orchestration/planning/planner.py` has two actual strategies:
 
 | File | Source-grounded role |
 |---|---|
-| `streamlit_app.py` | Main README launch target; Streamlit prompt/dashboard workflow. |
-| `app.py` | Edge AI Orchestrator UI. Loads a Qwen GGUF model if missing, creates `core.HybridOrchestrator`, shares its Qwen instance with `PromptGenerator`, optionally injects Grok, and provides PDF/image/voice and route UI code. |
+| `Frontend/streamlit_app.py` | Main README launch target; Streamlit prompt/dashboard workflow. |
+| `Frontend/app.py` | Edge AI Orchestrator UI. Loads a Qwen GGUF model if missing, creates `core.HybridOrchestrator`, shares its Qwen instance with `PromptGenerator`, optionally injects Grok, and provides PDF/image/voice and route UI code. |
 | `chatbot_app.py` | Separate chat UI with its own local/cloud request logic, conversation state, file/voice features and charts. |
 | `classifier.py` | Original prompt preprocessing, language/decomposition helpers, lazy classifier setup and classification. It is distinct from `Backend/intelligence/intent/intent_classifier.py`. |
 | `router.py` | Legacy route helpers and a separate orchestrator/executor implementation. |
 | `qwen_oda.py` | Qwen GGUF configuration, download/status/hardware helpers, lazy model loading, cached generation and error reporting. |
 | `grok_cloud.py` | Grok configuration/key lookup, request calls, retries/fallback helper and generation wrapper. |
-| `Backend/core/hybrid_orchestrator.py` | Main older orchestration class instantiated by `app.py`; has decomposition, parallel execution, result stitching, synthesis and image/diagram route hooks. |
+| `Backend/core/hybrid_orchestrator.py` | Main older orchestration class instantiated by `Frontend/app.py`; has decomposition, parallel execution, result stitching, synthesis and image/diagram route hooks. |
 | `Backend/core/task_executor.py` | Qwen/Grok task executor with retries and retry counts, used by the modular older core flow. |
 | `Backend/core/prompt_generator.py` | Prompt generation helper around a model path or shared model instance. |
 | `Backend/utils/pdf_parser.py` | PDF text extraction utility. |
@@ -397,7 +397,7 @@ The newer `Backend/orchestration/planning/planner.py` has two actual strategies:
 | `Backend/orchestration/hybrid/`, `Backend/orchestration/Backend/agents/`, `Backend/orchestration/synthesis/` | Route policy/selection/fallback, agent registry/Backend/runtime/loop, answer synthesis/validation/conflict resolution. |
 | `Backend/memory/` | Short-term buffers, episodic/semantic/procedural/preference stores, SQLite/Postgres/object/vector/graph adapters, consolidation, forgetting, privacy and retention pieces. |
 | `Backend/knowledge/` | Loaders/parsers, normalization/chunking, lexical/vector/semantic/graph indexes, ontology, hybrid search/reranking, evidence/provenance/citations. |
-| `Backend/learning/` | Feedback signals, continual/replay/consolidation/drift, task/device/user adaptation, Research/training/evolution and regression guards. |
+| `Backend/learning/` | Feedback signals, continual/replay/consolidation/drift, task/device/user adaptation, Backend/learning/training and regression guards. |
 | `Backend/federated/` | Client/server, rounds/messages, aggregation, differential privacy, secure aggregation, validation and reputation/poisoning checks. |
 | `Backend/multi_modal/` and `Backend/multimodal/` | Parallel package trees for input, speech, vision, video, documents, sensors and fusion. The duplication is real; callers may import one package explicitly. |
 | `Backend/runtime/`, `Backend/hardware/`, `Backend/os_layer/` | Platform/acceleration/resource management, device detection and CPU/GPU/energy support, filesystem/app/desktop/automation abstractions. |
@@ -409,7 +409,7 @@ The newer `Backend/orchestration/planning/planner.py` has two actual strategies:
 
 | Path | Role and maturity caveat |
 |---|---|
-| `streamlit_app.py`, `app.py`, `chatbot_app.py`, `gradio_app.py` | Separate Python UI entry points; they do not all call the same orchestrator. |
+| `Frontend/streamlit_app.py`, `Frontend/app.py`, `chatbot_app.py`, `gradio_app.py` | Separate Python UI entry points; they do not all call the same orchestrator. |
 | `Backend/unified_orchestrator/app.py`, `Backend/smart_orchestrator/app.py`, `Backend/revolutionary_orchestrator/app.py` | Separate orchestration demo applications. |
 | `Frontend/apps/streamlit/` | Another Streamlit package with app/state/session/components and its own README. |
 | `Frontend/apps/cli/` | CLI parser exposes chat (route choice), models, status, train and memory commands. Commands are implemented separately under `commands.py`. |
@@ -421,7 +421,7 @@ The newer `Backend/orchestration/planning/planner.py` has two actual strategies:
 
 ## Request data flow in the older dashboard path
 
-This is the source-oriented sequence for the `app.py` + `Backend/core/hybrid_orchestrator.py` path, subject to local dependency availability:
+This is the source-oriented sequence for the `Frontend/app.py` + `Backend/core/hybrid_orchestrator.py` path, subject to local dependency availability:
 
 ```mermaid
 sequenceDiagram
@@ -488,14 +488,14 @@ Security code is divided into authentication, authorization, privacy, sandbox, e
 | `Research/benchmarks/`, `Research/evaluation/`, `Quality/tests/` | Performance and functional evaluation assets |
 | `Operations/configs/` | Development, testing, production, edge, privacy and federation settings |
 | `Backend/core/` | Kernel, contracts, identity, config, errors and legacy hybrid orchestrator |
-| `Research/data/`, `Research/training/` | Sample datasets and classifier-training Research/data/code |
+| `Research/data/`, `Research/training/` | Sample datasets and classifier-training code |
 | `Operations/deployment/` | Docker, edge scripts, Kubernetes/Helm and Terraform assets |
 | `Documentation/docs/` | Architecture, ADRs, API, development, research and deployment docs |
 | `Backend/execution/`, `Backend/orchestration/` | DAG/task execution and newer orchestration services |
 | `Research/experiments/`, `Research/research/` | Experimental code/configuration and explanatory research notes |
 | `Backend/federated/`, `Backend/network/` | Federated learning and peer/distributed transport code |
 | `Backend/hardware/`, `Backend/runtime/`, `Backend/os_layer/` | Device/Backend/runtime/operating-system abstractions |
-| `Backend/intelligence/`, `Backend/learning/`, `liquid_Backend/core/` | Intent, reasoning, cognition, adaptation and learning |
+| `Backend/intelligence/`, `Backend/learning/`, `Backend/liquid_core/` | Intent, reasoning, cognition, adaptation and learning |
 | `Backend/knowledge/`, `Backend/memory/` | Document Backend/knowledge/retrieval and memory stores/policies |
 | `Backend/multi_modal/`, `Backend/multimodal/` | Two generations of multimodal processing code |
 | `Backend/observability/` | Logging, tracing, metrics and dashboards |
@@ -507,62 +507,16 @@ Security code is divided into authentication, authorization, privacy, sandbox, e
 
 ## Complete file listing
 
-Below is the complete file-level listing from `git ls-files` at the time this guide was rebuilt. It deliberately gives file paths without inventing descriptions from filenames. Read the sections above for module responsibilities and the source/docs for details. Git-ignored model weights, local `.env`, caches, and untracked local files are not included. The guide itself is named here because it is newly added.
+Below is the complete file-level listing from the current Git index. It gives every tracked path; read the sections above for responsibilities and implementation details. Ignored local data, secrets, model weights, and caches are omitted.
 
 <!-- SOURCE_TREE_START -->
-### (root)
 
-```text
-_gen_batch7.py
-.dockerignore
-.env.example
-.gitignore
-.python-version
-app.py
-ARCHITECTURE.md
-CHANGELOG.md
-chatbot_app.py
-check_libs.py
-classifier.py
-CONTRIBUTING.md
-diagnose.py
-docker-compose.yml
-Dockerfile
-evaluator.py
-execute_plan.py
-gradio_app.py
-grok_cloud.py
-IMPLEMENTATION_REPORT.md
-LICENSE
-lines_check.txt
-logger.py
-Makefile
-mcp_server.py
-packages.txt
-pyproject.toml
-qwen_oda.py
-README.md
-requirements.txt
-requirements.txt.bak
-router.py
-scratch_test.py
-scratch.py
-scratch2.py
-SECURITY.md
-streamlit_app.py
-uv.lock
-VERSION
-```
-
-### .devcontainer
+This listing is regenerated from the current Git index and includes the guide itself. It covers tracked files; ignored local files, secrets, model weights, and caches are omitted.
 
 ```text
 .devcontainer/devcontainer.json
-```
-
-### .github
-
-```text
+.dockerignore
+.env.example
 .github/CODEOWNERS
 .github/dependabot.yml
 .github/ISSUE_TEMPLATE/bug_report.md
@@ -580,35 +534,17 @@ VERSION
 .github/workflows/security.yml
 .github/workflows/tests.yml
 .github/workflows/typecheck.yml
-```
-
-### .gradio
-
-```text
+.gitignore
 .gradio/certificate.pem
-```
-
-### .streamlit
-
-```text
+.python-version
 .streamlit/config.toml
 .streamlit/secrets.toml.example
-```
-
-### .vscode
-
-```text
 .vscode/extensions.json
 .vscode/launch.json
 .vscode/settings.json
 .vscode/snippets/json.json
 .vscode/snippets/python.json
 .vscode/tasks.json
-```
-
-### agents
-
-```text
 Backend/agents/__init__.py
 Backend/agents/analyst/__init__.py
 Backend/agents/analyst/agent.py
@@ -639,11 +575,6 @@ Backend/agents/supervisor/prompts.py
 Backend/agents/verifier/__init__.py
 Backend/agents/verifier/agent.py
 Backend/agents/verifier/prompts.py
-```
-
-### APIs
-
-```text
 Backend/APIs/events/__init__.py
 Backend/APIs/events/event_bus.py
 Backend/APIs/events/event_handlers.py
@@ -669,17 +600,627 @@ Backend/APIs/schemas/models.py
 Backend/APIs/websocket/__init__.py
 Backend/APIs/websocket/connection_manager.py
 Backend/APIs/websocket/websocket_server.py
-```
-
-### apps
-
-```text
+Backend/classifier.py
+Backend/core/__init__.py
+Backend/core/configuration/config.py
+Backend/core/configuration/defaults.py
+Backend/core/configuration/environment.py
+Backend/core/configuration/feature_flags.py
+Backend/core/configuration/profiles.py
+Backend/core/contracts/capabilities.py
+Backend/core/contracts/commands.py
+Backend/core/contracts/errors.py
+Backend/core/contracts/events.py
+Backend/core/contracts/messages.py
+Backend/core/contracts/protocols.py
+Backend/core/contracts/results.py
+Backend/core/errors/base.py
+Backend/core/errors/execution.py
+Backend/core/errors/memory.py
+Backend/core/errors/model.py
+Backend/core/errors/runtime.py
+Backend/core/errors/security.py
+Backend/core/grok_client.py
+Backend/core/hybrid_orchestrator.py
+Backend/core/identity/device_identity.py
+Backend/core/identity/installation_identity.py
+Backend/core/identity/session_identity.py
+Backend/core/identity/user_identity.py
+Backend/core/kernel/__init__.py
+Backend/core/kernel/boot.py
+Backend/core/kernel/event_loop.py
+Backend/core/kernel/kernel.py
+Backend/core/kernel/lifecycle.py
+Backend/core/kernel/runtime.py
+Backend/core/kernel/scheduler.py
+Backend/core/kernel/shutdown.py
+Backend/core/prompt_generator.py
+Backend/core/prompts/__init__.py
+Backend/core/task_executor.py
+Backend/execute_plan.py
+Backend/execution/__init__.py
+Backend/execution/dag_generator.py
+Backend/execution/fallback_manager.py
+Backend/execution/result_aggregator.py
+Backend/execution/task_scheduler.py
+Backend/federated/__init__.py
+Backend/federated/client/__init__.py
+Backend/federated/client/client.py
+Backend/federated/client/contribution.py
+Backend/federated/client/local_training.py
+Backend/federated/client/secure_uploader.py
+Backend/federated/client/update_builder.py
+Backend/federated/client/update_extractor.py
+Backend/federated/privacy/differential_privacy.py
+Backend/federated/privacy/privacy_accountant.py
+Backend/federated/privacy/secure_aggregation.py
+Backend/federated/protocol/messages.py
+Backend/federated/protocol/rounds.py
+Backend/federated/protocol/versioning.py
+Backend/federated/reputation/contribution_score.py
+Backend/federated/reputation/poisoning_detection.py
+Backend/federated/reputation/trust.py
+Backend/federated/server/__init__.py
+Backend/federated/server/aggregation.py
+Backend/federated/server/aggregator.py
+Backend/federated/server/coordinator.py
+Backend/federated/server/model_registry.py
+Backend/federated/server/privacy_layer.py
+Backend/federated/server/server.py
+Backend/federated/server/validation.py
+Backend/grok_cloud.py
+Backend/hardware/__init__.py
+Backend/hardware/cpu.py
+Backend/hardware/energy_manager.py
+Backend/hardware/gpu.py
+Backend/hardware/hardware_detector.py
+Backend/hardware/model_scaler.py
+Backend/hardware/resource_monitor.py
+Backend/intelligence/cognition/attention.py
+Backend/intelligence/cognition/episodic_reasoning.py
+Backend/intelligence/cognition/metacognition.py
+Backend/intelligence/cognition/perception.py
+Backend/intelligence/cognition/procedural_reasoning.py
+Backend/intelligence/cognition/semantic_reasoning.py
+Backend/intelligence/cognition/working_memory.py
+Backend/intelligence/intent/intent_classifier.py
+Backend/intelligence/intent/intent_embeddings.py
+Backend/intelligence/intent/intent_engine.py
+Backend/intelligence/intent/intent_learning.py
+Backend/intelligence/intent/intent_registry.py
+Backend/intelligence/intent/intent_schema.py
+Backend/intelligence/liquid/adaptation.py
+Backend/intelligence/liquid/confidence.py
+Backend/intelligence/liquid/liquid_context.py
+Backend/intelligence/liquid/liquid_controller.py
+Backend/intelligence/liquid/liquid_engine.py
+Backend/intelligence/liquid/liquid_state.py
+Backend/intelligence/liquid/plasticity.py
+Backend/intelligence/liquid/stability.py
+Backend/intelligence/liquid/uncertainty.py
+Backend/intelligence/reasoning/critic.py
+Backend/intelligence/reasoning/hypothesis_engine.py
+Backend/intelligence/reasoning/planner.py
+Backend/intelligence/reasoning/reasoning_engine.py
+Backend/intelligence/reasoning/reflection.py
+Backend/intelligence/reasoning/task_decomposer.py
+Backend/intelligence/reasoning/uncertainty_reasoner.py
+Backend/intelligence/reasoning/verifier.py
+Backend/intelligence/state/intelligence_state.py
+Backend/intelligence/state/state_manager.py
+Backend/intelligence/state/state_recovery.py
+Backend/intelligence/state/state_snapshot.py
+Backend/intelligence/state/state_transition.py
+Backend/knowledge/__init__.py
+Backend/knowledge/indexing/__init__.py
+Backend/knowledge/indexing/graph_index.py
+Backend/knowledge/indexing/lexical_index.py
+Backend/knowledge/indexing/semantic_index.py
+Backend/knowledge/indexing/vector_index.py
+Backend/knowledge/ingestion/chunker.py
+Backend/knowledge/ingestion/ingestion_engine.py
+Backend/knowledge/ingestion/loaders.py
+Backend/knowledge/ingestion/normalizer.py
+Backend/knowledge/ingestion/parsers.py
+Backend/knowledge/ontology/__init__.py
+Backend/knowledge/ontology/entities.py
+Backend/knowledge/ontology/ontology.py
+Backend/knowledge/ontology/reasoning.py
+Backend/knowledge/ontology/relations.py
+Backend/knowledge/provenance/__init__.py
+Backend/knowledge/provenance/citation.py
+Backend/knowledge/provenance/evidence.py
+Backend/knowledge/provenance/lineage.py
+Backend/knowledge/provenance/source.py
+Backend/knowledge/retrieval/__init__.py
+Backend/knowledge/retrieval/context_builder.py
+Backend/knowledge/retrieval/hybrid_search.py
+Backend/knowledge/retrieval/reranker.py
+Backend/knowledge/retrieval/retriever.py
+Backend/learning/__init__.py
+Backend/learning/adaptation/__init__.py
+Backend/learning/adaptation/device_adaptation.py
+Backend/learning/adaptation/policy_adaptation.py
+Backend/learning/adaptation/strategy_adaptation.py
+Backend/learning/adaptation/task_adaptation.py
+Backend/learning/adaptation/user_adaptation.py
+Backend/learning/continual/__init__.py
+Backend/learning/continual/concept_drift.py
+Backend/learning/continual/consolidation.py
+Backend/learning/continual/continual_engine.py
+Backend/learning/continual/forgetting_detector.py
+Backend/learning/continual/incremental_learning.py
+Backend/learning/continual/replay_buffer.py
+Backend/learning/evolution/architecture_search.py
+Backend/learning/evolution/capability_evolution.py
+Backend/learning/evolution/evolution_engine.py
+Backend/learning/evolution/regression_guard.py
+Backend/learning/evolution/strategy_evolution.py
+Backend/learning/feedback/__init__.py
+Backend/learning/feedback/correction_learning.py
+Backend/learning/feedback/explicit_feedback.py
+Backend/learning/feedback/feedback_engine.py
+Backend/learning/feedback/implicit_feedback.py
+Backend/learning/feedback/reward_signals.py
+Backend/learning/training/__init__.py
+Backend/learning/training/checkpoints.py
+Backend/learning/training/dataset_builder.py
+Backend/learning/training/evaluator.py
+Backend/learning/training/feature_builder.py
+Backend/learning/training/trainer.py
+Backend/liquid_core/__init__.py
+Backend/liquid_core/adaptive_scaler.py
+Backend/liquid_core/continual_learning.py
+Backend/liquid_core/federated_aggregator.py
+Backend/liquid_core/liquid_engine.py
+Backend/logger.py
+Backend/mcp_server.py
+Backend/memory/__init__.py
+Backend/memory/consolidation/deduplicator.py
+Backend/memory/consolidation/forgetting_policy.py
+Backend/memory/consolidation/importance.py
+Backend/memory/consolidation/memory_consolidator.py
+Backend/memory/episodic/episode_index.py
+Backend/memory/episodic/episodic_memory.py
+Backend/memory/episodic/event_store.py
+Backend/memory/graph/entity_graph.py
+Backend/memory/graph/graph_query.py
+Backend/memory/graph/knowledge_graph.py
+Backend/memory/graph/relation_store.py
+Backend/memory/long_term_memory.py
+Backend/memory/preference/preference_memory.py
+Backend/memory/preference/preference_model.py
+Backend/memory/preference/preference_updater.py
+Backend/memory/privacy/deletion.py
+Backend/memory/privacy/encryption.py
+Backend/memory/privacy/permissions.py
+Backend/memory/privacy/retention.py
+Backend/memory/procedural/procedural_memory.py
+Backend/memory/procedural/skill_store.py
+Backend/memory/procedural/workflow_store.py
+Backend/memory/replay_buffer.py
+Backend/memory/semantic/concept_index.py
+Backend/memory/semantic/knowledge_store.py
+Backend/memory/semantic/semantic_memory.py
+Backend/memory/short_term/conversation_buffer.py
+Backend/memory/short_term/short_term_memory.py
+Backend/memory/short_term/working_context.py
+Backend/memory/short_term_memory.py
+Backend/memory/storage/migrations.py
+Backend/memory/storage/object_store.py
+Backend/memory/storage/postgres_store.py
+Backend/memory/storage/sqlite_store.py
+Backend/memory/vector/embedding_store.py
+Backend/memory/vector/faiss_store.py
+Backend/memory/vector/vector_store.py
+Backend/models/lifecycle/cache.py
+Backend/models/lifecycle/downloader.py
+Backend/models/lifecycle/garbage_collector.py
+Backend/models/lifecycle/loader.py
+Backend/models/lifecycle/validator.py
+Backend/models/liquid/checkpoints/manager.py
+Backend/models/liquid/checkpoints/validator.py
+Backend/models/liquid/lnn/architecture.py
+Backend/models/liquid/lnn/cells.py
+Backend/models/liquid/lnn/dynamics.py
+Backend/models/liquid/lnn/intent_model.py
+Backend/models/liquid/lnn/optimizer.py
+Backend/models/local/llama/loader.py
+Backend/models/local/llama/provider.py
+Backend/models/local/qwen/loader.py
+Backend/models/local/qwen/provider.py
+Backend/models/local/vision/loader.py
+Backend/models/local/vision/provider.py
+Backend/models/local/whisper/loader.py
+Backend/models/local/whisper/provider.py
+Backend/models/optimization/batching.py
+Backend/models/optimization/compilation.py
+Backend/models/optimization/distillation.py
+Backend/models/optimization/pruning.py
+Backend/models/optimization/quantization.py
+Backend/models/registry/model_capabilities.py
+Backend/models/registry/model_health.py
+Backend/models/registry/model_metadata.py
+Backend/models/registry/model_registry.py
+Backend/models/registry/model_versions.py
+Backend/models/remote/grok/adapter.py
+Backend/models/remote/grok/client.py
+Backend/models/remote/openai/adapter.py
+Backend/models/remote/openai/client.py
+Backend/models/remote/providers/base.py
+Backend/models/remote/providers/registry.py
+Backend/models/remote/providers/router.py
+Backend/multi_modal/__init__.py
+Backend/multi_modal/documents/document_parser.py
+Backend/multi_modal/documents/docx.py
+Backend/multi_modal/documents/pdf.py
+Backend/multi_modal/documents/presentations.py
+Backend/multi_modal/documents/spreadsheets.py
+Backend/multi_modal/fusion/context_alignment.py
+Backend/multi_modal/fusion/cross_modal_attention.py
+Backend/multi_modal/fusion/modality_fusion.py
+Backend/multi_modal/fusion/temporal_fusion.py
+Backend/multi_modal/image_processor.py
+Backend/multi_modal/input/document_processor.py
+Backend/multi_modal/input/image_processor.py
+Backend/multi_modal/input/input_router.py
+Backend/multi_modal/input/screen_processor.py
+Backend/multi_modal/input/sensor_processor.py
+Backend/multi_modal/input/text_processor.py
+Backend/multi_modal/input/video_processor.py
+Backend/multi_modal/input/voice_processor.py
+Backend/multi_modal/input_router.py
+Backend/multi_modal/sensor_processor.py
+Backend/multi_modal/sensors/device_sensors.py
+Backend/multi_modal/sensors/sensor_fusion.py
+Backend/multi_modal/sensors/sensor_manager.py
+Backend/multi_modal/speech/audio_preprocessor.py
+Backend/multi_modal/speech/speech_to_text.py
+Backend/multi_modal/speech/text_to_speech.py
+Backend/multi_modal/speech/voice_activity.py
+Backend/multi_modal/text_processor.py
+Backend/multi_modal/video/frame_sampler.py
+Backend/multi_modal/video/temporal_context.py
+Backend/multi_modal/video/video_processor.py
+Backend/multi_modal/video/video_understanding.py
+Backend/multi_modal/video_processor.py
+Backend/multi_modal/vision/image_understanding.py
+Backend/multi_modal/vision/object_detection.py
+Backend/multi_modal/vision/ocr.py
+Backend/multi_modal/vision/screenshot.py
+Backend/multi_modal/vision/visual_context.py
+Backend/multi_modal/voice_processor.py
+Backend/multimodal/documents/document_parser.py
+Backend/multimodal/documents/docx.py
+Backend/multimodal/documents/pdf.py
+Backend/multimodal/documents/presentations.py
+Backend/multimodal/documents/spreadsheets.py
+Backend/multimodal/fusion/context_alignment.py
+Backend/multimodal/fusion/cross_modal_attention.py
+Backend/multimodal/fusion/modality_fusion.py
+Backend/multimodal/fusion/temporal_fusion.py
+Backend/multimodal/input/document_processor.py
+Backend/multimodal/input/image_processor.py
+Backend/multimodal/input/input_router.py
+Backend/multimodal/input/screen_processor.py
+Backend/multimodal/input/sensor_processor.py
+Backend/multimodal/input/text_processor.py
+Backend/multimodal/input/video_processor.py
+Backend/multimodal/input/voice_processor.py
+Backend/multimodal/sensors/device_sensors.py
+Backend/multimodal/sensors/sensor_fusion.py
+Backend/multimodal/sensors/sensor_manager.py
+Backend/multimodal/speech/audio_preprocessor.py
+Backend/multimodal/speech/speech_to_text.py
+Backend/multimodal/speech/text_to_speech.py
+Backend/multimodal/speech/voice_activity.py
+Backend/multimodal/video/frame_sampler.py
+Backend/multimodal/video/temporal_context.py
+Backend/multimodal/video/video_processor.py
+Backend/multimodal/video/video_understanding.py
+Backend/multimodal/vision/image_understanding.py
+Backend/multimodal/vision/object_detection.py
+Backend/multimodal/vision/ocr.py
+Backend/multimodal/vision/screenshot.py
+Backend/multimodal/vision/visual_context.py
+Backend/network/discovery/discovery.py
+Backend/network/discovery/peer_registry.py
+Backend/network/distributed/distributed_execution.py
+Backend/network/distributed/distributed_memory.py
+Backend/network/peer/peer.py
+Backend/network/peer/peer_manager.py
+Backend/network/synchronization/conflict_resolution.py
+Backend/network/synchronization/synchronizer.py
+Backend/network/transport/grpc.py
+Backend/network/transport/transport.py
+Backend/network/transport/websocket.py
+Backend/observability/dashboards/intelligence.py
+Backend/observability/dashboards/learning.py
+Backend/observability/dashboards/models.py
+Backend/observability/dashboards/system.py
+Backend/observability/logging/correlation.py
+Backend/observability/logging/logger.py
+Backend/observability/logging/structured.py
+Backend/observability/metrics/latency.py
+Backend/observability/metrics/metrics.py
+Backend/observability/metrics/model_metrics.py
+Backend/observability/metrics/resources.py
+Backend/observability/telemetry/collector.py
+Backend/observability/telemetry/exporter.py
+Backend/observability/telemetry/privacy_filter.py
+Backend/observability/tracing/spans.py
+Backend/observability/tracing/tracer.py
+Backend/orchestration/__init__.py
+Backend/orchestration/agents/__init__.py
+Backend/orchestration/agents/agent_loop.py
+Backend/orchestration/agents/agent_memory.py
+Backend/orchestration/agents/agent_registry.py
+Backend/orchestration/agents/agent_runtime.py
+Backend/orchestration/agents/agent_supervisor.py
+Backend/orchestration/agents/agent_tools.py
+Backend/orchestration/execution/__init__.py
+Backend/orchestration/execution/cancellation.py
+Backend/orchestration/execution/execution_engine.py
+Backend/orchestration/execution/parallel_executor.py
+Backend/orchestration/execution/sandbox.py
+Backend/orchestration/execution/sequential_executor.py
+Backend/orchestration/execution/task_executor.py
+Backend/orchestration/execution/timeout_manager.py
+Backend/orchestration/hybrid/__init__.py
+Backend/orchestration/hybrid/fallback_manager.py
+Backend/orchestration/hybrid/hybrid_orchestrator.py
+Backend/orchestration/hybrid/route_engine.py
+Backend/orchestration/hybrid/route_policy.py
+Backend/orchestration/hybrid/route_selector.py
+Backend/orchestration/planning/__init__.py
+Backend/orchestration/planning/dag_builder.py
+Backend/orchestration/planning/dependency_resolver.py
+Backend/orchestration/planning/execution_plan.py
+Backend/orchestration/planning/planner.py
+Backend/orchestration/planning/task_graph.py
+Backend/orchestration/synthesis/__init__.py
+Backend/orchestration/synthesis/answer_composer.py
+Backend/orchestration/synthesis/conflict_resolver.py
+Backend/orchestration/synthesis/output_validator.py
+Backend/orchestration/synthesis/result_synthesizer.py
+Backend/os_layer/applications/__init__.py
+Backend/os_layer/applications/app_context.py
+Backend/os_layer/applications/app_controller.py
+Backend/os_layer/applications/app_registry.py
+Backend/os_layer/applications/application_manager.py
+Backend/os_layer/automation/__init__.py
+Backend/os_layer/automation/automation_controller.py
+Backend/os_layer/automation/automation_engine.py
+Backend/os_layer/automation/ui_controller.py
+Backend/os_layer/automation/workflow_engine.py
+Backend/os_layer/desktop/desktop_context.py
+Backend/os_layer/desktop/launcher.py
+Backend/os_layer/desktop/window_manager.py
+Backend/os_layer/filesystem/__init__.py
+Backend/os_layer/filesystem/file_intelligence.py
+Backend/os_layer/filesystem/filesystem_agent.py
+Backend/os_layer/filesystem/filesystem_manager.py
+Backend/os_layer/filesystem/path_handler.py
+Backend/os_layer/filesystem/semantic_files.py
+Backend/os_layer/system/__init__.py
+Backend/os_layer/system/device_context.py
+Backend/os_layer/system/permissions.py
+Backend/os_layer/system/system_controller.py
+Backend/os_layer/system/system_manager.py
+Backend/os_layer/system/system_monitor.py
+Backend/plugins/community/README.md
+Backend/plugins/official/browser/manifest.json
+Backend/plugins/official/browser/plugin.py
+Backend/plugins/official/developer/manifest.json
+Backend/plugins/official/developer/plugin.py
+Backend/plugins/official/filesystem/manifest.json
+Backend/plugins/official/filesystem/plugin.py
+Backend/qwen_oda.py
+Backend/resilience/__init__.py
+Backend/resilience/chaos/__init__.py
+Backend/resilience/chaos/chaos_runner.py
+Backend/resilience/chaos/fault_injection.py
+Backend/resilience/chaos/resilience_tests.py
+Backend/resilience/failure/__init__.py
+Backend/resilience/failure/circuit_breaker.py
+Backend/resilience/failure/failure_detector.py
+Backend/resilience/failure/fallback.py
+Backend/resilience/failure/graceful_degradation.py
+Backend/resilience/failure/retry.py
+Backend/resilience/health/__init__.py
+Backend/resilience/health/dependency_health.py
+Backend/resilience/health/health_check.py
+Backend/resilience/health/health_monitor.py
+Backend/resilience/recovery/__init__.py
+Backend/resilience/recovery/checkpoint.py
+Backend/resilience/recovery/recovery_manager.py
+Backend/resilience/recovery/rollback.py
+Backend/resilience/recovery/state_restore.py
+Backend/revolutionary_orchestrator/app.py
+Backend/revolutionary_orchestrator/orchestrator/__init__.py
+Backend/revolutionary_orchestrator/orchestrator/dag_generator.py
+Backend/revolutionary_orchestrator/orchestrator/executor.py
+Backend/revolutionary_orchestrator/orchestrator/planner.py
+Backend/revolutionary_orchestrator/orchestrator/refiner.py
+Backend/revolutionary_orchestrator/orchestrator/visualizer.py
+Backend/revolutionary_orchestrator/requirements.txt
+Backend/revolutionary_orchestrator/temp_ADA mini PRoject Report.pdf
+Backend/revolutionary_orchestrator/utils/__init__.py
+Backend/revolutionary_orchestrator/utils/pdf_parser.py
+Backend/revolutionary_orchestrator/utils/text_chunking.py
+Backend/router.py
+Backend/runtime/__init__.py
+Backend/runtime/acceleration/__init__.py
+Backend/runtime/acceleration/auto_backend.py
+Backend/runtime/acceleration/cpu_backend.py
+Backend/runtime/acceleration/cuda_backend.py
+Backend/runtime/acceleration/metal_backend.py
+Backend/runtime/acceleration/rocm_backend.py
+Backend/runtime/adaptive/__init__.py
+Backend/runtime/adaptive/capability_mapper.py
+Backend/runtime/adaptive/hardware_profiler.py
+Backend/runtime/adaptive/runtime_optimizer.py
+Backend/runtime/adaptive/workload_profiler.py
+Backend/runtime/hardware/__init__.py
+Backend/runtime/hardware/accelerator.py
+Backend/runtime/hardware/cpu.py
+Backend/runtime/hardware/gpu.py
+Backend/runtime/hardware/hardware_detector.py
+Backend/runtime/hardware/memory.py
+Backend/runtime/hardware/storage.py
+Backend/runtime/hardware/thermal.py
+Backend/runtime/platform/__init__.py
+Backend/runtime/platform/android.py
+Backend/runtime/platform/ios.py
+Backend/runtime/platform/linux.py
+Backend/runtime/platform/macos.py
+Backend/runtime/platform/windows.py
+Backend/runtime/resource/__init__.py
+Backend/runtime/resource/compute_manager.py
+Backend/runtime/resource/memory_manager.py
+Backend/runtime/resource/power_manager.py
+Backend/runtime/resource/quota_manager.py
+Backend/runtime/resource/resource_manager.py
+Backend/security/__init__.py
+Backend/security/audit/__init__.py
+Backend/security/audit/audit_event.py
+Backend/security/audit/audit_logger.py
+Backend/security/audit/audit_store.py
+Backend/security/authentication/__init__.py
+Backend/security/authentication/authenticator.py
+Backend/security/authentication/session.py
+Backend/security/authentication/tokens.py
+Backend/security/authorization/__init__.py
+Backend/security/authorization/authorizer.py
+Backend/security/authorization/policies.py
+Backend/security/authorization/roles.py
+Backend/security/encryption/__init__.py
+Backend/security/encryption/encryption.py
+Backend/security/encryption/hashing.py
+Backend/security/encryption/key_manager.py
+Backend/security/privacy/__init__.py
+Backend/security/privacy/consent.py
+Backend/security/privacy/data_classification.py
+Backend/security/privacy/privacy_manager.py
+Backend/security/sandbox/__init__.py
+Backend/security/sandbox/filesystem_policy.py
+Backend/security/sandbox/process_policy.py
+Backend/security/sandbox/sandbox.py
+Backend/security/secrets/__init__.py
+Backend/security/secrets/secret_manager.py
+Backend/security/secrets/vault.py
+Backend/security/threat_detection/__init__.py
+Backend/security/threat_detection/anomaly_detector.py
+Backend/security/threat_detection/prompt_injection.py
+Backend/security/threat_detection/threat_detector.py
+Backend/smart_orchestrator/app.py
+Backend/smart_orchestrator/orchestrator.py
+Backend/smart_orchestrator/requirements.txt
+Backend/smart_orchestrator/utils/prompt_decomposer.py
+Backend/smart_orchestrator/utils/visualizer.py
+Backend/tools/__init__.py
+Backend/tools/communication/__init__.py
+Backend/tools/communication/email.py
+Backend/tools/communication/messaging.py
+Backend/tools/communication/notifications.py
+Backend/tools/developer/__init__.py
+Backend/tools/developer/code_analyzer.py
+Backend/tools/developer/code_runner.py
+Backend/tools/developer/debugger.py
+Backend/tools/developer/git.py
+Backend/tools/developer/project_manager.py
+Backend/tools/developer/testing.py
+Backend/tools/filesystem/__init__.py
+Backend/tools/filesystem/metadata.py
+Backend/tools/filesystem/organize.py
+Backend/tools/filesystem/read.py
+Backend/tools/filesystem/search.py
+Backend/tools/filesystem/watcher.py
+Backend/tools/filesystem/write.py
+Backend/tools/productivity/__init__.py
+Backend/tools/productivity/calendar.py
+Backend/tools/productivity/documents.py
+Backend/tools/productivity/notes.py
+Backend/tools/productivity/tasks.py
+Backend/tools/registry/__init__.py
+Backend/tools/registry/tool_discovery.py
+Backend/tools/registry/tool_health.py
+Backend/tools/registry/tool_permissions.py
+Backend/tools/registry/tool_registry.py
+Backend/tools/registry/tool_schema.py
+Backend/tools/system/__init__.py
+Backend/tools/system/environment.py
+Backend/tools/system/process.py
+Backend/tools/system/services.py
+Backend/tools/system/system_info.py
+Backend/tools/system/terminal.py
+Backend/tools/web/__init__.py
+Backend/tools/web/browser.py
+Backend/tools/web/crawler.py
+Backend/tools/web/downloader.py
+Backend/tools/web/extractor.py
+Backend/tools/web/search.py
+Backend/unified_orchestrator/app.py
+Backend/unified_orchestrator/core/__init__.py
+Backend/unified_orchestrator/core/hybrid_orchestrator.py
+Backend/unified_orchestrator/core/stream_handler.py
+Backend/unified_orchestrator/core/task_executor.py
+Backend/unified_orchestrator/core/task_planner.py
+Backend/unified_orchestrator/core/task_refiner.py
+Backend/unified_orchestrator/test_import.py
+Backend/unified_orchestrator/utils/__init__.py
+Backend/unified_orchestrator/utils/logging.py
+Backend/unified_orchestrator/utils/pdf_parser.py
+Backend/utils/__init__.py
+Backend/utils/image_executor.py
+Backend/utils/logger.py
+Backend/utils/pdf_parser.py
+docker-compose.yml
+Dockerfile
+Documentation/ARCHITECTURE.md
+Documentation/CHANGELOG.md
+Documentation/CONTRIBUTING.md
+Documentation/docs/api/events.md
+Documentation/docs/api/rest.md
+Documentation/docs/api/websocket.md
+Documentation/docs/architecture.md
+Documentation/docs/architecture/agents.md
+Documentation/docs/architecture/federation.md
+Documentation/docs/architecture/hardware.md
+Documentation/docs/architecture/intelligence.md
+Documentation/docs/architecture/kernel.md
+Documentation/docs/architecture/learning.md
+Documentation/docs/architecture/liquid.md
+Documentation/docs/architecture/memory.md
+Documentation/docs/architecture/multimodal.md
+Documentation/docs/architecture/orchestration.md
+Documentation/docs/architecture/os_layer.md
+Documentation/docs/architecture/resilience.md
+Documentation/docs/architecture/security.md
+Documentation/docs/architecture/system.md
+Documentation/docs/decisions/ADR-001-kernel.md
+Documentation/docs/decisions/ADR-002-memory.md
+Documentation/docs/decisions/ADR-003-orchestration.md
+Documentation/docs/decisions/ADR-004-federation.md
+Documentation/docs/deployment/cloud.md
+Documentation/docs/deployment/desktop.md
+Documentation/docs/deployment/edge.md
+Documentation/docs/development/conventions.md
+Documentation/docs/development/debugging.md
+Documentation/docs/development/setup.md
+Documentation/docs/PROJECT_GUIDE.md
+Documentation/docs/research/continual_learning.md
+Documentation/docs/research/device_adaptation.md
+Documentation/docs/research/liquid_intelligence.md
+Documentation/IMPLEMENTATION_REPORT.md
+Documentation/SECURITY.md
+Frontend/app.py
 Frontend/apps/cli/commands.py
 Frontend/apps/cli/formatter.py
 Frontend/apps/cli/main.py
 Frontend/apps/cli/shell.py
-Frontend/apps/desktop/Frontend/assets/icon.svg
-Frontend/apps/desktop/Frontend/assets/manifest.json
+Frontend/apps/desktop/assets/icon.svg
+Frontend/apps/desktop/assets/manifest.json
 Frontend/apps/desktop/README.md
 Frontend/apps/desktop/src/application.py
 Frontend/apps/desktop/src/main.py
@@ -728,40 +1269,30 @@ Frontend/apps/web/src/types.ts
 Frontend/apps/web/tsconfig.json
 Frontend/apps/web/tsconfig.node.json
 Frontend/apps/web/vite.config.ts
-```
-
-### assets
-
-```text
 Frontend/assets/readme-banner.svg
-```
-
-### benchmarks
-
-```text
-Research/benchmarks/devices/benchmark.py
-Research/benchmarks/devices/devices.yaml
-Research/benchmarks/energy/benchmark.py
-Research/benchmarks/energy/config.yaml
-Research/benchmarks/latency/benchmark.py
-Research/benchmarks/latency/config.yaml
-Research/benchmarks/Backend/memory/benchmark.py
-Research/benchmarks/Backend/memory/config.yaml
-Research/benchmarks/throughput/benchmark.py
-Research/benchmarks/throughput/config.yaml
-```
-
-### configs
-
-```text
+Frontend/chatbot_app.py
+Frontend/corsair-plugin-edge-ai/index.ts
+Frontend/corsair-plugin-edge-ai/package-lock.json
+Frontend/corsair-plugin-edge-ai/package.json
+Frontend/corsair-plugin-edge-ai/tsconfig.json
+Frontend/gradio_app.py
+Frontend/streamlit_app.py
+Frontend/user_interface/__init__.py
+Frontend/user_interface/adaptive_ui.py
+Frontend/user_interface/ar_vr_visualizer.py
+Frontend/user_interface/gamification.py
+Frontend/user_interface/voice_control.py
+LICENSE
+Makefile
+Operations/archive/requirements.txt.bak
 Operations/configs/__init__.py
 Operations/configs/development/config.yaml
 Operations/configs/development/models.yaml
 Operations/configs/edge/config.yaml
 Operations/configs/edge/hardware.yaml
+Operations/configs/federated/client.yaml
+Operations/configs/federated/server.yaml
 Operations/configs/federated_config.yaml
-Operations/configs/Backend/federated/client.yaml
-Operations/configs/Backend/federated/server.yaml
 Operations/configs/hardware_profiles.yaml
 Operations/configs/lnn_config.yaml
 Operations/configs/privacy_config.yaml
@@ -769,76 +1300,6 @@ Operations/configs/production/config.yaml
 Operations/configs/production/models.yaml
 Operations/configs/testing/config.yaml
 Operations/configs/testing/models.yaml
-```
-
-### core
-
-```text
-Backend/core/__init__.py
-Backend/core/configuration/config.py
-Backend/core/configuration/defaults.py
-Backend/core/configuration/environment.py
-Backend/core/configuration/feature_flags.py
-Backend/core/configuration/profiles.py
-Backend/core/contracts/capabilities.py
-Backend/core/contracts/commands.py
-Backend/core/contracts/errors.py
-Backend/core/contracts/events.py
-Backend/core/contracts/messages.py
-Backend/core/contracts/protocols.py
-Backend/core/contracts/results.py
-Backend/core/errors/base.py
-Backend/core/errors/execution.py
-Backend/core/errors/memory.py
-Backend/core/errors/model.py
-Backend/core/errors/runtime.py
-Backend/core/errors/security.py
-Backend/core/grok_client.py
-Backend/core/hybrid_orchestrator.py
-Backend/core/identity/device_identity.py
-Backend/core/identity/installation_identity.py
-Backend/core/identity/session_identity.py
-Backend/core/identity/user_identity.py
-Backend/core/kernel/__init__.py
-Backend/core/kernel/boot.py
-Backend/core/kernel/event_loop.py
-Backend/core/kernel/kernel.py
-Backend/core/kernel/lifecycle.py
-Backend/core/kernel/runtime.py
-Backend/core/kernel/scheduler.py
-Backend/core/kernel/shutdown.py
-Backend/core/prompt_generator.py
-Backend/core/prompts/__init__.py
-Backend/core/task_executor.py
-```
-
-### corsair-plugin-edge-ai
-
-```text
-Frontend/corsair-plugin-edge-ai/index.ts
-Frontend/corsair-plugin-edge-ai/package-lock.json
-Frontend/corsair-plugin-edge-ai/package.json
-Frontend/corsair-plugin-edge-ai/tsconfig.json
-```
-
-### data
-
-```text
-Research/data/cache/.gitkeep
-Research/data/checkpoints/.gitkeep
-Research/data/datasets/evaluation.json
-Research/data/datasets/feedback.json
-Research/data/datasets/intents.json
-Research/data/exports/.gitkeep
-Research/data/feedback/.gitkeep
-Research/data/interactions/.gitkeep
-Research/data/processed/.gitkeep
-Research/data/raw/.gitkeep
-```
-
-### deployment
-
-```text
 Operations/deployment/docker/docker-compose.yml
 Operations/deployment/docker/Dockerfile
 Operations/deployment/docker/Dockerfile.edge
@@ -858,733 +1319,40 @@ Operations/deployment/kubernetes/worker.yaml
 Operations/deployment/terraform/main.tf
 Operations/deployment/terraform/outputs.tf
 Operations/deployment/terraform/variables.tf
-```
-
-### docs
-
-```text
-Documentation/docs/api/events.md
-Documentation/docs/api/rest.md
-Documentation/docs/api/websocket.md
-Documentation/docs/architecture.md
-Documentation/docs/architecture/agents.md
-Documentation/docs/architecture/federation.md
-Documentation/docs/architecture/hardware.md
-Documentation/docs/architecture/intelligence.md
-Documentation/docs/architecture/kernel.md
-Documentation/docs/architecture/learning.md
-Documentation/docs/architecture/liquid.md
-Documentation/docs/architecture/memory.md
-Documentation/docs/architecture/multimodal.md
-Documentation/docs/architecture/orchestration.md
-Documentation/docs/architecture/os_layer.md
-Documentation/docs/architecture/resilience.md
-Documentation/docs/architecture/security.md
-Documentation/docs/architecture/system.md
-Documentation/docs/decisions/ADR-001-kernel.md
-Documentation/docs/decisions/ADR-002-memory.md
-Documentation/docs/decisions/ADR-003-orchestration.md
-Documentation/docs/decisions/ADR-004-federation.md
-Documentation/docs/Operations/deployment/cloud.md
-Documentation/docs/Operations/deployment/desktop.md
-Documentation/docs/Operations/deployment/edge.md
-Documentation/docs/development/conventions.md
-Documentation/docs/development/debugging.md
-Documentation/docs/development/setup.md
-Documentation/docs/PROJECT_GUIDE.md
-Documentation/docs/Research/research/continual_learning.md
-Documentation/docs/Research/research/device_adaptation.md
-Documentation/docs/Research/research/liquid_intelligence.md
-```
-
-### evaluation
-
-```text
-Research/evaluation/Research/benchmarks/benchmark_report.py
-Research/evaluation/Research/benchmarks/benchmark_runner.py
-Research/evaluation/Research/benchmarks/benchmark_suite.py
-Research/evaluation/Backend/intelligence/intent_accuracy.py
-Research/evaluation/Backend/intelligence/reasoning_quality.py
-Research/evaluation/Backend/intelligence/task_success.py
-Research/evaluation/Backend/intelligence/uncertainty.py
-Research/evaluation/Backend/learning/drift.py
-Research/evaluation/Backend/learning/forgetting.py
-Research/evaluation/Backend/learning/improvement.py
-Research/evaluation/Backend/learning/regression.py
-Research/evaluation/Backend/models/efficiency.py
-Research/evaluation/Backend/models/latency.py
-Research/evaluation/Backend/models/quality.py
-Research/evaluation/Backend/multimodal/fusion.py
-Research/evaluation/Backend/multimodal/speech.py
-Research/evaluation/Backend/multimodal/vision.py
-Research/evaluation/Backend/orchestration/dag.py
-Research/evaluation/Backend/orchestration/recovery.py
-Research/evaluation/Backend/orchestration/routing.py
-Research/evaluation/Backend/security/authorization.py
-Research/evaluation/Backend/security/injection.py
-Research/evaluation/Backend/security/isolation.py
-```
-
-### execution
-
-```text
-Backend/execution/__init__.py
-Backend/execution/dag_generator.py
-Backend/execution/fallback_manager.py
-Backend/execution/result_aggregator.py
-Backend/execution/task_scheduler.py
-```
-
-### experiments
-
-```text
-Research/experiments/Backend/agents/config.yaml
-Research/experiments/Backend/agents/experiment.py
-Research/experiments/continual_Backend/learning/config.yaml
-Research/experiments/continual_Backend/learning/experiment.py
-Research/experiments/Backend/federated/config.yaml
-Research/experiments/Backend/federated/experiment.py
-Research/experiments/hardware_adaptation/config.yaml
-Research/experiments/hardware_adaptation/experiment.py
-Research/experiments/liquid/config.yaml
-Research/experiments/liquid/experiment.py
-```
-
-### federated
-
-```text
-Backend/federated/__init__.py
-Backend/federated/client/__init__.py
-Backend/federated/client/client.py
-Backend/federated/client/contribution.py
-Backend/federated/client/local_training.py
-Backend/federated/client/secure_uploader.py
-Backend/federated/client/update_builder.py
-Backend/federated/client/update_extractor.py
-Backend/federated/privacy/differential_privacy.py
-Backend/federated/privacy/privacy_accountant.py
-Backend/federated/privacy/secure_aggregation.py
-Backend/federated/protocol/messages.py
-Backend/federated/protocol/rounds.py
-Backend/federated/protocol/versioning.py
-Backend/federated/reputation/contribution_score.py
-Backend/federated/reputation/poisoning_detection.py
-Backend/federated/reputation/trust.py
-Backend/federated/server/__init__.py
-Backend/federated/server/aggregation.py
-Backend/federated/server/aggregator.py
-Backend/federated/server/coordinator.py
-Backend/federated/server/model_registry.py
-Backend/federated/server/privacy_layer.py
-Backend/federated/server/server.py
-Backend/federated/server/validation.py
-```
-
-### hardware
-
-```text
-Backend/hardware/__init__.py
-Backend/hardware/cpu.py
-Backend/hardware/energy_manager.py
-Backend/hardware/gpu.py
-Backend/hardware/hardware_detector.py
-Backend/hardware/model_scaler.py
-Backend/hardware/resource_monitor.py
-```
-
-### intelligence
-
-```text
-Backend/intelligence/cognition/attention.py
-Backend/intelligence/cognition/episodic_reasoning.py
-Backend/intelligence/cognition/metacognition.py
-Backend/intelligence/cognition/perception.py
-Backend/intelligence/cognition/procedural_reasoning.py
-Backend/intelligence/cognition/semantic_reasoning.py
-Backend/intelligence/cognition/working_memory.py
-Backend/intelligence/intent/intent_classifier.py
-Backend/intelligence/intent/intent_embeddings.py
-Backend/intelligence/intent/intent_engine.py
-Backend/intelligence/intent/intent_learning.py
-Backend/intelligence/intent/intent_registry.py
-Backend/intelligence/intent/intent_schema.py
-Backend/intelligence/liquid/adaptation.py
-Backend/intelligence/liquid/confidence.py
-Backend/intelligence/liquid/liquid_context.py
-Backend/intelligence/liquid/liquid_controller.py
-Backend/intelligence/liquid/liquid_engine.py
-Backend/intelligence/liquid/liquid_state.py
-Backend/intelligence/liquid/plasticity.py
-Backend/intelligence/liquid/stability.py
-Backend/intelligence/liquid/uncertainty.py
-Backend/intelligence/reasoning/critic.py
-Backend/intelligence/reasoning/hypothesis_engine.py
-Backend/intelligence/reasoning/planner.py
-Backend/intelligence/reasoning/reasoning_engine.py
-Backend/intelligence/reasoning/reflection.py
-Backend/intelligence/reasoning/task_decomposer.py
-Backend/intelligence/reasoning/uncertainty_reasoner.py
-Backend/intelligence/reasoning/verifier.py
-Backend/intelligence/state/intelligence_state.py
-Backend/intelligence/state/state_manager.py
-Backend/intelligence/state/state_recovery.py
-Backend/intelligence/state/state_snapshot.py
-Backend/intelligence/state/state_transition.py
-```
-
-### knowledge
-
-```text
-Backend/knowledge/__init__.py
-Backend/knowledge/indexing/__init__.py
-Backend/knowledge/indexing/graph_index.py
-Backend/knowledge/indexing/lexical_index.py
-Backend/knowledge/indexing/semantic_index.py
-Backend/knowledge/indexing/vector_index.py
-Backend/knowledge/ingestion/chunker.py
-Backend/knowledge/ingestion/ingestion_engine.py
-Backend/knowledge/ingestion/loaders.py
-Backend/knowledge/ingestion/normalizer.py
-Backend/knowledge/ingestion/parsers.py
-Backend/knowledge/ontology/__init__.py
-Backend/knowledge/ontology/entities.py
-Backend/knowledge/ontology/ontology.py
-Backend/knowledge/ontology/reasoning.py
-Backend/knowledge/ontology/relations.py
-Backend/knowledge/provenance/__init__.py
-Backend/knowledge/provenance/citation.py
-Backend/knowledge/provenance/evidence.py
-Backend/knowledge/provenance/lineage.py
-Backend/knowledge/provenance/source.py
-Backend/knowledge/retrieval/__init__.py
-Backend/knowledge/retrieval/context_builder.py
-Backend/knowledge/retrieval/hybrid_search.py
-Backend/knowledge/retrieval/reranker.py
-Backend/knowledge/retrieval/retriever.py
-```
-
-### learning
-
-```text
-Backend/learning/__init__.py
-Backend/learning/adaptation/__init__.py
-Backend/learning/adaptation/device_adaptation.py
-Backend/learning/adaptation/policy_adaptation.py
-Backend/learning/adaptation/strategy_adaptation.py
-Backend/learning/adaptation/task_adaptation.py
-Backend/learning/adaptation/user_adaptation.py
-Backend/learning/continual/__init__.py
-Backend/learning/continual/concept_drift.py
-Backend/learning/continual/consolidation.py
-Backend/learning/continual/continual_engine.py
-Backend/learning/continual/forgetting_detector.py
-Backend/learning/continual/incremental_learning.py
-Backend/learning/continual/replay_buffer.py
-Backend/learning/evolution/architecture_search.py
-Backend/learning/evolution/capability_evolution.py
-Backend/learning/evolution/evolution_engine.py
-Backend/learning/evolution/regression_guard.py
-Backend/learning/evolution/strategy_evolution.py
-Backend/learning/feedback/__init__.py
-Backend/learning/feedback/correction_learning.py
-Backend/learning/feedback/explicit_feedback.py
-Backend/learning/feedback/feedback_engine.py
-Backend/learning/feedback/implicit_feedback.py
-Backend/learning/feedback/reward_signals.py
-Backend/learning/Research/training/__init__.py
-Backend/learning/Research/training/checkpoints.py
-Backend/learning/Research/training/dataset_builder.py
-Backend/learning/Research/training/evaluator.py
-Backend/learning/Research/training/feature_builder.py
-Backend/learning/Research/training/trainer.py
-```
-
-### liquid_core
-
-```text
-liquid_Backend/core/__init__.py
-liquid_Backend/core/adaptive_scaler.py
-liquid_Backend/core/continual_learning.py
-liquid_Backend/core/federated_aggregator.py
-liquid_Backend/core/liquid_engine.py
-```
-
-### memory
-
-```text
-Backend/memory/__init__.py
-Backend/memory/consolidation/deduplicator.py
-Backend/memory/consolidation/forgetting_policy.py
-Backend/memory/consolidation/importance.py
-Backend/memory/consolidation/memory_consolidator.py
-Backend/memory/episodic/episode_index.py
-Backend/memory/episodic/episodic_memory.py
-Backend/memory/episodic/event_store.py
-Backend/memory/graph/entity_graph.py
-Backend/memory/graph/graph_query.py
-Backend/memory/graph/knowledge_graph.py
-Backend/memory/graph/relation_store.py
-Backend/memory/long_term_memory.py
-Backend/memory/preference/preference_memory.py
-Backend/memory/preference/preference_model.py
-Backend/memory/preference/preference_updater.py
-Backend/memory/privacy/deletion.py
-Backend/memory/privacy/encryption.py
-Backend/memory/privacy/permissions.py
-Backend/memory/privacy/retention.py
-Backend/memory/procedural/procedural_memory.py
-Backend/memory/procedural/skill_store.py
-Backend/memory/procedural/workflow_store.py
-Backend/memory/replay_buffer.py
-Backend/memory/semantic/concept_index.py
-Backend/memory/semantic/knowledge_store.py
-Backend/memory/semantic/semantic_memory.py
-Backend/memory/short_term_memory.py
-Backend/memory/short_term/conversation_buffer.py
-Backend/memory/short_term/short_term_memory.py
-Backend/memory/short_term/working_context.py
-Backend/memory/storage/migrations.py
-Backend/memory/storage/object_store.py
-Backend/memory/storage/postgres_store.py
-Backend/memory/storage/sqlite_store.py
-Backend/memory/vector/embedding_store.py
-Backend/memory/vector/faiss_store.py
-Backend/memory/vector/vector_store.py
-```
-
-### migrations
-
-```text
 Operations/migrations/database/migration_runner.py
 Operations/migrations/database/versions/README.md
-Operations/migrations/Backend/memory/migration_runner.py
-Operations/migrations/Backend/memory/versions/README.md
-```
-
-### models
-
-```text
-Backend/models/lifecycle/cache.py
-Backend/models/lifecycle/downloader.py
-Backend/models/lifecycle/garbage_collector.py
-Backend/models/lifecycle/loader.py
-Backend/models/lifecycle/validator.py
-Backend/models/liquid/checkpoints/manager.py
-Backend/models/liquid/checkpoints/validator.py
-Backend/models/liquid/lnn/architecture.py
-Backend/models/liquid/lnn/cells.py
-Backend/models/liquid/lnn/dynamics.py
-Backend/models/liquid/lnn/intent_model.py
-Backend/models/liquid/lnn/optimizer.py
-Backend/models/local/llama/loader.py
-Backend/models/local/llama/provider.py
-Backend/models/local/qwen/loader.py
-Backend/models/local/qwen/provider.py
-Backend/models/local/vision/loader.py
-Backend/models/local/vision/provider.py
-Backend/models/local/whisper/loader.py
-Backend/models/local/whisper/provider.py
-Backend/models/optimization/batching.py
-Backend/models/optimization/compilation.py
-Backend/models/optimization/distillation.py
-Backend/models/optimization/pruning.py
-Backend/models/optimization/quantization.py
-Backend/models/registry/model_capabilities.py
-Backend/models/registry/model_health.py
-Backend/models/registry/model_metadata.py
-Backend/models/registry/model_registry.py
-Backend/models/registry/model_versions.py
-Backend/models/remote/grok/adapter.py
-Backend/models/remote/grok/client.py
-Backend/models/remote/openai/adapter.py
-Backend/models/remote/openai/client.py
-Backend/models/remote/providers/base.py
-Backend/models/remote/providers/registry.py
-Backend/models/remote/providers/router.py
-```
-
-### multi_modal
-
-```text
-Backend/multi_modal/__init__.py
-Backend/multi_modal/documents/document_parser.py
-Backend/multi_modal/documents/docx.py
-Backend/multi_modal/documents/pdf.py
-Backend/multi_modal/documents/presentations.py
-Backend/multi_modal/documents/spreadsheets.py
-Backend/multi_modal/fusion/context_alignment.py
-Backend/multi_modal/fusion/cross_modal_attention.py
-Backend/multi_modal/fusion/modality_fusion.py
-Backend/multi_modal/fusion/temporal_fusion.py
-Backend/multi_modal/image_processor.py
-Backend/multi_modal/input_router.py
-Backend/multi_modal/input/document_processor.py
-Backend/multi_modal/input/image_processor.py
-Backend/multi_modal/input/input_router.py
-Backend/multi_modal/input/screen_processor.py
-Backend/multi_modal/input/sensor_processor.py
-Backend/multi_modal/input/text_processor.py
-Backend/multi_modal/input/video_processor.py
-Backend/multi_modal/input/voice_processor.py
-Backend/multi_modal/sensor_processor.py
-Backend/multi_modal/sensors/device_sensors.py
-Backend/multi_modal/sensors/sensor_fusion.py
-Backend/multi_modal/sensors/sensor_manager.py
-Backend/multi_modal/speech/audio_preprocessor.py
-Backend/multi_modal/speech/speech_to_text.py
-Backend/multi_modal/speech/text_to_speech.py
-Backend/multi_modal/speech/voice_activity.py
-Backend/multi_modal/text_processor.py
-Backend/multi_modal/video_processor.py
-Backend/multi_modal/video/frame_sampler.py
-Backend/multi_modal/video/temporal_context.py
-Backend/multi_modal/video/video_processor.py
-Backend/multi_modal/video/video_understanding.py
-Backend/multi_modal/vision/image_understanding.py
-Backend/multi_modal/vision/object_detection.py
-Backend/multi_modal/vision/ocr.py
-Backend/multi_modal/vision/screenshot.py
-Backend/multi_modal/vision/visual_context.py
-Backend/multi_modal/voice_processor.py
-```
-
-### multimodal
-
-```text
-Backend/multimodal/documents/document_parser.py
-Backend/multimodal/documents/docx.py
-Backend/multimodal/documents/pdf.py
-Backend/multimodal/documents/presentations.py
-Backend/multimodal/documents/spreadsheets.py
-Backend/multimodal/fusion/context_alignment.py
-Backend/multimodal/fusion/cross_modal_attention.py
-Backend/multimodal/fusion/modality_fusion.py
-Backend/multimodal/fusion/temporal_fusion.py
-Backend/multimodal/input/document_processor.py
-Backend/multimodal/input/image_processor.py
-Backend/multimodal/input/input_router.py
-Backend/multimodal/input/screen_processor.py
-Backend/multimodal/input/sensor_processor.py
-Backend/multimodal/input/text_processor.py
-Backend/multimodal/input/video_processor.py
-Backend/multimodal/input/voice_processor.py
-Backend/multimodal/sensors/device_sensors.py
-Backend/multimodal/sensors/sensor_fusion.py
-Backend/multimodal/sensors/sensor_manager.py
-Backend/multimodal/speech/audio_preprocessor.py
-Backend/multimodal/speech/speech_to_text.py
-Backend/multimodal/speech/text_to_speech.py
-Backend/multimodal/speech/voice_activity.py
-Backend/multimodal/video/frame_sampler.py
-Backend/multimodal/video/temporal_context.py
-Backend/multimodal/video/video_processor.py
-Backend/multimodal/video/video_understanding.py
-Backend/multimodal/vision/image_understanding.py
-Backend/multimodal/vision/object_detection.py
-Backend/multimodal/vision/ocr.py
-Backend/multimodal/vision/screenshot.py
-Backend/multimodal/vision/visual_context.py
-```
-
-### network
-
-```text
-Backend/network/discovery/discovery.py
-Backend/network/discovery/peer_registry.py
-Backend/network/distributed/distributed_execution.py
-Backend/network/distributed/distributed_memory.py
-Backend/network/peer/peer_manager.py
-Backend/network/peer/peer.py
-Backend/network/synchronization/conflict_resolution.py
-Backend/network/synchronization/synchronizer.py
-Backend/network/transport/grpc.py
-Backend/network/transport/transport.py
-Backend/network/transport/websocket.py
-```
-
-### observability
-
-```text
-Backend/observability/dashboards/intelligence.py
-Backend/observability/dashboards/learning.py
-Backend/observability/dashboards/models.py
-Backend/observability/dashboards/system.py
-Backend/observability/logging/correlation.py
-Backend/observability/logging/logger.py
-Backend/observability/logging/structured.py
-Backend/observability/metrics/latency.py
-Backend/observability/metrics/metrics.py
-Backend/observability/metrics/model_metrics.py
-Backend/observability/metrics/resources.py
-Backend/observability/telemetry/collector.py
-Backend/observability/telemetry/exporter.py
-Backend/observability/telemetry/privacy_filter.py
-Backend/observability/tracing/spans.py
-Backend/observability/tracing/tracer.py
-```
-
-### orchestration
-
-```text
-Backend/orchestration/__init__.py
-Backend/orchestration/Backend/agents/__init__.py
-Backend/orchestration/Backend/agents/agent_loop.py
-Backend/orchestration/Backend/agents/agent_memory.py
-Backend/orchestration/Backend/agents/agent_registry.py
-Backend/orchestration/Backend/agents/agent_runtime.py
-Backend/orchestration/Backend/agents/agent_supervisor.py
-Backend/orchestration/Backend/agents/agent_tools.py
-Backend/orchestration/Backend/execution/__init__.py
-Backend/orchestration/Backend/execution/cancellation.py
-Backend/orchestration/Backend/execution/execution_engine.py
-Backend/orchestration/Backend/execution/parallel_executor.py
-Backend/orchestration/Backend/execution/sandbox.py
-Backend/orchestration/Backend/execution/sequential_executor.py
-Backend/orchestration/Backend/execution/task_executor.py
-Backend/orchestration/Backend/execution/timeout_manager.py
-Backend/orchestration/hybrid/__init__.py
-Backend/orchestration/hybrid/fallback_manager.py
-Backend/orchestration/hybrid/hybrid_orchestrator.py
-Backend/orchestration/hybrid/route_engine.py
-Backend/orchestration/hybrid/route_policy.py
-Backend/orchestration/hybrid/route_selector.py
-Backend/orchestration/planning/__init__.py
-Backend/orchestration/planning/dag_builder.py
-Backend/orchestration/planning/dependency_resolver.py
-Backend/orchestration/planning/execution_plan.py
-Backend/orchestration/planning/planner.py
-Backend/orchestration/planning/task_graph.py
-Backend/orchestration/synthesis/__init__.py
-Backend/orchestration/synthesis/answer_composer.py
-Backend/orchestration/synthesis/conflict_resolver.py
-Backend/orchestration/synthesis/output_validator.py
-Backend/orchestration/synthesis/result_synthesizer.py
-```
-
-### os_layer
-
-```text
-Backend/os_layer/applications/__init__.py
-Backend/os_layer/applications/app_context.py
-Backend/os_layer/applications/app_controller.py
-Backend/os_layer/applications/app_registry.py
-Backend/os_layer/applications/application_manager.py
-Backend/os_layer/automation/__init__.py
-Backend/os_layer/automation/automation_controller.py
-Backend/os_layer/automation/automation_engine.py
-Backend/os_layer/automation/ui_controller.py
-Backend/os_layer/automation/workflow_engine.py
-Backend/os_layer/desktop/desktop_context.py
-Backend/os_layer/desktop/launcher.py
-Backend/os_layer/desktop/window_manager.py
-Backend/os_layer/filesystem/__init__.py
-Backend/os_layer/filesystem/file_intelligence.py
-Backend/os_layer/filesystem/filesystem_agent.py
-Backend/os_layer/filesystem/filesystem_manager.py
-Backend/os_layer/filesystem/path_handler.py
-Backend/os_layer/filesystem/semantic_files.py
-Backend/os_layer/system/__init__.py
-Backend/os_layer/system/device_context.py
-Backend/os_layer/system/permissions.py
-Backend/os_layer/system/system_controller.py
-Backend/os_layer/system/system_manager.py
-Backend/os_layer/system/system_monitor.py
-```
-
-### plugins
-
-```text
-Backend/plugins/community/README.md
-Backend/plugins/official/browser/manifest.json
-Backend/plugins/official/browser/plugin.py
-Backend/plugins/official/developer/manifest.json
-Backend/plugins/official/developer/plugin.py
-Backend/plugins/official/filesystem/manifest.json
-Backend/plugins/official/filesystem/plugin.py
-```
-
-### research
-
-```text
-Research/research/Backend/agents/experiments.md
-Research/research/Backend/agents/README.md
-Research/research/continual_Backend/learning/experiments.md
-Research/research/continual_Backend/learning/README.md
-Research/research/distributed_ai/experiments.md
-Research/research/distributed_ai/README.md
-Research/research/edge_ai/benchmarks.md
-Research/research/edge_ai/README.md
-Research/research/federated_Backend/learning/experiments.md
-Research/research/federated_Backend/learning/README.md
-Research/research/liquid_Backend/intelligence/experiments.md
-Research/research/liquid_Backend/intelligence/README.md
-```
-
-### resilience
-
-```text
-Backend/resilience/__init__.py
-Backend/resilience/chaos/__init__.py
-Backend/resilience/chaos/chaos_runner.py
-Backend/resilience/chaos/fault_injection.py
-Backend/resilience/chaos/resilience_tests.py
-Backend/resilience/failure/__init__.py
-Backend/resilience/failure/circuit_breaker.py
-Backend/resilience/failure/failure_detector.py
-Backend/resilience/failure/fallback.py
-Backend/resilience/failure/graceful_degradation.py
-Backend/resilience/failure/retry.py
-Backend/resilience/health/__init__.py
-Backend/resilience/health/dependency_health.py
-Backend/resilience/health/health_check.py
-Backend/resilience/health/health_monitor.py
-Backend/resilience/recovery/__init__.py
-Backend/resilience/recovery/checkpoint.py
-Backend/resilience/recovery/recovery_manager.py
-Backend/resilience/recovery/rollback.py
-Backend/resilience/recovery/state_restore.py
-```
-
-### revolutionary_orchestrator
-
-```text
-Backend/revolutionary_orchestrator/app.py
-Backend/revolutionary_orchestrator/orchestrator/__init__.py
-Backend/revolutionary_orchestrator/orchestrator/dag_generator.py
-Backend/revolutionary_orchestrator/orchestrator/executor.py
-Backend/revolutionary_orchestrator/orchestrator/planner.py
-Backend/revolutionary_orchestrator/orchestrator/refiner.py
-Backend/revolutionary_orchestrator/orchestrator/visualizer.py
-Backend/revolutionary_orchestrator/requirements.txt
-Backend/revolutionary_orchestrator/temp_ADA mini PRoject Report.pdf
-Backend/revolutionary_orchestrator/Backend/utils/__init__.py
-Backend/revolutionary_orchestrator/Backend/utils/pdf_parser.py
-Backend/revolutionary_orchestrator/Backend/utils/text_chunking.py
-```
-
-### runtime_data
-
-```text
-Operations/runtime_Research/data/cache/.gitkeep
-Operations/runtime_Research/data/database/.gitkeep
-Operations/runtime_Research/data/logs/.gitkeep
-Operations/runtime_Research/data/Backend/memory/.gitkeep
-Operations/runtime_Research/data/Backend/models/.gitkeep
-Operations/runtime_Research/data/state/.gitkeep
-```
-
-### runtime
-
-```text
-Backend/runtime/__init__.py
-Backend/runtime/acceleration/__init__.py
-Backend/runtime/acceleration/auto_backend.py
-Backend/runtime/acceleration/cpu_backend.py
-Backend/runtime/acceleration/cuda_backend.py
-Backend/runtime/acceleration/metal_backend.py
-Backend/runtime/acceleration/rocm_backend.py
-Backend/runtime/adaptive/__init__.py
-Backend/runtime/adaptive/capability_mapper.py
-Backend/runtime/adaptive/hardware_profiler.py
-Backend/runtime/adaptive/runtime_optimizer.py
-Backend/runtime/adaptive/workload_profiler.py
-Backend/runtime/Backend/hardware/__init__.py
-Backend/runtime/Backend/hardware/accelerator.py
-Backend/runtime/Backend/hardware/cpu.py
-Backend/runtime/Backend/hardware/gpu.py
-Backend/runtime/Backend/hardware/hardware_detector.py
-Backend/runtime/Backend/hardware/memory.py
-Backend/runtime/Backend/hardware/storage.py
-Backend/runtime/Backend/hardware/thermal.py
-Backend/runtime/platform/__init__.py
-Backend/runtime/platform/android.py
-Backend/runtime/platform/ios.py
-Backend/runtime/platform/linux.py
-Backend/runtime/platform/macos.py
-Backend/runtime/platform/windows.py
-Backend/runtime/resource/__init__.py
-Backend/runtime/resource/compute_manager.py
-Backend/runtime/resource/memory_manager.py
-Backend/runtime/resource/power_manager.py
-Backend/runtime/resource/quota_manager.py
-Backend/runtime/resource/resource_manager.py
-```
-
-### scripts
-
-```text
+Operations/migrations/memory/migration_runner.py
+Operations/migrations/memory/versions/README.md
+Operations/packages.txt
+Operations/runtime_data/cache/.gitkeep
+Operations/runtime_data/database/.gitkeep
+Operations/runtime_data/logs/.gitkeep
+Operations/runtime_data/memory/.gitkeep
+Operations/runtime_data/models/.gitkeep
+Operations/runtime_data/state/.gitkeep
 Operations/scripts/__init__.py
 Operations/scripts/benchmark.py
 Operations/scripts/benchmarking/compare.py
 Operations/scripts/benchmarking/run_benchmarks.py
+Operations/scripts/check_libs.py
 Operations/scripts/development/dev_server.py
 Operations/scripts/development/reset_dev.py
-Operations/scripts/Research/evaluation/evaluate.py
-Operations/scripts/Research/evaluation/regression.py
+Operations/scripts/diagnose.py
+Operations/scripts/evaluation/evaluate.py
+Operations/scripts/evaluation/regression.py
 Operations/scripts/maintenance/cleanup.py
 Operations/scripts/maintenance/health_check.py
 Operations/scripts/maintenance/rebuild_indexes.py
-Operations/scripts/setup_liquid_core.py
 Operations/scripts/setup/initialize_data.py
 Operations/scripts/setup/install_models.py
 Operations/scripts/setup/setup.py
+Operations/scripts/setup_liquid_core.py
 Operations/scripts/test_federated.py
 Operations/scripts/train_lnn.py
-Operations/scripts/Research/training/build_dataset.py
-Operations/scripts/Research/training/train_intent.py
-Operations/scripts/Research/training/train_liquid.py
-```
-
-### security
-
-```text
-Backend/security/__init__.py
-Backend/security/audit/__init__.py
-Backend/security/audit/audit_event.py
-Backend/security/audit/audit_logger.py
-Backend/security/audit/audit_store.py
-Backend/security/authentication/__init__.py
-Backend/security/authentication/authenticator.py
-Backend/security/authentication/session.py
-Backend/security/authentication/tokens.py
-Backend/security/authorization/__init__.py
-Backend/security/authorization/authorizer.py
-Backend/security/authorization/policies.py
-Backend/security/authorization/roles.py
-Backend/security/encryption/__init__.py
-Backend/security/encryption/encryption.py
-Backend/security/encryption/hashing.py
-Backend/security/encryption/key_manager.py
-Backend/security/privacy/__init__.py
-Backend/security/privacy/consent.py
-Backend/security/privacy/data_classification.py
-Backend/security/privacy/privacy_manager.py
-Backend/security/sandbox/__init__.py
-Backend/security/sandbox/filesystem_policy.py
-Backend/security/sandbox/process_policy.py
-Backend/security/sandbox/sandbox.py
-Backend/security/secrets/__init__.py
-Backend/security/secrets/secret_manager.py
-Backend/security/secrets/vault.py
-Backend/security/threat_detection/__init__.py
-Backend/security/threat_detection/anomaly_detector.py
-Backend/security/threat_detection/prompt_injection.py
-Backend/security/threat_detection/threat_detector.py
-```
-
-### smart_orchestrator
-
-```text
-Backend/smart_orchestrator/app.py
-Backend/smart_orchestrator/orchestrator.py
-Backend/smart_orchestrator/requirements.txt
-Backend/smart_orchestrator/Backend/utils/prompt_decomposer.py
-Backend/smart_orchestrator/Backend/utils/visualizer.py
-```
-
-### tests
-
-```text
+Operations/scripts/training/build_dataset.py
+Operations/scripts/training/train_intent.py
+Operations/scripts/training/train_liquid.py
+pyproject.toml
 Quality/tests/__init__.py
 Quality/tests/end_to_end/test_agent.py
 Quality/tests/end_to_end/test_chat.py
@@ -1596,12 +1364,12 @@ Quality/tests/integration/test_memory_learning.py
 Quality/tests/integration/test_multimodal.py
 Quality/tests/integration/test_pipeline.py
 Quality/tests/integration/test_tools.py
-Quality/tests/Backend/resilience/test_chaos.py
-Quality/tests/Backend/resilience/test_fallback.py
-Quality/tests/Backend/resilience/test_recovery.py
-Quality/tests/Backend/security/test_injection.py
-Quality/tests/Backend/security/test_permissions.py
-Quality/tests/Backend/security/test_sandbox.py
+Quality/tests/resilience/test_chaos.py
+Quality/tests/resilience/test_fallback.py
+Quality/tests/resilience/test_recovery.py
+Quality/tests/security/test_injection.py
+Quality/tests/security/test_permissions.py
+Quality/tests/security/test_sandbox.py
 Quality/tests/system/test_kernel.py
 Quality/tests/system/test_runtime.py
 Quality/tests/test_federated.py
@@ -1618,113 +1386,101 @@ Quality/tests/unit/test_orchestration.py
 Quality/tests/unit/test_orchestrator.py
 Quality/tests/unit/test_role_agents.py
 Quality/tests/unit/test_security_resilience.py
-```
-
-### tools
-
-```text
-Backend/tools/__init__.py
-Backend/tools/communication/__init__.py
-Backend/tools/communication/email.py
-Backend/tools/communication/messaging.py
-Backend/tools/communication/notifications.py
-Backend/tools/developer/__init__.py
-Backend/tools/developer/code_analyzer.py
-Backend/tools/developer/code_runner.py
-Backend/tools/developer/debugger.py
-Backend/tools/developer/git.py
-Backend/tools/developer/project_manager.py
-Backend/tools/developer/testing.py
-Backend/tools/filesystem/__init__.py
-Backend/tools/filesystem/metadata.py
-Backend/tools/filesystem/organize.py
-Backend/tools/filesystem/read.py
-Backend/tools/filesystem/search.py
-Backend/tools/filesystem/watcher.py
-Backend/tools/filesystem/write.py
-Backend/tools/productivity/__init__.py
-Backend/tools/productivity/calendar.py
-Backend/tools/productivity/documents.py
-Backend/tools/productivity/notes.py
-Backend/tools/productivity/tasks.py
-Backend/tools/registry/__init__.py
-Backend/tools/registry/tool_discovery.py
-Backend/tools/registry/tool_health.py
-Backend/tools/registry/tool_permissions.py
-Backend/tools/registry/tool_registry.py
-Backend/tools/registry/tool_schema.py
-Backend/tools/system/__init__.py
-Backend/tools/system/environment.py
-Backend/tools/system/process.py
-Backend/tools/system/services.py
-Backend/tools/system/system_info.py
-Backend/tools/system/terminal.py
-Backend/tools/web/__init__.py
-Backend/tools/web/browser.py
-Backend/tools/web/crawler.py
-Backend/tools/web/downloader.py
-Backend/tools/web/extractor.py
-Backend/tools/web/search.py
-```
-
-### training
-
-```text
+README.md
+requirements.txt
+Research/agents/experiments.md
+Research/agents/README.md
+Research/benchmarks/devices/benchmark.py
+Research/benchmarks/devices/devices.yaml
+Research/benchmarks/energy/benchmark.py
+Research/benchmarks/energy/config.yaml
+Research/benchmarks/latency/benchmark.py
+Research/benchmarks/latency/config.yaml
+Research/benchmarks/memory/benchmark.py
+Research/benchmarks/memory/config.yaml
+Research/benchmarks/throughput/benchmark.py
+Research/benchmarks/throughput/config.yaml
+Research/continual_learning/experiments.md
+Research/continual_learning/README.md
+Research/data/cache/.gitkeep
+Research/data/checkpoints/.gitkeep
+Research/data/datasets/evaluation.json
+Research/data/datasets/feedback.json
+Research/data/datasets/intents.json
+Research/data/exports/.gitkeep
+Research/data/feedback/.gitkeep
+Research/data/interactions/.gitkeep
+Research/data/processed/.gitkeep
+Research/data/raw/.gitkeep
+Research/distributed_ai/experiments.md
+Research/distributed_ai/README.md
+Research/edge_ai/benchmarks.md
+Research/edge_ai/README.md
+Research/evaluation/benchmarks/benchmark_report.py
+Research/evaluation/benchmarks/benchmark_runner.py
+Research/evaluation/benchmarks/benchmark_suite.py
+Research/evaluation/intelligence/intent_accuracy.py
+Research/evaluation/intelligence/reasoning_quality.py
+Research/evaluation/intelligence/task_success.py
+Research/evaluation/intelligence/uncertainty.py
+Research/evaluation/learning/drift.py
+Research/evaluation/learning/forgetting.py
+Research/evaluation/learning/improvement.py
+Research/evaluation/learning/regression.py
+Research/evaluation/models/efficiency.py
+Research/evaluation/models/latency.py
+Research/evaluation/models/quality.py
+Research/evaluation/multimodal/fusion.py
+Research/evaluation/multimodal/speech.py
+Research/evaluation/multimodal/vision.py
+Research/evaluation/orchestration/dag.py
+Research/evaluation/orchestration/recovery.py
+Research/evaluation/orchestration/routing.py
+Research/evaluation/security/authorization.py
+Research/evaluation/security/injection.py
+Research/evaluation/security/isolation.py
+Research/evaluator.py
+Research/experiments/agents/config.yaml
+Research/experiments/agents/experiment.py
+Research/experiments/continual_learning/config.yaml
+Research/experiments/continual_learning/experiment.py
+Research/experiments/federated/config.yaml
+Research/experiments/federated/experiment.py
+Research/experiments/hardware_adaptation/config.yaml
+Research/experiments/hardware_adaptation/experiment.py
+Research/experiments/liquid/config.yaml
+Research/experiments/liquid/experiment.py
+Research/federated_learning/experiments.md
+Research/federated_learning/README.md
+Research/liquid_intelligence/experiments.md
+Research/liquid_intelligence/README.md
+Research/scratchpad/_gen_batch7.py
+Research/scratchpad/lines_check.txt
+Research/scratchpad/scratch.py
+Research/scratchpad/scratch2.py
+Research/scratchpad/scratch_test.py
 Research/training/_patch_dashboard.py
 Research/training/domain_dataset.json
 Research/training/train_classifier.py
-```
-
-### unified_orchestrator
-
-```text
-Backend/unified_orchestrator/app.py
-Backend/unified_orchestrator/Backend/core/__init__.py
-Backend/unified_orchestrator/Backend/core/hybrid_orchestrator.py
-Backend/unified_orchestrator/Backend/core/stream_handler.py
-Backend/unified_orchestrator/Backend/core/task_executor.py
-Backend/unified_orchestrator/Backend/core/task_planner.py
-Backend/unified_orchestrator/Backend/core/task_refiner.py
-Backend/unified_orchestrator/test_import.py
-Backend/unified_orchestrator/Backend/utils/__init__.py
-Backend/unified_orchestrator/Backend/utils/logging.py
-Backend/unified_orchestrator/Backend/utils/pdf_parser.py
-```
-
-### user_interface
-
-```text
-Frontend/user_interface/__init__.py
-Frontend/user_interface/adaptive_ui.py
-Frontend/user_interface/ar_vr_visualizer.py
-Frontend/user_interface/gamification.py
-Frontend/user_interface/voice_control.py
-```
-
-### utils
-
-```text
-Backend/utils/__init__.py
-Backend/utils/image_executor.py
-Backend/utils/logger.py
-Backend/utils/pdf_parser.py
+uv.lock
+VERSION
 ```
 
 ## Configuration and running the project
 
 ### Python setup
 
-The README’s basic path targets the root Streamlit workflow:
+The README’s basic path targets the primary Frontend Streamlit workflow:
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 Copy-Item .env.example .env
-streamlit run streamlit_app.py
+streamlit run Frontend/streamlit_app.py
 ```
 
-`CONTRIBUTING.md` instead recommends `uv sync --extra dev`, which uses `pyproject.toml` and `uv.lock`. These dependency declarations have drifted: `requirements.txt` comments out some audio/OCR dependencies, while `pyproject.toml` declares another set. A clean install may not support every optional input in every app. The root `app.py` imports `speech_recognition` and `pytesseract` directly; inspect/install those optional system and Python dependencies before choosing it. The main README’s `streamlit_app.py` is the safer documented launch target.
+`Documentation/CONTRIBUTING.md` instead recommends `uv sync --extra dev`, which uses `pyproject.toml` and `uv.lock`. These dependency declarations have drifted: `requirements.txt` comments out some audio/OCR dependencies, while `pyproject.toml` declares another set. A clean install may not support every optional input in every app. The root `Frontend/app.py` imports `speech_recognition` and `pytesseract` directly; inspect/install those optional system and Python dependencies before choosing it. The main README’s `Frontend/streamlit_app.py` is the safer documented launch target.
 
 ### Model and service settings
 
@@ -1740,7 +1496,7 @@ streamlit run streamlit_app.py
 - `Research/evaluation/` contains task/intent/reasoning, learning, multimodal, orchestration, security and benchmark runners.
 - `Research/benchmarks/` contains latency, memory, throughput, energy and device harnesses.
 - `Operations/scripts/` contains setup, training, evaluation, benchmarking, maintenance and development entry points.
-- `CONTRIBUTING.md` documents `pytest`, Ruff, mypy and CI workflows. This guide was not validated by running the test suite.
+- `Documentation/CONTRIBUTING.md` documents `pytest`, Ruff, mypy and CI workflows. This guide was not validated by running the test suite.
 
 Some files show the gap between intended and implemented operations: `Operations/scripts/development/dev_server.py` has a `main()` that only passes; `Backend/execution/task_scheduler.py` is a placeholder; `Quality/tests/unit/test_orchestrator.py` has test methods containing only `pass`. Those are not working server/scheduler/tests despite their names.
 
@@ -1750,13 +1506,13 @@ Root `Dockerfile`/`docker-compose.yml`, `Operations/deployment/docker/`, Kuberne
 
 ## Security and credential handling
 
-The two current Streamlit entry-point files had embedded provider credentials in obfuscated source lines. I removed those assignments from `app.py` and `streamlit_app.py`; `app.py` now checks Streamlit secrets and then the environment for Grok, and the other app uses the same fallback. The actual values are deliberately not included in this document or output.
+The two current Streamlit entry-point files had embedded provider credentials in obfuscated source lines. I removed those assignments from `Frontend/app.py` and `Frontend/streamlit_app.py`; `Frontend/app.py` now checks Streamlit secrets and then the environment for Grok, and the other app uses the same fallback. The actual values are deliberately not included in this document or output.
 
 **Source cleanup does not revoke credentials or erase Git history.** The affected Grok and Replicate credentials must be rotated/revoked with their providers. Historical commits can still contain them; if the repository is shared, coordinate history cleanup and any force-push with collaborators after rotation. Do not reuse either credential.
 
 Other security boundaries to verify before deployment:
 
-- `SECURITY.md` states tools should be least-privileged and APIs should not be exposed publicly without authentication. Some docs describe middleware protections, but `Backend/APIs/rest/app.py` itself is a simple route registry and does not construct the FastAPI app shown in the docs.
+- `Documentation/SECURITY.md` states tools should be least-privileged and APIs should not be exposed publicly without authentication. Some docs describe middleware protections, but `Backend/APIs/rest/app.py` itself is a simple route registry and does not construct the FastAPI app shown in the docs.
 - Local GGUF loading invokes native inference code; only load trusted model files.
 - PDF, image, audio, sensor and OS automation paths may handle sensitive data or invoke external services. Inspect whether each path is local and what it logs/transmits.
 - Memory encryption, retention, deletion, consent and permissions modules must be wired to the application and persistent store to provide actual protection.
@@ -1781,7 +1537,7 @@ These are code/document mismatches useful for anyone evaluating or extending the
 
 ### Explicitly recorded in project docs
 
-The `CHANGELOG.md` Unreleased section plans to fill out Backend/orchestration/agent runtime, harden REST/WebSocket and schemas, complete authentication/authorization/sandbox/audit, add circuit breakers/checkpoints/chaos coverage, and build a capability-gated multimodal pipeline. `IMPLEMENTATION_REPORT.md` proposes hardware acceleration across CUDA/ROCm/Metal, dataset generation from execution feedback, and human preference feedback to tune routing. Architecture/research materials add continual learning, device adaptation, liquid intelligence, distributed/federated learning, stronger agent workflows and cross-platform operation.
+The `Documentation/CHANGELOG.md` Unreleased section plans to fill out Backend/orchestration/agent runtime, harden REST/WebSocket and schemas, complete authentication/authorization/sandbox/audit, add circuit breakers/checkpoints/chaos coverage, and build a capability-gated multimodal pipeline. `Documentation/IMPLEMENTATION_REPORT.md` proposes hardware acceleration across CUDA/ROCm/Metal, dataset generation from execution feedback, and human preference feedback to tune routing. Architecture/research materials add continual learning, device adaptation, liquid intelligence, distributed/federated learning, stronger agent workflows and cross-platform operation.
 
 ### Practical order suggested by current code gaps
 
@@ -1808,13 +1564,13 @@ flowchart LR
 ## Reference documents
 
 - [`README.md`](../README.md) — quick start and concise project overview.
-- [`ARCHITECTURE.md`](../ARCHITECTURE.md), [`Documentation/docs/architecture/`](architecture.md) — architectural map and subsystem notes.
-- [`IMPLEMENTATION_REPORT.md`](../IMPLEMENTATION_REPORT.md) — historical account of the four orchestration workflows.
-- [`CHANGELOG.md`](../CHANGELOG.md) — release baseline and declared unreleased work.
+- [`Documentation/ARCHITECTURE.md`](../ARCHITECTURE.md), [`Documentation/docs/architecture/`](architecture.md) — architectural map and subsystem notes.
+- [`Documentation/IMPLEMENTATION_REPORT.md`](../IMPLEMENTATION_REPORT.md) — historical account of the four orchestration workflows.
+- [`Documentation/CHANGELOG.md`](../CHANGELOG.md) — release baseline and declared unreleased work.
 - [`Documentation/docs/decisions/`](decisions/) — kernel, memory, orchestration and federation ADRs, including trade-offs.
 - [`Documentation/docs/api/`](api/), [`Documentation/docs/development/`](development/), [`Documentation/docs/Operations/deployment/`](Operations/deployment/) — API, contributor, and deployment references.
 - [`Research/research/`](../Research/research/) and [`Research/experiments/`](../Research/experiments/) — exploratory notes, experiment definitions, and benchmark descriptions.
-- [`CONTRIBUTING.md`](../CONTRIBUTING.md), [`SECURITY.md`](../SECURITY.md), [`LICENSE`](../LICENSE).
+- [`Documentation/CONTRIBUTING.md`](../CONTRIBUTING.md), [`SECURITY.md`](../SECURITY.md), [`LICENSE`](../LICENSE).
 
 ## Part II — Project dossier: vision, scope, program and difficulty
 

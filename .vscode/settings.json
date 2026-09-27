@@ -1,15 +1,8 @@
 {
-  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
   "python.analysis.extraPaths": [
-    "${workspaceFolder}",
-    "${workspaceFolder}/core",
-    "${workspaceFolder}/liquid_core",
-    "${workspaceFolder}/memory",
-    "${workspaceFolder}/multi_modal",
-    "${workspaceFolder}/hardware",
-    "${workspaceFolder}/federated",
-    "${workspaceFolder}/execution",
-    "${workspaceFolder}/utils"
+    "${workspaceFolder}/Backend",
+    "${workspaceFolder}/Research"
   ],
   "python.analysis.typeCheckingMode": "basic",
   "python.linting.enabled": true,
@@ -24,8 +17,14 @@
     "--follow-imports=silent"
   ],
   "python.formatting.provider": "black",
-  "python.formatting.blackArgs": ["--line-length", "120"],
-  "python.sortImports.args": ["--profile", "black"],
+  "python.formatting.blackArgs": [
+    "--line-length",
+    "120"
+  ],
+  "python.sortImports.args": [
+    "--profile",
+    "black"
+  ],
   "[python]": {
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
@@ -54,13 +53,32 @@
     "**/.mypy_cache": true,
     "**/.ruff_cache": true,
     "**/.venv": true,
-    "**/node_modules": true
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/.devcontainer": true,
+    "**/.github": true,
+    "**/.gradio": true,
+    "**/.kilo": true,
+    "**/.streamlit": true,
+    "**/.vscode": true,
+    ".dockerignore": true,
+    ".env.example": true,
+    ".gitignore": true,
+    ".python-version": true,
+    "docker-compose.yml": true,
+    "Dockerfile": true,
+    "LICENSE": true,
+    "Makefile": true,
+    "pyproject.toml": true,
+    "requirements.txt": true,
+    "uv.lock": true,
+    "VERSION": true
   },
   "files.watcherExclude": {
     "**/.venv/**": true,
     "**/node_modules/**": true,
     "**/Backend/models/**": true,
-    "**/Operations/runtime_Research/data/**": true
+    "**/Operations/runtime_data/**": true
   },
   "search.exclude": {
     "**/.venv": true,
@@ -71,12 +89,16 @@
     "**/*.pkl": true,
     "**/*.db": true
   },
-  "editor.rulers": [120],
+  "editor.rulers": [
+    120
+  ],
   "editor.tabSize": 4,
   "editor.insertSpaces": true,
   "terminal.integrated.defaultProfile.windows": "PowerShell",
   "python.testing.pytestEnabled": true,
-  "python.testing.pytestArgs": ["tests"],
+  "python.testing.pytestArgs": [
+    "Quality/tests"
+  ],
   "python.testing.unittestEnabled": false,
   "cSpell.words": [
     "DAIOPH",

@@ -24,7 +24,7 @@ jobs:
 
       - name: Run mypy on core modules
         run: |
-          mypy Backend/core/ liquid_Backend/core/ Backend/memory/ Backend/multi_modal/ --ignore-missing-imports --no-error-summary || echo "Typecheck warnings (non-blocking)"
+          mypy Backend/core/ Backend/liquid_core/ Backend/memory/ Backend/multi_modal/ --ignore-missing-imports --no-error-summary || echo "Typecheck warnings (non-blocking)"
         continue-on-error: true
 
   node-typecheck:

@@ -66,7 +66,7 @@ This document is the top-level overview. Detailed per-subsystem notes live in
 | `Backend/memory/` | Short-term, episodic, semantic, procedural, preference stores; consolidation; privacy |
 | `Backend/learning/` | Continual learning, adaptation, feedback, training utilities, evolution |
 | `Backend/models/` | Model registry, local providers (Qwen/Llama/Whisper/vision), remote providers (Grok/OpenAI), optimization, lifecycle |
-| `liquid_Backend/core/` | Adaptive scaling, continual learning, federated aggregation around the liquid engine |
+| `Backend/liquid_core/` | Adaptive scaling, continual learning, federated aggregation around the liquid engine |
 | `Backend/multi_modal/`, `Backend/multimodal/` | Input routing, speech, vision, video, documents, sensors, fusion |
 | `Backend/agents/` | Role agents: planner, executor, coder, analyst, researcher, monitor, supervisor, verifier |
 | `Backend/orchestration/` | Agent runtime, planning/DAG, execution engines, hybrid routing, result synthesis |
