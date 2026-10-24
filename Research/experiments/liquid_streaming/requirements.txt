@@ -1,0 +1,34 @@
+# DAIOPH — Liquid Intelligence streaming study
+# Location: Research/experiments/liquid_streaming/
+#
+# Project-local virtual environment only. DO NOT install these into the global
+# / base conda environment. Create and activate this project's venv, then:
+#   pip install -r requirements.txt
+#
+# Pinned for reproducibility of this standalone study. Unrelated DAIOPH
+# dependencies (streamlit, llama-cpp-python, whisper, plotly, etc.) are NOT
+# included and are NOT installed by this file.
+
+# Array / tensor backend (numpy 2.x required for prebuilt cp313 wheels)
+numpy==2.3.5
+
+# Deep learning (CPU). LSTM / GRU baselines and the ncps CfC backend.
+# `torch==2.11.0` from PyPI resolves to the CPU wheel (no CUDA).
+torch==2.11.0
+
+# Classical ML baselines and metrics
+scikit-learn==1.5.2
+
+# Dataframe handling for raw results + aggregation
+pandas==2.2.3
+
+# Plotting (figures are generated from saved CSVs only)
+matplotlib==3.9.2
+
+# Dataset download (CLINC150 from its documented source)
+requests==2.32.1
+
+# Official Neural Circuit Policies implementation (provides the CfC cell).
+# Pinned to 1.0.1 (pure-Python wheel, no Python constraint; verified on py3.13).
+# Source: https://github.com/mlech26l/ncps
+ncps==1.0.1

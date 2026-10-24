@@ -1,0 +1,801 @@
+seed,model,chunk_step,eval_chunk,example_index,text,true_label,predicted_label,correct
+0,cfc,0,0,0,can you please provide me with assistance in moving money from one account to another,transfer,order,0
+0,cfc,0,0,1,i would like help moving money between accounts,transfer,order,0
+0,cfc,0,0,2,can you assist me in moving money from one account to another,transfer,order,0
+0,cfc,0,0,3,i would like help moving money from one account to another,transfer,order,0
+0,cfc,0,0,4,i would like assistance moving money from one account to another,transfer,order,0
+0,cfc,0,0,5,can i move some money around,transfer,order,0
+0,cfc,0,0,6,can i make a transfer between my accounts,transfer,order,0
+0,cfc,0,0,7,i need to make a transfer of my money,transfer,order,0
+0,cfc,0,0,8,can i move some money between my two accounts,transfer,order,0
+0,cfc,0,0,9,i would like to distribute some money between my accounts,transfer,order,0
+0,cfc,0,0,10,i would like to transfer $100 from my checking to saving account,transfer,order,0
+0,cfc,0,0,11,help me transfer $100 from my checking to saving account,transfer,order,0
+0,cfc,0,0,12,transfer $100 from my checking to saving account,transfer,order,0
+0,cfc,0,0,13,can you please help me move $100 from my checking to saving account,transfer,order,0
+0,cfc,0,0,14,please move $100 from my checking to saving account,transfer,order,0
+0,cfc,0,0,15,"transfer seventeen dollars from rbs to woodforest account, please",transfer,order,0
+0,cfc,0,0,16,"send twelve dollars between cabelas and bank of london accounts, please",transfer,order,0
+0,cfc,0,0,17,"transfer ninety dollars between glacier checking and farmers accounts, please",transfer,order,0
+0,cfc,0,0,18,transfer seventy dollars between national and citizens accounts,transfer,order,0
+0,cfc,0,0,19,transfer four and sixty seven dollars from bank of oklahoma checking to security bank account,transfer,order,0
+0,cfc,0,0,20,how much money can i transfer today,transfer,order,0
+0,cfc,0,0,21,add funds to the retirement account from the pnc account only,transfer,order,0
+0,cfc,0,0,22,would you move 100 dollars from the checking and put it into savings,transfer,order,0
+0,cfc,0,0,23,repeat what the weather will be like,transfer,order,0
+0,cfc,0,0,24,i would like to put 100 dollars from the checking into the savings account now,transfer,order,0
+0,cfc,0,0,25,please transfer $5000 to money market from checking account,transfer,order,0
+0,cfc,0,0,26,i need $360 transfered from savings to checking account,transfer,order,0
+0,cfc,0,0,27,make an immediate transfer of ten thousand from money market to checking,transfer,order,0
+0,cfc,0,0,28,i'd like to transfer $400 from household to savings account,transfer,order,0
+0,cfc,0,0,29,transer $800 from my checking to savings account,transfer,order,0
+0,cfc,0,0,30,define antebellum,definition,order,0
+0,cfc,0,0,31,define discontent,definition,order,0
+0,cfc,0,0,32,what is the meaning of incandescent,definition,order,0
+0,cfc,0,0,33,what does confrontation mean,definition,order,0
+0,cfc,0,0,34,what does serendipity mean,definition,order,0
+0,cfc,0,0,35,what's the definition of luminescent,definition,order,0
+0,cfc,0,0,36,what is the definiton of auspicious,definition,order,0
+0,cfc,0,0,37,what does circuitous mean,definition,order,0
+0,cfc,0,0,38,what's the definition of unencumbered,definition,order,0
+0,cfc,0,0,39,what does adulation mean,definition,order,0
+0,cfc,0,0,40,what does assiduous mean,definition,order,0
+0,cfc,0,0,41,what does amicable mean,definition,order,0
+0,cfc,0,0,42,what's the definition of remunerative,definition,order,0
+0,cfc,0,0,43,what does anachronistic mean,definition,order,0
+0,cfc,0,0,44,what's the definition of idiosyncratic,definition,order,0
+0,cfc,0,0,45,what does yolo mean,definition,order,0
+0,cfc,0,0,46,can you tell me the meaning of fluctuate,definition,order,0
+0,cfc,0,0,47,what does the word polynomial mean,definition,order,0
+0,cfc,0,0,48,what does ferrari mean,definition,order,0
+0,cfc,0,0,49,what is the meaning of the word girn,definition,order,0
+0,cfc,0,0,50,what does mature mean,definition,order,0
+0,cfc,0,0,51,i'd like to know what bitcoin means,definition,order,0
+0,cfc,0,0,52,"i heard some woman say she was going to yerd me, what's that mean",definition,order,0
+0,cfc,0,0,53,can you tell me what obsolescence means,definition,order,0
+0,cfc,0,0,54,please explain the word catastrophic to me,definition,order,0
+0,cfc,0,0,55,what's the meaning of naff,definition,order,0
+0,cfc,0,0,56,can you tell me what dendrofilous means,definition,order,0
+0,cfc,0,0,57,what does peer-to-peer actually mean,definition,order,0
+0,cfc,0,0,58,define epicurean,definition,order,0
+0,cfc,0,0,59,what does epicurean mean,definition,order,0
+0,cfc,0,0,60,name unusual facts about the circus,fun_fact,order,0
+0,cfc,0,0,61,i need interesting baseball trivia from the nineteen eighties,fun_fact,order,0
+0,cfc,0,0,62,tell me a fun fact about cars,fun_fact,order,0
+0,cfc,0,0,63,give me a fun fact about kangaroo,fun_fact,order,0
+0,cfc,0,0,64,give me a fun fact about koala,fun_fact,order,0
+0,cfc,0,0,65,give me a fun fact about dolphin,fun_fact,order,0
+0,cfc,0,0,66,what is some trivia about frog,fun_fact,order,0
+0,cfc,0,0,67,tell me fun facts of today,fun_fact,order,0
+0,cfc,0,0,68,give me something interesting about stars,fun_fact,order,0
+0,cfc,0,0,69,what is some trivia question about coffee,fun_fact,order,0
+0,cfc,0,0,70,tell me some trivia about sweat,fun_fact,order,0
+0,cfc,0,0,71,tell me some trivia about dolphin,fun_fact,order,0
+0,cfc,0,0,72,what is some trivia about the weather,fun_fact,order,0
+0,cfc,0,0,73,give me a fun fact about komodo dragon,fun_fact,order,0
+0,cfc,0,0,74,give me a amusing fact about wolf,fun_fact,order,0
+0,cfc,0,0,75,what is the interesting trivia about human bodies,fun_fact,order,0
+0,cfc,0,0,76,i want to learn something about apples,fun_fact,order,0
+0,cfc,0,0,77,tell me today's fun fact,fun_fact,order,0
+0,cfc,0,0,78,i want today's fun fact please,fun_fact,order,0
+0,cfc,0,0,79,what is today's fun fact,fun_fact,order,0
+0,cfc,0,0,80,today's fun fact,fun_fact,order,0
+0,cfc,0,0,81,i want a fun fact about london,fun_fact,order,0
+0,cfc,0,0,82,tell me something interesting about bees,fun_fact,order,0
+0,cfc,0,0,83,i would you like to learn something interesting about bees,fun_fact,order,0
+0,cfc,0,0,84,i want to hear cool bee facts,fun_fact,order,0
+0,cfc,0,0,85,what's something interesting about bees,fun_fact,order,0
+0,cfc,0,0,86,i wanna hear something cool about bees,fun_fact,order,0
+0,cfc,0,0,87,tell me fun facts on science topics,fun_fact,order,0
+0,cfc,0,0,88,tell me fun science facts,fun_fact,order,0
+0,cfc,0,0,89,i want to know fun facts about koala bears,fun_fact,order,0
+0,cfc,0,0,90,help me change my oil,oil_change_how,order,0
+0,cfc,0,0,91,what oil should i use for an oil change and how do i do it,oil_change_how,order,0
+0,cfc,0,0,92,how do i do an oil change,oil_change_how,order,0
+0,cfc,0,0,93,diy oil change,oil_change_how,order,0
+0,cfc,0,0,94,how to do an oil change,oil_change_how,order,0
+0,cfc,0,0,95,give me instructions for an oil change,oil_change_how,order,0
+0,cfc,0,0,96,diy oil change and oil type,oil_change_how,order,0
+0,cfc,0,0,97,oil type and do it yourself oil change information please,oil_change_how,order,0
+0,cfc,0,0,98,i want to know how to change my oil,oil_change_how,order,0
+0,cfc,0,0,99,can you tell me how to change my oil and what kind i use,oil_change_how,order,0
+0,cfc,0,0,100,how to change oil and what oil type,oil_change_how,order,0
+0,cfc,0,0,101,can you please instruct me on the proper way to change the oil in my car,oil_change_how,order,0
+0,cfc,0,0,102,i need guidance on changing my oil,oil_change_how,order,0
+0,cfc,0,0,103,i want a step by step explanation of how to change the oil in my car,oil_change_how,order,0
+0,cfc,0,0,104,can you teach me how to change my oil,oil_change_how,order,0
+0,cfc,0,0,105,can you teach me how to change my oil in my car,oil_change_how,order,0
+0,cfc,0,0,106,help me figure out how to change my oil,oil_change_how,order,0
+0,cfc,0,0,107,walk me through the steps involved in changing my oil,oil_change_how,order,0
+0,cfc,0,0,108,give me step by step instructions for changing my oil,oil_change_how,order,0
+0,cfc,0,0,109,i want to change the oil in my car but i do not know how to do it can you help,oil_change_how,order,0
+0,cfc,0,0,110,put together a list of instructions for me on how to change the oil in my car,oil_change_how,order,0
+0,cfc,0,0,111,"is it possible to change oil, if so how and what do i use",oil_change_how,order,0
+0,cfc,0,0,112,what oil do i use when changing oil and how do i do it,oil_change_how,order,0
+0,cfc,0,0,113,how would i replace my oil and what sort of oil should i use,oil_change_how,order,0
+0,cfc,0,0,114,"can you change the oil, with what and how",oil_change_how,order,0
+0,cfc,0,0,115,how could i replace my oil and what form of oil ought to i take advantage of,oil_change_how,order,0
+0,cfc,0,0,116,can you tell me how to change my oil please,oil_change_how,order,0
+0,cfc,0,0,117,how do i change my oil,oil_change_how,order,0
+0,cfc,0,0,118,please let me know how to change the oil,oil_change_how,order,0
+0,cfc,0,0,119,i need to know how to change oil in a car,oil_change_how,order,0
+0,cfc,0,0,120,"i'd like to make a reservation at rooth chris, can you do that",restaurant_reservation,order,0
+0,cfc,0,0,121,make a reservation for chik-fil-a at 3 o' clock please,restaurant_reservation,order,0
+0,cfc,0,0,122,reserve a table for 3 at 7 for olive garden,restaurant_reservation,order,0
+0,cfc,0,0,123,will you reserve a table at olive garden for 3 people at 7,restaurant_reservation,order,0
+0,cfc,0,0,124,"at 7, i need a table for 3 at olive garden",restaurant_reservation,order,0
+0,cfc,0,0,125,i need a table for 3 at olive garden for 7,restaurant_reservation,order,0
+0,cfc,0,0,126,get a table for me at 7 for 3 people at olive garden,restaurant_reservation,order,0
+0,cfc,0,0,127,reserve table for 5 at red robin under the name sara at 3,restaurant_reservation,order,0
+0,cfc,0,0,128,reverse a table for 5 at burger king under the name sara at 6,restaurant_reservation,order,0
+0,cfc,0,0,129,can you reserve a table for 6 at red robin under the name mavrick at 5 clock,restaurant_reservation,order,0
+0,cfc,0,0,130,could you reserve table for 3 at carlos jr under the name adam at 4,restaurant_reservation,order,0
+0,cfc,0,0,131,i want to reserve table for 5 at red robin under the name sara at 5,restaurant_reservation,order,0
+0,cfc,0,0,132,i need a table for two at the havana at nine,restaurant_reservation,order,0
+0,cfc,0,0,133,look for me a table at carl's cabin for twelve at eight,restaurant_reservation,order,0
+0,cfc,0,0,134,i need a table at gemma for nine at two,restaurant_reservation,order,0
+0,cfc,0,0,135,book me a table for three at rainforest cafe at seven,restaurant_reservation,order,0
+0,cfc,0,0,136,get me a table for five at itta bena at three,restaurant_reservation,order,0
+0,cfc,0,0,137,"5 people are going to be at tropicana by 8pm, reserve the table under martins name please",restaurant_reservation,order,0
+0,cfc,0,0,138,use martins name to reserve a table at tropicana for 5 people at 8pm,restaurant_reservation,order,0
+0,cfc,0,0,139,reserve a table at tropicana for 5 people under the name martins for 8pm,restaurant_reservation,order,0
+0,cfc,0,0,140,martins needs a table for 5 people at tropicana at 8pm precisely,restaurant_reservation,order,0
+0,cfc,0,0,141,the table should be reserved at 8pm at tropicana using martins name and it should be for 5 people,restaurant_reservation,order,0
+0,cfc,0,0,142,are there any open reservations at outback tonight,restaurant_reservation,order,0
+0,cfc,0,0,143,make a reservation for 2 tonight at 7:00 at outback steakhouse,restaurant_reservation,order,0
+0,cfc,0,0,144,michael will reserve a table for two at 7:00pm for olive garden,restaurant_reservation,order,0
+0,cfc,0,0,145,a table for two needs to be reserved for 7:00pm at olive garden using the name michael,restaurant_reservation,order,0
+0,cfc,0,0,146,please reserve a table for two at olive garden at 7:00pm for michael,restaurant_reservation,order,0
+0,cfc,0,0,147,get reservations at olive garden for two at 7:00pm under michael,restaurant_reservation,order,0
+0,cfc,0,0,148,reservations for two need to be made using michael's name for 7:00pm at olive garden,restaurant_reservation,order,0
+0,cfc,0,0,149,i want to eat at seven in the restaurant for two people,restaurant_reservation,order,0
+0,cfc,0,0,150,what company made this ai,who_made_you,order,0
+0,cfc,0,0,151,what is the name of the person who made you,who_made_you,order,0
+0,cfc,0,0,152,who is the person that brought you to life,who_made_you,order,0
+0,cfc,0,0,153,who is the one that made you,who_made_you,order,0
+0,cfc,0,0,154,who is your maker,who_made_you,order,0
+0,cfc,0,0,155,which company made you,who_made_you,order,0
+0,cfc,0,0,156,who assembled you,who_made_you,order,0
+0,cfc,0,0,157,i wanna know who programmed you,who_made_you,order,0
+0,cfc,0,0,158,let me know who programmed you,who_made_you,order,0
+0,cfc,0,0,159,who made you,who_made_you,order,0
+0,cfc,0,0,160,i wanna know your maker,who_made_you,order,0
+0,cfc,0,0,161,who was your maker,who_made_you,order,0
+0,cfc,0,0,162,who is the one who programmed you,who_made_you,order,0
+0,cfc,0,0,163,i must know who programmed you,who_made_you,order,0
+0,cfc,0,0,164,tell me who your maker was,who_made_you,order,0
+0,cfc,0,0,165,what was the company that designed you,who_made_you,order,0
+0,cfc,0,0,166,do you know what company were you designed by,who_made_you,order,0
+0,cfc,0,0,167,let me know which company were you designed by,who_made_you,order,0
+0,cfc,0,0,168,what company were you designed by,who_made_you,order,0
+0,cfc,0,0,169,can you let me know what company were you designed by,who_made_you,order,0
+0,cfc,0,0,170,which company were you designed by,who_made_you,order,0
+0,cfc,0,0,171,tell me who made you please,who_made_you,order,0
+0,cfc,0,0,172,can you tell me who made you,who_made_you,order,0
+0,cfc,0,0,173,whats the name of the person who made you,who_made_you,order,0
+0,cfc,0,0,174,what company did the design for this,who_made_you,order,0
+0,cfc,0,0,175,what company did this design,who_made_you,order,0
+0,cfc,0,0,176,what company is responsible for this design,who_made_you,order,0
+0,cfc,0,0,177,what company designed this,who_made_you,order,0
+0,cfc,0,0,178,"for this design, what company did it",who_made_you,order,0
+0,cfc,0,0,179,name the person or group that programmed you,who_made_you,order,0
+0,cfc,0,0,180,x card has earned how many points,rewards_balance,order,0
+0,cfc,0,0,181,can you give me a points update on my rewards plus card,rewards_balance,order,0
+0,cfc,0,0,182,can you pull up how many points i've earned with travel card,rewards_balance,order,0
+0,cfc,0,0,183,what is the updated points that i earned with synovus card,rewards_balance,order,0
+0,cfc,0,0,184,how many points do i have on my six flags rewards card,rewards_balance,order,0
+0,cfc,0,0,185,i would like to check my rewards for my credit card,rewards_balance,order,0
+0,cfc,0,0,186,i need to check my rewards for my credit card,rewards_balance,order,0
+0,cfc,0,0,187,i wanna know how many points have i earned with my credit card,rewards_balance,order,0
+0,cfc,0,0,188,i would like to know my debit card's rewards balance,rewards_balance,order,0
+0,cfc,0,0,189,i would like to know how many points have i earned with my credit card,rewards_balance,order,0
+0,cfc,0,0,190,i need to know my credit card's rewards balance,rewards_balance,order,0
+0,cfc,0,0,191,i wanna know my credit card's rewards balance,rewards_balance,order,0
+0,cfc,0,0,192,i really need to check my rewards for my credit card,rewards_balance,order,0
+0,cfc,0,0,193,i would like to check my rewards for my debit card,rewards_balance,order,0
+0,cfc,0,0,194,i wish to know my debit card's rewards balance,rewards_balance,order,0
+0,cfc,0,0,195,i wanna check my rewards for my credit card,rewards_balance,order,0
+0,cfc,0,0,196,tell me my debit card's rewards balance,rewards_balance,order,0
+0,cfc,0,0,197,i need to understand how many points have i earned with my credit card,rewards_balance,order,0
+0,cfc,0,0,198,i must know how many points have i earned with my credit card,rewards_balance,order,0
+0,cfc,0,0,199,i gotta know how many points i have gotten with my debit card,rewards_balance,order,0
+0,lstm,0,0,0,can you please provide me with assistance in moving money from one account to another,transfer,international_fees,0
+0,lstm,0,0,1,i would like help moving money between accounts,transfer,international_fees,0
+0,lstm,0,0,2,can you assist me in moving money from one account to another,transfer,international_fees,0
+0,lstm,0,0,3,i would like help moving money from one account to another,transfer,international_fees,0
+0,lstm,0,0,4,i would like assistance moving money from one account to another,transfer,international_fees,0
+0,lstm,0,0,5,can i move some money around,transfer,international_fees,0
+0,lstm,0,0,6,can i make a transfer between my accounts,transfer,international_fees,0
+0,lstm,0,0,7,i need to make a transfer of my money,transfer,international_fees,0
+0,lstm,0,0,8,can i move some money between my two accounts,transfer,international_fees,0
+0,lstm,0,0,9,i would like to distribute some money between my accounts,transfer,international_fees,0
+0,lstm,0,0,10,i would like to transfer $100 from my checking to saving account,transfer,international_fees,0
+0,lstm,0,0,11,help me transfer $100 from my checking to saving account,transfer,international_fees,0
+0,lstm,0,0,12,transfer $100 from my checking to saving account,transfer,international_fees,0
+0,lstm,0,0,13,can you please help me move $100 from my checking to saving account,transfer,international_fees,0
+0,lstm,0,0,14,please move $100 from my checking to saving account,transfer,international_fees,0
+0,lstm,0,0,15,"transfer seventeen dollars from rbs to woodforest account, please",transfer,international_fees,0
+0,lstm,0,0,16,"send twelve dollars between cabelas and bank of london accounts, please",transfer,international_fees,0
+0,lstm,0,0,17,"transfer ninety dollars between glacier checking and farmers accounts, please",transfer,international_fees,0
+0,lstm,0,0,18,transfer seventy dollars between national and citizens accounts,transfer,international_fees,0
+0,lstm,0,0,19,transfer four and sixty seven dollars from bank of oklahoma checking to security bank account,transfer,international_fees,0
+0,lstm,0,0,20,how much money can i transfer today,transfer,international_fees,0
+0,lstm,0,0,21,add funds to the retirement account from the pnc account only,transfer,international_fees,0
+0,lstm,0,0,22,would you move 100 dollars from the checking and put it into savings,transfer,international_fees,0
+0,lstm,0,0,23,repeat what the weather will be like,transfer,international_fees,0
+0,lstm,0,0,24,i would like to put 100 dollars from the checking into the savings account now,transfer,international_fees,0
+0,lstm,0,0,25,please transfer $5000 to money market from checking account,transfer,international_fees,0
+0,lstm,0,0,26,i need $360 transfered from savings to checking account,transfer,international_fees,0
+0,lstm,0,0,27,make an immediate transfer of ten thousand from money market to checking,transfer,international_fees,0
+0,lstm,0,0,28,i'd like to transfer $400 from household to savings account,transfer,international_fees,0
+0,lstm,0,0,29,transer $800 from my checking to savings account,transfer,international_fees,0
+0,lstm,0,0,30,define antebellum,definition,international_fees,0
+0,lstm,0,0,31,define discontent,definition,international_fees,0
+0,lstm,0,0,32,what is the meaning of incandescent,definition,international_fees,0
+0,lstm,0,0,33,what does confrontation mean,definition,international_fees,0
+0,lstm,0,0,34,what does serendipity mean,definition,international_fees,0
+0,lstm,0,0,35,what's the definition of luminescent,definition,international_fees,0
+0,lstm,0,0,36,what is the definiton of auspicious,definition,international_fees,0
+0,lstm,0,0,37,what does circuitous mean,definition,international_fees,0
+0,lstm,0,0,38,what's the definition of unencumbered,definition,international_fees,0
+0,lstm,0,0,39,what does adulation mean,definition,international_fees,0
+0,lstm,0,0,40,what does assiduous mean,definition,international_fees,0
+0,lstm,0,0,41,what does amicable mean,definition,international_fees,0
+0,lstm,0,0,42,what's the definition of remunerative,definition,international_fees,0
+0,lstm,0,0,43,what does anachronistic mean,definition,international_fees,0
+0,lstm,0,0,44,what's the definition of idiosyncratic,definition,international_fees,0
+0,lstm,0,0,45,what does yolo mean,definition,international_fees,0
+0,lstm,0,0,46,can you tell me the meaning of fluctuate,definition,international_fees,0
+0,lstm,0,0,47,what does the word polynomial mean,definition,international_fees,0
+0,lstm,0,0,48,what does ferrari mean,definition,international_fees,0
+0,lstm,0,0,49,what is the meaning of the word girn,definition,international_fees,0
+0,lstm,0,0,50,what does mature mean,definition,international_fees,0
+0,lstm,0,0,51,i'd like to know what bitcoin means,definition,international_fees,0
+0,lstm,0,0,52,"i heard some woman say she was going to yerd me, what's that mean",definition,international_fees,0
+0,lstm,0,0,53,can you tell me what obsolescence means,definition,international_fees,0
+0,lstm,0,0,54,please explain the word catastrophic to me,definition,international_fees,0
+0,lstm,0,0,55,what's the meaning of naff,definition,international_fees,0
+0,lstm,0,0,56,can you tell me what dendrofilous means,definition,international_fees,0
+0,lstm,0,0,57,what does peer-to-peer actually mean,definition,international_fees,0
+0,lstm,0,0,58,define epicurean,definition,international_fees,0
+0,lstm,0,0,59,what does epicurean mean,definition,international_fees,0
+0,lstm,0,0,60,name unusual facts about the circus,fun_fact,international_fees,0
+0,lstm,0,0,61,i need interesting baseball trivia from the nineteen eighties,fun_fact,international_fees,0
+0,lstm,0,0,62,tell me a fun fact about cars,fun_fact,international_fees,0
+0,lstm,0,0,63,give me a fun fact about kangaroo,fun_fact,international_fees,0
+0,lstm,0,0,64,give me a fun fact about koala,fun_fact,international_fees,0
+0,lstm,0,0,65,give me a fun fact about dolphin,fun_fact,international_fees,0
+0,lstm,0,0,66,what is some trivia about frog,fun_fact,international_fees,0
+0,lstm,0,0,67,tell me fun facts of today,fun_fact,international_fees,0
+0,lstm,0,0,68,give me something interesting about stars,fun_fact,international_fees,0
+0,lstm,0,0,69,what is some trivia question about coffee,fun_fact,international_fees,0
+0,lstm,0,0,70,tell me some trivia about sweat,fun_fact,international_fees,0
+0,lstm,0,0,71,tell me some trivia about dolphin,fun_fact,international_fees,0
+0,lstm,0,0,72,what is some trivia about the weather,fun_fact,international_fees,0
+0,lstm,0,0,73,give me a fun fact about komodo dragon,fun_fact,international_fees,0
+0,lstm,0,0,74,give me a amusing fact about wolf,fun_fact,international_fees,0
+0,lstm,0,0,75,what is the interesting trivia about human bodies,fun_fact,international_fees,0
+0,lstm,0,0,76,i want to learn something about apples,fun_fact,international_fees,0
+0,lstm,0,0,77,tell me today's fun fact,fun_fact,international_fees,0
+0,lstm,0,0,78,i want today's fun fact please,fun_fact,international_fees,0
+0,lstm,0,0,79,what is today's fun fact,fun_fact,international_fees,0
+0,lstm,0,0,80,today's fun fact,fun_fact,international_fees,0
+0,lstm,0,0,81,i want a fun fact about london,fun_fact,international_fees,0
+0,lstm,0,0,82,tell me something interesting about bees,fun_fact,international_fees,0
+0,lstm,0,0,83,i would you like to learn something interesting about bees,fun_fact,international_fees,0
+0,lstm,0,0,84,i want to hear cool bee facts,fun_fact,international_fees,0
+0,lstm,0,0,85,what's something interesting about bees,fun_fact,international_fees,0
+0,lstm,0,0,86,i wanna hear something cool about bees,fun_fact,international_fees,0
+0,lstm,0,0,87,tell me fun facts on science topics,fun_fact,international_fees,0
+0,lstm,0,0,88,tell me fun science facts,fun_fact,international_fees,0
+0,lstm,0,0,89,i want to know fun facts about koala bears,fun_fact,international_fees,0
+0,lstm,0,0,90,help me change my oil,oil_change_how,international_fees,0
+0,lstm,0,0,91,what oil should i use for an oil change and how do i do it,oil_change_how,international_fees,0
+0,lstm,0,0,92,how do i do an oil change,oil_change_how,international_fees,0
+0,lstm,0,0,93,diy oil change,oil_change_how,international_fees,0
+0,lstm,0,0,94,how to do an oil change,oil_change_how,international_fees,0
+0,lstm,0,0,95,give me instructions for an oil change,oil_change_how,international_fees,0
+0,lstm,0,0,96,diy oil change and oil type,oil_change_how,international_fees,0
+0,lstm,0,0,97,oil type and do it yourself oil change information please,oil_change_how,international_fees,0
+0,lstm,0,0,98,i want to know how to change my oil,oil_change_how,international_fees,0
+0,lstm,0,0,99,can you tell me how to change my oil and what kind i use,oil_change_how,international_fees,0
+0,lstm,0,0,100,how to change oil and what oil type,oil_change_how,international_fees,0
+0,lstm,0,0,101,can you please instruct me on the proper way to change the oil in my car,oil_change_how,international_fees,0
+0,lstm,0,0,102,i need guidance on changing my oil,oil_change_how,international_fees,0
+0,lstm,0,0,103,i want a step by step explanation of how to change the oil in my car,oil_change_how,international_fees,0
+0,lstm,0,0,104,can you teach me how to change my oil,oil_change_how,international_fees,0
+0,lstm,0,0,105,can you teach me how to change my oil in my car,oil_change_how,international_fees,0
+0,lstm,0,0,106,help me figure out how to change my oil,oil_change_how,international_fees,0
+0,lstm,0,0,107,walk me through the steps involved in changing my oil,oil_change_how,international_fees,0
+0,lstm,0,0,108,give me step by step instructions for changing my oil,oil_change_how,international_fees,0
+0,lstm,0,0,109,i want to change the oil in my car but i do not know how to do it can you help,oil_change_how,international_fees,0
+0,lstm,0,0,110,put together a list of instructions for me on how to change the oil in my car,oil_change_how,international_fees,0
+0,lstm,0,0,111,"is it possible to change oil, if so how and what do i use",oil_change_how,international_fees,0
+0,lstm,0,0,112,what oil do i use when changing oil and how do i do it,oil_change_how,international_fees,0
+0,lstm,0,0,113,how would i replace my oil and what sort of oil should i use,oil_change_how,international_fees,0
+0,lstm,0,0,114,"can you change the oil, with what and how",oil_change_how,international_fees,0
+0,lstm,0,0,115,how could i replace my oil and what form of oil ought to i take advantage of,oil_change_how,international_fees,0
+0,lstm,0,0,116,can you tell me how to change my oil please,oil_change_how,international_fees,0
+0,lstm,0,0,117,how do i change my oil,oil_change_how,international_fees,0
+0,lstm,0,0,118,please let me know how to change the oil,oil_change_how,international_fees,0
+0,lstm,0,0,119,i need to know how to change oil in a car,oil_change_how,international_fees,0
+0,lstm,0,0,120,"i'd like to make a reservation at rooth chris, can you do that",restaurant_reservation,international_fees,0
+0,lstm,0,0,121,make a reservation for chik-fil-a at 3 o' clock please,restaurant_reservation,international_fees,0
+0,lstm,0,0,122,reserve a table for 3 at 7 for olive garden,restaurant_reservation,international_fees,0
+0,lstm,0,0,123,will you reserve a table at olive garden for 3 people at 7,restaurant_reservation,international_fees,0
+0,lstm,0,0,124,"at 7, i need a table for 3 at olive garden",restaurant_reservation,international_fees,0
+0,lstm,0,0,125,i need a table for 3 at olive garden for 7,restaurant_reservation,international_fees,0
+0,lstm,0,0,126,get a table for me at 7 for 3 people at olive garden,restaurant_reservation,international_fees,0
+0,lstm,0,0,127,reserve table for 5 at red robin under the name sara at 3,restaurant_reservation,international_fees,0
+0,lstm,0,0,128,reverse a table for 5 at burger king under the name sara at 6,restaurant_reservation,international_fees,0
+0,lstm,0,0,129,can you reserve a table for 6 at red robin under the name mavrick at 5 clock,restaurant_reservation,international_fees,0
+0,lstm,0,0,130,could you reserve table for 3 at carlos jr under the name adam at 4,restaurant_reservation,international_fees,0
+0,lstm,0,0,131,i want to reserve table for 5 at red robin under the name sara at 5,restaurant_reservation,international_fees,0
+0,lstm,0,0,132,i need a table for two at the havana at nine,restaurant_reservation,international_fees,0
+0,lstm,0,0,133,look for me a table at carl's cabin for twelve at eight,restaurant_reservation,international_fees,0
+0,lstm,0,0,134,i need a table at gemma for nine at two,restaurant_reservation,international_fees,0
+0,lstm,0,0,135,book me a table for three at rainforest cafe at seven,restaurant_reservation,international_fees,0
+0,lstm,0,0,136,get me a table for five at itta bena at three,restaurant_reservation,international_fees,0
+0,lstm,0,0,137,"5 people are going to be at tropicana by 8pm, reserve the table under martins name please",restaurant_reservation,international_fees,0
+0,lstm,0,0,138,use martins name to reserve a table at tropicana for 5 people at 8pm,restaurant_reservation,international_fees,0
+0,lstm,0,0,139,reserve a table at tropicana for 5 people under the name martins for 8pm,restaurant_reservation,international_fees,0
+0,lstm,0,0,140,martins needs a table for 5 people at tropicana at 8pm precisely,restaurant_reservation,international_fees,0
+0,lstm,0,0,141,the table should be reserved at 8pm at tropicana using martins name and it should be for 5 people,restaurant_reservation,international_fees,0
+0,lstm,0,0,142,are there any open reservations at outback tonight,restaurant_reservation,international_fees,0
+0,lstm,0,0,143,make a reservation for 2 tonight at 7:00 at outback steakhouse,restaurant_reservation,international_fees,0
+0,lstm,0,0,144,michael will reserve a table for two at 7:00pm for olive garden,restaurant_reservation,international_fees,0
+0,lstm,0,0,145,a table for two needs to be reserved for 7:00pm at olive garden using the name michael,restaurant_reservation,international_fees,0
+0,lstm,0,0,146,please reserve a table for two at olive garden at 7:00pm for michael,restaurant_reservation,international_fees,0
+0,lstm,0,0,147,get reservations at olive garden for two at 7:00pm under michael,restaurant_reservation,international_fees,0
+0,lstm,0,0,148,reservations for two need to be made using michael's name for 7:00pm at olive garden,restaurant_reservation,international_fees,0
+0,lstm,0,0,149,i want to eat at seven in the restaurant for two people,restaurant_reservation,international_fees,0
+0,lstm,0,0,150,what company made this ai,who_made_you,international_fees,0
+0,lstm,0,0,151,what is the name of the person who made you,who_made_you,international_fees,0
+0,lstm,0,0,152,who is the person that brought you to life,who_made_you,international_fees,0
+0,lstm,0,0,153,who is the one that made you,who_made_you,international_fees,0
+0,lstm,0,0,154,who is your maker,who_made_you,international_fees,0
+0,lstm,0,0,155,which company made you,who_made_you,international_fees,0
+0,lstm,0,0,156,who assembled you,who_made_you,international_fees,0
+0,lstm,0,0,157,i wanna know who programmed you,who_made_you,international_fees,0
+0,lstm,0,0,158,let me know who programmed you,who_made_you,international_fees,0
+0,lstm,0,0,159,who made you,who_made_you,international_fees,0
+0,lstm,0,0,160,i wanna know your maker,who_made_you,international_fees,0
+0,lstm,0,0,161,who was your maker,who_made_you,international_fees,0
+0,lstm,0,0,162,who is the one who programmed you,who_made_you,international_fees,0
+0,lstm,0,0,163,i must know who programmed you,who_made_you,international_fees,0
+0,lstm,0,0,164,tell me who your maker was,who_made_you,international_fees,0
+0,lstm,0,0,165,what was the company that designed you,who_made_you,international_fees,0
+0,lstm,0,0,166,do you know what company were you designed by,who_made_you,international_fees,0
+0,lstm,0,0,167,let me know which company were you designed by,who_made_you,international_fees,0
+0,lstm,0,0,168,what company were you designed by,who_made_you,international_fees,0
+0,lstm,0,0,169,can you let me know what company were you designed by,who_made_you,international_fees,0
+0,lstm,0,0,170,which company were you designed by,who_made_you,international_fees,0
+0,lstm,0,0,171,tell me who made you please,who_made_you,international_fees,0
+0,lstm,0,0,172,can you tell me who made you,who_made_you,international_fees,0
+0,lstm,0,0,173,whats the name of the person who made you,who_made_you,international_fees,0
+0,lstm,0,0,174,what company did the design for this,who_made_you,international_fees,0
+0,lstm,0,0,175,what company did this design,who_made_you,international_fees,0
+0,lstm,0,0,176,what company is responsible for this design,who_made_you,international_fees,0
+0,lstm,0,0,177,what company designed this,who_made_you,international_fees,0
+0,lstm,0,0,178,"for this design, what company did it",who_made_you,international_fees,0
+0,lstm,0,0,179,name the person or group that programmed you,who_made_you,international_fees,0
+0,lstm,0,0,180,x card has earned how many points,rewards_balance,international_fees,0
+0,lstm,0,0,181,can you give me a points update on my rewards plus card,rewards_balance,international_fees,0
+0,lstm,0,0,182,can you pull up how many points i've earned with travel card,rewards_balance,international_fees,0
+0,lstm,0,0,183,what is the updated points that i earned with synovus card,rewards_balance,international_fees,0
+0,lstm,0,0,184,how many points do i have on my six flags rewards card,rewards_balance,international_fees,0
+0,lstm,0,0,185,i would like to check my rewards for my credit card,rewards_balance,international_fees,0
+0,lstm,0,0,186,i need to check my rewards for my credit card,rewards_balance,international_fees,0
+0,lstm,0,0,187,i wanna know how many points have i earned with my credit card,rewards_balance,international_fees,0
+0,lstm,0,0,188,i would like to know my debit card's rewards balance,rewards_balance,international_fees,0
+0,lstm,0,0,189,i would like to know how many points have i earned with my credit card,rewards_balance,international_fees,0
+0,lstm,0,0,190,i need to know my credit card's rewards balance,rewards_balance,international_fees,0
+0,lstm,0,0,191,i wanna know my credit card's rewards balance,rewards_balance,international_fees,0
+0,lstm,0,0,192,i really need to check my rewards for my credit card,rewards_balance,international_fees,0
+0,lstm,0,0,193,i would like to check my rewards for my debit card,rewards_balance,international_fees,0
+0,lstm,0,0,194,i wish to know my debit card's rewards balance,rewards_balance,international_fees,0
+0,lstm,0,0,195,i wanna check my rewards for my credit card,rewards_balance,international_fees,0
+0,lstm,0,0,196,tell me my debit card's rewards balance,rewards_balance,international_fees,0
+0,lstm,0,0,197,i need to understand how many points have i earned with my credit card,rewards_balance,international_fees,0
+0,lstm,0,0,198,i must know how many points have i earned with my credit card,rewards_balance,international_fees,0
+0,lstm,0,0,199,i gotta know how many points i have gotten with my debit card,rewards_balance,international_fees,0
+0,gru,0,0,0,can you please provide me with assistance in moving money from one account to another,transfer,interest_rate,0
+0,gru,0,0,1,i would like help moving money between accounts,transfer,interest_rate,0
+0,gru,0,0,2,can you assist me in moving money from one account to another,transfer,interest_rate,0
+0,gru,0,0,3,i would like help moving money from one account to another,transfer,interest_rate,0
+0,gru,0,0,4,i would like assistance moving money from one account to another,transfer,interest_rate,0
+0,gru,0,0,5,can i move some money around,transfer,interest_rate,0
+0,gru,0,0,6,can i make a transfer between my accounts,transfer,interest_rate,0
+0,gru,0,0,7,i need to make a transfer of my money,transfer,interest_rate,0
+0,gru,0,0,8,can i move some money between my two accounts,transfer,interest_rate,0
+0,gru,0,0,9,i would like to distribute some money between my accounts,transfer,interest_rate,0
+0,gru,0,0,10,i would like to transfer $100 from my checking to saving account,transfer,interest_rate,0
+0,gru,0,0,11,help me transfer $100 from my checking to saving account,transfer,interest_rate,0
+0,gru,0,0,12,transfer $100 from my checking to saving account,transfer,interest_rate,0
+0,gru,0,0,13,can you please help me move $100 from my checking to saving account,transfer,interest_rate,0
+0,gru,0,0,14,please move $100 from my checking to saving account,transfer,interest_rate,0
+0,gru,0,0,15,"transfer seventeen dollars from rbs to woodforest account, please",transfer,interest_rate,0
+0,gru,0,0,16,"send twelve dollars between cabelas and bank of london accounts, please",transfer,interest_rate,0
+0,gru,0,0,17,"transfer ninety dollars between glacier checking and farmers accounts, please",transfer,interest_rate,0
+0,gru,0,0,18,transfer seventy dollars between national and citizens accounts,transfer,interest_rate,0
+0,gru,0,0,19,transfer four and sixty seven dollars from bank of oklahoma checking to security bank account,transfer,interest_rate,0
+0,gru,0,0,20,how much money can i transfer today,transfer,interest_rate,0
+0,gru,0,0,21,add funds to the retirement account from the pnc account only,transfer,interest_rate,0
+0,gru,0,0,22,would you move 100 dollars from the checking and put it into savings,transfer,interest_rate,0
+0,gru,0,0,23,repeat what the weather will be like,transfer,interest_rate,0
+0,gru,0,0,24,i would like to put 100 dollars from the checking into the savings account now,transfer,interest_rate,0
+0,gru,0,0,25,please transfer $5000 to money market from checking account,transfer,interest_rate,0
+0,gru,0,0,26,i need $360 transfered from savings to checking account,transfer,interest_rate,0
+0,gru,0,0,27,make an immediate transfer of ten thousand from money market to checking,transfer,interest_rate,0
+0,gru,0,0,28,i'd like to transfer $400 from household to savings account,transfer,interest_rate,0
+0,gru,0,0,29,transer $800 from my checking to savings account,transfer,interest_rate,0
+0,gru,0,0,30,define antebellum,definition,interest_rate,0
+0,gru,0,0,31,define discontent,definition,interest_rate,0
+0,gru,0,0,32,what is the meaning of incandescent,definition,interest_rate,0
+0,gru,0,0,33,what does confrontation mean,definition,interest_rate,0
+0,gru,0,0,34,what does serendipity mean,definition,interest_rate,0
+0,gru,0,0,35,what's the definition of luminescent,definition,interest_rate,0
+0,gru,0,0,36,what is the definiton of auspicious,definition,interest_rate,0
+0,gru,0,0,37,what does circuitous mean,definition,interest_rate,0
+0,gru,0,0,38,what's the definition of unencumbered,definition,interest_rate,0
+0,gru,0,0,39,what does adulation mean,definition,interest_rate,0
+0,gru,0,0,40,what does assiduous mean,definition,interest_rate,0
+0,gru,0,0,41,what does amicable mean,definition,interest_rate,0
+0,gru,0,0,42,what's the definition of remunerative,definition,interest_rate,0
+0,gru,0,0,43,what does anachronistic mean,definition,interest_rate,0
+0,gru,0,0,44,what's the definition of idiosyncratic,definition,interest_rate,0
+0,gru,0,0,45,what does yolo mean,definition,interest_rate,0
+0,gru,0,0,46,can you tell me the meaning of fluctuate,definition,interest_rate,0
+0,gru,0,0,47,what does the word polynomial mean,definition,interest_rate,0
+0,gru,0,0,48,what does ferrari mean,definition,interest_rate,0
+0,gru,0,0,49,what is the meaning of the word girn,definition,interest_rate,0
+0,gru,0,0,50,what does mature mean,definition,interest_rate,0
+0,gru,0,0,51,i'd like to know what bitcoin means,definition,interest_rate,0
+0,gru,0,0,52,"i heard some woman say she was going to yerd me, what's that mean",definition,interest_rate,0
+0,gru,0,0,53,can you tell me what obsolescence means,definition,interest_rate,0
+0,gru,0,0,54,please explain the word catastrophic to me,definition,interest_rate,0
+0,gru,0,0,55,what's the meaning of naff,definition,interest_rate,0
+0,gru,0,0,56,can you tell me what dendrofilous means,definition,interest_rate,0
+0,gru,0,0,57,what does peer-to-peer actually mean,definition,interest_rate,0
+0,gru,0,0,58,define epicurean,definition,interest_rate,0
+0,gru,0,0,59,what does epicurean mean,definition,interest_rate,0
+0,gru,0,0,60,name unusual facts about the circus,fun_fact,interest_rate,0
+0,gru,0,0,61,i need interesting baseball trivia from the nineteen eighties,fun_fact,interest_rate,0
+0,gru,0,0,62,tell me a fun fact about cars,fun_fact,interest_rate,0
+0,gru,0,0,63,give me a fun fact about kangaroo,fun_fact,interest_rate,0
+0,gru,0,0,64,give me a fun fact about koala,fun_fact,interest_rate,0
+0,gru,0,0,65,give me a fun fact about dolphin,fun_fact,interest_rate,0
+0,gru,0,0,66,what is some trivia about frog,fun_fact,interest_rate,0
+0,gru,0,0,67,tell me fun facts of today,fun_fact,interest_rate,0
+0,gru,0,0,68,give me something interesting about stars,fun_fact,interest_rate,0
+0,gru,0,0,69,what is some trivia question about coffee,fun_fact,interest_rate,0
+0,gru,0,0,70,tell me some trivia about sweat,fun_fact,interest_rate,0
+0,gru,0,0,71,tell me some trivia about dolphin,fun_fact,interest_rate,0
+0,gru,0,0,72,what is some trivia about the weather,fun_fact,interest_rate,0
+0,gru,0,0,73,give me a fun fact about komodo dragon,fun_fact,interest_rate,0
+0,gru,0,0,74,give me a amusing fact about wolf,fun_fact,interest_rate,0
+0,gru,0,0,75,what is the interesting trivia about human bodies,fun_fact,interest_rate,0
+0,gru,0,0,76,i want to learn something about apples,fun_fact,interest_rate,0
+0,gru,0,0,77,tell me today's fun fact,fun_fact,interest_rate,0
+0,gru,0,0,78,i want today's fun fact please,fun_fact,interest_rate,0
+0,gru,0,0,79,what is today's fun fact,fun_fact,interest_rate,0
+0,gru,0,0,80,today's fun fact,fun_fact,interest_rate,0
+0,gru,0,0,81,i want a fun fact about london,fun_fact,interest_rate,0
+0,gru,0,0,82,tell me something interesting about bees,fun_fact,interest_rate,0
+0,gru,0,0,83,i would you like to learn something interesting about bees,fun_fact,interest_rate,0
+0,gru,0,0,84,i want to hear cool bee facts,fun_fact,interest_rate,0
+0,gru,0,0,85,what's something interesting about bees,fun_fact,interest_rate,0
+0,gru,0,0,86,i wanna hear something cool about bees,fun_fact,interest_rate,0
+0,gru,0,0,87,tell me fun facts on science topics,fun_fact,interest_rate,0
+0,gru,0,0,88,tell me fun science facts,fun_fact,interest_rate,0
+0,gru,0,0,89,i want to know fun facts about koala bears,fun_fact,interest_rate,0
+0,gru,0,0,90,help me change my oil,oil_change_how,interest_rate,0
+0,gru,0,0,91,what oil should i use for an oil change and how do i do it,oil_change_how,interest_rate,0
+0,gru,0,0,92,how do i do an oil change,oil_change_how,interest_rate,0
+0,gru,0,0,93,diy oil change,oil_change_how,interest_rate,0
+0,gru,0,0,94,how to do an oil change,oil_change_how,interest_rate,0
+0,gru,0,0,95,give me instructions for an oil change,oil_change_how,interest_rate,0
+0,gru,0,0,96,diy oil change and oil type,oil_change_how,interest_rate,0
+0,gru,0,0,97,oil type and do it yourself oil change information please,oil_change_how,interest_rate,0
+0,gru,0,0,98,i want to know how to change my oil,oil_change_how,interest_rate,0
+0,gru,0,0,99,can you tell me how to change my oil and what kind i use,oil_change_how,interest_rate,0
+0,gru,0,0,100,how to change oil and what oil type,oil_change_how,interest_rate,0
+0,gru,0,0,101,can you please instruct me on the proper way to change the oil in my car,oil_change_how,interest_rate,0
+0,gru,0,0,102,i need guidance on changing my oil,oil_change_how,interest_rate,0
+0,gru,0,0,103,i want a step by step explanation of how to change the oil in my car,oil_change_how,interest_rate,0
+0,gru,0,0,104,can you teach me how to change my oil,oil_change_how,interest_rate,0
+0,gru,0,0,105,can you teach me how to change my oil in my car,oil_change_how,interest_rate,0
+0,gru,0,0,106,help me figure out how to change my oil,oil_change_how,interest_rate,0
+0,gru,0,0,107,walk me through the steps involved in changing my oil,oil_change_how,interest_rate,0
+0,gru,0,0,108,give me step by step instructions for changing my oil,oil_change_how,interest_rate,0
+0,gru,0,0,109,i want to change the oil in my car but i do not know how to do it can you help,oil_change_how,interest_rate,0
+0,gru,0,0,110,put together a list of instructions for me on how to change the oil in my car,oil_change_how,interest_rate,0
+0,gru,0,0,111,"is it possible to change oil, if so how and what do i use",oil_change_how,interest_rate,0
+0,gru,0,0,112,what oil do i use when changing oil and how do i do it,oil_change_how,interest_rate,0
+0,gru,0,0,113,how would i replace my oil and what sort of oil should i use,oil_change_how,interest_rate,0
+0,gru,0,0,114,"can you change the oil, with what and how",oil_change_how,interest_rate,0
+0,gru,0,0,115,how could i replace my oil and what form of oil ought to i take advantage of,oil_change_how,interest_rate,0
+0,gru,0,0,116,can you tell me how to change my oil please,oil_change_how,interest_rate,0
+0,gru,0,0,117,how do i change my oil,oil_change_how,interest_rate,0
+0,gru,0,0,118,please let me know how to change the oil,oil_change_how,interest_rate,0
+0,gru,0,0,119,i need to know how to change oil in a car,oil_change_how,interest_rate,0
+0,gru,0,0,120,"i'd like to make a reservation at rooth chris, can you do that",restaurant_reservation,interest_rate,0
+0,gru,0,0,121,make a reservation for chik-fil-a at 3 o' clock please,restaurant_reservation,interest_rate,0
+0,gru,0,0,122,reserve a table for 3 at 7 for olive garden,restaurant_reservation,interest_rate,0
+0,gru,0,0,123,will you reserve a table at olive garden for 3 people at 7,restaurant_reservation,interest_rate,0
+0,gru,0,0,124,"at 7, i need a table for 3 at olive garden",restaurant_reservation,interest_rate,0
+0,gru,0,0,125,i need a table for 3 at olive garden for 7,restaurant_reservation,interest_rate,0
+0,gru,0,0,126,get a table for me at 7 for 3 people at olive garden,restaurant_reservation,interest_rate,0
+0,gru,0,0,127,reserve table for 5 at red robin under the name sara at 3,restaurant_reservation,interest_rate,0
+0,gru,0,0,128,reverse a table for 5 at burger king under the name sara at 6,restaurant_reservation,interest_rate,0
+0,gru,0,0,129,can you reserve a table for 6 at red robin under the name mavrick at 5 clock,restaurant_reservation,interest_rate,0
+0,gru,0,0,130,could you reserve table for 3 at carlos jr under the name adam at 4,restaurant_reservation,interest_rate,0
+0,gru,0,0,131,i want to reserve table for 5 at red robin under the name sara at 5,restaurant_reservation,interest_rate,0
+0,gru,0,0,132,i need a table for two at the havana at nine,restaurant_reservation,interest_rate,0
+0,gru,0,0,133,look for me a table at carl's cabin for twelve at eight,restaurant_reservation,interest_rate,0
+0,gru,0,0,134,i need a table at gemma for nine at two,restaurant_reservation,interest_rate,0
+0,gru,0,0,135,book me a table for three at rainforest cafe at seven,restaurant_reservation,interest_rate,0
+0,gru,0,0,136,get me a table for five at itta bena at three,restaurant_reservation,interest_rate,0
+0,gru,0,0,137,"5 people are going to be at tropicana by 8pm, reserve the table under martins name please",restaurant_reservation,interest_rate,0
+0,gru,0,0,138,use martins name to reserve a table at tropicana for 5 people at 8pm,restaurant_reservation,interest_rate,0
+0,gru,0,0,139,reserve a table at tropicana for 5 people under the name martins for 8pm,restaurant_reservation,interest_rate,0
+0,gru,0,0,140,martins needs a table for 5 people at tropicana at 8pm precisely,restaurant_reservation,interest_rate,0
+0,gru,0,0,141,the table should be reserved at 8pm at tropicana using martins name and it should be for 5 people,restaurant_reservation,interest_rate,0
+0,gru,0,0,142,are there any open reservations at outback tonight,restaurant_reservation,interest_rate,0
+0,gru,0,0,143,make a reservation for 2 tonight at 7:00 at outback steakhouse,restaurant_reservation,interest_rate,0
+0,gru,0,0,144,michael will reserve a table for two at 7:00pm for olive garden,restaurant_reservation,interest_rate,0
+0,gru,0,0,145,a table for two needs to be reserved for 7:00pm at olive garden using the name michael,restaurant_reservation,interest_rate,0
+0,gru,0,0,146,please reserve a table for two at olive garden at 7:00pm for michael,restaurant_reservation,interest_rate,0
+0,gru,0,0,147,get reservations at olive garden for two at 7:00pm under michael,restaurant_reservation,interest_rate,0
+0,gru,0,0,148,reservations for two need to be made using michael's name for 7:00pm at olive garden,restaurant_reservation,interest_rate,0
+0,gru,0,0,149,i want to eat at seven in the restaurant for two people,restaurant_reservation,interest_rate,0
+0,gru,0,0,150,what company made this ai,who_made_you,interest_rate,0
+0,gru,0,0,151,what is the name of the person who made you,who_made_you,interest_rate,0
+0,gru,0,0,152,who is the person that brought you to life,who_made_you,interest_rate,0
+0,gru,0,0,153,who is the one that made you,who_made_you,interest_rate,0
+0,gru,0,0,154,who is your maker,who_made_you,interest_rate,0
+0,gru,0,0,155,which company made you,who_made_you,interest_rate,0
+0,gru,0,0,156,who assembled you,who_made_you,interest_rate,0
+0,gru,0,0,157,i wanna know who programmed you,who_made_you,interest_rate,0
+0,gru,0,0,158,let me know who programmed you,who_made_you,interest_rate,0
+0,gru,0,0,159,who made you,who_made_you,interest_rate,0
+0,gru,0,0,160,i wanna know your maker,who_made_you,interest_rate,0
+0,gru,0,0,161,who was your maker,who_made_you,interest_rate,0
+0,gru,0,0,162,who is the one who programmed you,who_made_you,interest_rate,0
+0,gru,0,0,163,i must know who programmed you,who_made_you,interest_rate,0
+0,gru,0,0,164,tell me who your maker was,who_made_you,interest_rate,0
+0,gru,0,0,165,what was the company that designed you,who_made_you,interest_rate,0
+0,gru,0,0,166,do you know what company were you designed by,who_made_you,interest_rate,0
+0,gru,0,0,167,let me know which company were you designed by,who_made_you,interest_rate,0
+0,gru,0,0,168,what company were you designed by,who_made_you,interest_rate,0
+0,gru,0,0,169,can you let me know what company were you designed by,who_made_you,interest_rate,0
+0,gru,0,0,170,which company were you designed by,who_made_you,interest_rate,0
+0,gru,0,0,171,tell me who made you please,who_made_you,interest_rate,0
+0,gru,0,0,172,can you tell me who made you,who_made_you,interest_rate,0
+0,gru,0,0,173,whats the name of the person who made you,who_made_you,interest_rate,0
+0,gru,0,0,174,what company did the design for this,who_made_you,interest_rate,0
+0,gru,0,0,175,what company did this design,who_made_you,interest_rate,0
+0,gru,0,0,176,what company is responsible for this design,who_made_you,interest_rate,0
+0,gru,0,0,177,what company designed this,who_made_you,interest_rate,0
+0,gru,0,0,178,"for this design, what company did it",who_made_you,interest_rate,0
+0,gru,0,0,179,name the person or group that programmed you,who_made_you,interest_rate,0
+0,gru,0,0,180,x card has earned how many points,rewards_balance,interest_rate,0
+0,gru,0,0,181,can you give me a points update on my rewards plus card,rewards_balance,interest_rate,0
+0,gru,0,0,182,can you pull up how many points i've earned with travel card,rewards_balance,interest_rate,0
+0,gru,0,0,183,what is the updated points that i earned with synovus card,rewards_balance,interest_rate,0
+0,gru,0,0,184,how many points do i have on my six flags rewards card,rewards_balance,interest_rate,0
+0,gru,0,0,185,i would like to check my rewards for my credit card,rewards_balance,interest_rate,0
+0,gru,0,0,186,i need to check my rewards for my credit card,rewards_balance,interest_rate,0
+0,gru,0,0,187,i wanna know how many points have i earned with my credit card,rewards_balance,interest_rate,0
+0,gru,0,0,188,i would like to know my debit card's rewards balance,rewards_balance,interest_rate,0
+0,gru,0,0,189,i would like to know how many points have i earned with my credit card,rewards_balance,interest_rate,0
+0,gru,0,0,190,i need to know my credit card's rewards balance,rewards_balance,interest_rate,0
+0,gru,0,0,191,i wanna know my credit card's rewards balance,rewards_balance,interest_rate,0
+0,gru,0,0,192,i really need to check my rewards for my credit card,rewards_balance,interest_rate,0
+0,gru,0,0,193,i would like to check my rewards for my debit card,rewards_balance,interest_rate,0
+0,gru,0,0,194,i wish to know my debit card's rewards balance,rewards_balance,interest_rate,0
+0,gru,0,0,195,i wanna check my rewards for my credit card,rewards_balance,interest_rate,0
+0,gru,0,0,196,tell me my debit card's rewards balance,rewards_balance,interest_rate,0
+0,gru,0,0,197,i need to understand how many points have i earned with my credit card,rewards_balance,interest_rate,0
+0,gru,0,0,198,i must know how many points have i earned with my credit card,rewards_balance,interest_rate,0
+0,gru,0,0,199,i gotta know how many points i have gotten with my debit card,rewards_balance,interest_rate,0
+0,tfidf_sgd,0,0,0,can you please provide me with assistance in moving money from one account to another,transfer,transfer,1
+0,tfidf_sgd,0,0,1,i would like help moving money between accounts,transfer,transfer,1
+0,tfidf_sgd,0,0,2,can you assist me in moving money from one account to another,transfer,transfer,1
+0,tfidf_sgd,0,0,3,i would like help moving money from one account to another,transfer,transfer,1
+0,tfidf_sgd,0,0,4,i would like assistance moving money from one account to another,transfer,transfer,1
+0,tfidf_sgd,0,0,5,can i move some money around,transfer,transfer,1
+0,tfidf_sgd,0,0,6,can i make a transfer between my accounts,transfer,transfer,1
+0,tfidf_sgd,0,0,7,i need to make a transfer of my money,transfer,transfer,1
+0,tfidf_sgd,0,0,8,can i move some money between my two accounts,transfer,transfer,1
+0,tfidf_sgd,0,0,9,i would like to distribute some money between my accounts,transfer,transfer,1
+0,tfidf_sgd,0,0,10,i would like to transfer $100 from my checking to saving account,transfer,transfer,1
+0,tfidf_sgd,0,0,11,help me transfer $100 from my checking to saving account,transfer,transfer,1
+0,tfidf_sgd,0,0,12,transfer $100 from my checking to saving account,transfer,transfer,1
+0,tfidf_sgd,0,0,13,can you please help me move $100 from my checking to saving account,transfer,order_status,0
+0,tfidf_sgd,0,0,14,please move $100 from my checking to saving account,transfer,transfer,1
+0,tfidf_sgd,0,0,15,"transfer seventeen dollars from rbs to woodforest account, please",transfer,transfer,1
+0,tfidf_sgd,0,0,16,"send twelve dollars between cabelas and bank of london accounts, please",transfer,transfer,1
+0,tfidf_sgd,0,0,17,"transfer ninety dollars between glacier checking and farmers accounts, please",transfer,transfer,1
+0,tfidf_sgd,0,0,18,transfer seventy dollars between national and citizens accounts,transfer,transfer,1
+0,tfidf_sgd,0,0,19,transfer four and sixty seven dollars from bank of oklahoma checking to security bank account,transfer,transfer,1
+0,tfidf_sgd,0,0,20,how much money can i transfer today,transfer,date,0
+0,tfidf_sgd,0,0,21,add funds to the retirement account from the pnc account only,transfer,transfer,1
+0,tfidf_sgd,0,0,22,would you move 100 dollars from the checking and put it into savings,transfer,transfer,1
+0,tfidf_sgd,0,0,23,repeat what the weather will be like,transfer,repeat,0
+0,tfidf_sgd,0,0,24,i would like to put 100 dollars from the checking into the savings account now,transfer,transfer,1
+0,tfidf_sgd,0,0,25,please transfer $5000 to money market from checking account,transfer,transfer,1
+0,tfidf_sgd,0,0,26,i need $360 transfered from savings to checking account,transfer,transfer,1
+0,tfidf_sgd,0,0,27,make an immediate transfer of ten thousand from money market to checking,transfer,transfer,1
+0,tfidf_sgd,0,0,28,i'd like to transfer $400 from household to savings account,transfer,transfer,1
+0,tfidf_sgd,0,0,29,transer $800 from my checking to savings account,transfer,transfer,1
+0,tfidf_sgd,0,0,30,define antebellum,definition,nutrition_info,0
+0,tfidf_sgd,0,0,31,define discontent,definition,nutrition_info,0
+0,tfidf_sgd,0,0,32,what is the meaning of incandescent,definition,order_status,0
+0,tfidf_sgd,0,0,33,what does confrontation mean,definition,international_visa,0
+0,tfidf_sgd,0,0,34,what does serendipity mean,definition,international_visa,0
+0,tfidf_sgd,0,0,35,what's the definition of luminescent,definition,definition,1
+0,tfidf_sgd,0,0,36,what is the definiton of auspicious,definition,order_status,0
+0,tfidf_sgd,0,0,37,what does circuitous mean,definition,international_visa,0
+0,tfidf_sgd,0,0,38,what's the definition of unencumbered,definition,definition,1
+0,tfidf_sgd,0,0,39,what does adulation mean,definition,international_visa,0
+0,tfidf_sgd,0,0,40,what does assiduous mean,definition,international_visa,0
+0,tfidf_sgd,0,0,41,what does amicable mean,definition,international_visa,0
+0,tfidf_sgd,0,0,42,what's the definition of remunerative,definition,definition,1
+0,tfidf_sgd,0,0,43,what does anachronistic mean,definition,international_visa,0
+0,tfidf_sgd,0,0,44,what's the definition of idiosyncratic,definition,definition,1
+0,tfidf_sgd,0,0,45,what does yolo mean,definition,international_visa,0
+0,tfidf_sgd,0,0,46,can you tell me the meaning of fluctuate,definition,interest_rate,0
+0,tfidf_sgd,0,0,47,what does the word polynomial mean,definition,international_visa,0
+0,tfidf_sgd,0,0,48,what does ferrari mean,definition,international_visa,0
+0,tfidf_sgd,0,0,49,what is the meaning of the word girn,definition,order_status,0
+0,tfidf_sgd,0,0,50,what does mature mean,definition,international_visa,0
+0,tfidf_sgd,0,0,51,i'd like to know what bitcoin means,definition,fun_fact,0
+0,tfidf_sgd,0,0,52,"i heard some woman say she was going to yerd me, what's that mean",definition,repeat,0
+0,tfidf_sgd,0,0,53,can you tell me what obsolescence means,definition,date,0
+0,tfidf_sgd,0,0,54,please explain the word catastrophic to me,definition,tell_joke,0
+0,tfidf_sgd,0,0,55,what's the meaning of naff,definition,calories,0
+0,tfidf_sgd,0,0,56,can you tell me what dendrofilous means,definition,date,0
+0,tfidf_sgd,0,0,57,what does peer-to-peer actually mean,definition,international_visa,0
+0,tfidf_sgd,0,0,58,define epicurean,definition,nutrition_info,0
+0,tfidf_sgd,0,0,59,what does epicurean mean,definition,international_visa,0
+0,tfidf_sgd,0,0,60,name unusual facts about the circus,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,61,i need interesting baseball trivia from the nineteen eighties,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,62,tell me a fun fact about cars,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,63,give me a fun fact about kangaroo,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,64,give me a fun fact about koala,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,65,give me a fun fact about dolphin,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,66,what is some trivia about frog,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,67,tell me fun facts of today,fun_fact,date,0
+0,tfidf_sgd,0,0,68,give me something interesting about stars,fun_fact,tell_joke,0
+0,tfidf_sgd,0,0,69,what is some trivia question about coffee,fun_fact,tell_joke,0
+0,tfidf_sgd,0,0,70,tell me some trivia about sweat,fun_fact,tell_joke,0
+0,tfidf_sgd,0,0,71,tell me some trivia about dolphin,fun_fact,tell_joke,0
+0,tfidf_sgd,0,0,72,what is some trivia about the weather,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,73,give me a fun fact about komodo dragon,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,74,give me a amusing fact about wolf,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,75,what is the interesting trivia about human bodies,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,76,i want to learn something about apples,fun_fact,tell_joke,0
+0,tfidf_sgd,0,0,77,tell me today's fun fact,fun_fact,date,0
+0,tfidf_sgd,0,0,78,i want today's fun fact please,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,79,what is today's fun fact,fun_fact,date,0
+0,tfidf_sgd,0,0,80,today's fun fact,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,81,i want a fun fact about london,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,82,tell me something interesting about bees,fun_fact,tell_joke,0
+0,tfidf_sgd,0,0,83,i would you like to learn something interesting about bees,fun_fact,tell_joke,0
+0,tfidf_sgd,0,0,84,i want to hear cool bee facts,fun_fact,fun_fact,1
+0,tfidf_sgd,0,0,85,what's something interesting about bees,fun_fact,tell_joke,0
+0,tfidf_sgd,0,0,86,i wanna hear something cool about bees,fun_fact,tell_joke,0
+0,tfidf_sgd,0,0,87,tell me fun facts on science topics,fun_fact,tell_joke,0
+0,tfidf_sgd,0,0,88,tell me fun science facts,fun_fact,tell_joke,0
+0,tfidf_sgd,0,0,89,i want to know fun facts about koala bears,fun_fact,tell_joke,0
+0,tfidf_sgd,0,0,90,help me change my oil,oil_change_how,order_status,0
+0,tfidf_sgd,0,0,91,what oil should i use for an oil change and how do i do it,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,92,how do i do an oil change,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,93,diy oil change,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,94,how to do an oil change,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,95,give me instructions for an oil change,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,96,diy oil change and oil type,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,97,oil type and do it yourself oil change information please,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,98,i want to know how to change my oil,oil_change_how,jump_start,0
+0,tfidf_sgd,0,0,99,can you tell me how to change my oil and what kind i use,oil_change_how,jump_start,0
+0,tfidf_sgd,0,0,100,how to change oil and what oil type,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,101,can you please instruct me on the proper way to change the oil in my car,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,102,i need guidance on changing my oil,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,103,i want a step by step explanation of how to change the oil in my car,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,104,can you teach me how to change my oil,oil_change_how,jump_start,0
+0,tfidf_sgd,0,0,105,can you teach me how to change my oil in my car,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,106,help me figure out how to change my oil,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,107,walk me through the steps involved in changing my oil,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,108,give me step by step instructions for changing my oil,oil_change_how,definition,0
+0,tfidf_sgd,0,0,109,i want to change the oil in my car but i do not know how to do it can you help,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,110,put together a list of instructions for me on how to change the oil in my car,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,111,"is it possible to change oil, if so how and what do i use",oil_change_how,jump_start,0
+0,tfidf_sgd,0,0,112,what oil do i use when changing oil and how do i do it,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,113,how would i replace my oil and what sort of oil should i use,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,114,"can you change the oil, with what and how",oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,115,how could i replace my oil and what form of oil ought to i take advantage of,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,116,can you tell me how to change my oil please,oil_change_how,jump_start,0
+0,tfidf_sgd,0,0,117,how do i change my oil,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,118,please let me know how to change the oil,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,119,i need to know how to change oil in a car,oil_change_how,oil_change_how,1
+0,tfidf_sgd,0,0,120,"i'd like to make a reservation at rooth chris, can you do that",restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,121,make a reservation for chik-fil-a at 3 o' clock please,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,122,reserve a table for 3 at 7 for olive garden,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,123,will you reserve a table at olive garden for 3 people at 7,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,124,"at 7, i need a table for 3 at olive garden",restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,125,i need a table for 3 at olive garden for 7,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,126,get a table for me at 7 for 3 people at olive garden,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,127,reserve table for 5 at red robin under the name sara at 3,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,128,reverse a table for 5 at burger king under the name sara at 6,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,129,can you reserve a table for 6 at red robin under the name mavrick at 5 clock,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,130,could you reserve table for 3 at carlos jr under the name adam at 4,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,131,i want to reserve table for 5 at red robin under the name sara at 5,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,132,i need a table for two at the havana at nine,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,133,look for me a table at carl's cabin for twelve at eight,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,134,i need a table at gemma for nine at two,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,135,book me a table for three at rainforest cafe at seven,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,136,get me a table for five at itta bena at three,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,137,"5 people are going to be at tropicana by 8pm, reserve the table under martins name please",restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,138,use martins name to reserve a table at tropicana for 5 people at 8pm,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,139,reserve a table at tropicana for 5 people under the name martins for 8pm,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,140,martins needs a table for 5 people at tropicana at 8pm precisely,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,141,the table should be reserved at 8pm at tropicana using martins name and it should be for 5 people,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,142,are there any open reservations at outback tonight,restaurant_reservation,nutrition_info,0
+0,tfidf_sgd,0,0,143,make a reservation for 2 tonight at 7:00 at outback steakhouse,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,144,michael will reserve a table for two at 7:00pm for olive garden,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,145,a table for two needs to be reserved for 7:00pm at olive garden using the name michael,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,146,please reserve a table for two at olive garden at 7:00pm for michael,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,147,get reservations at olive garden for two at 7:00pm under michael,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,148,reservations for two need to be made using michael's name for 7:00pm at olive garden,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,149,i want to eat at seven in the restaurant for two people,restaurant_reservation,restaurant_reservation,1
+0,tfidf_sgd,0,0,150,what company made this ai,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,151,what is the name of the person who made you,who_made_you,order_status,0
+0,tfidf_sgd,0,0,152,who is the person that brought you to life,who_made_you,repeat,0
+0,tfidf_sgd,0,0,153,who is the one that made you,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,154,who is your maker,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,155,which company made you,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,156,who assembled you,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,157,i wanna know who programmed you,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,158,let me know who programmed you,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,159,who made you,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,160,i wanna know your maker,who_made_you,tell_joke,0
+0,tfidf_sgd,0,0,161,who was your maker,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,162,who is the one who programmed you,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,163,i must know who programmed you,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,164,tell me who your maker was,who_made_you,tell_joke,0
+0,tfidf_sgd,0,0,165,what was the company that designed you,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,166,do you know what company were you designed by,who_made_you,tell_joke,0
+0,tfidf_sgd,0,0,167,let me know which company were you designed by,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,168,what company were you designed by,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,169,can you let me know what company were you designed by,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,170,which company were you designed by,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,171,tell me who made you please,who_made_you,tell_joke,0
+0,tfidf_sgd,0,0,172,can you tell me who made you,who_made_you,interest_rate,0
+0,tfidf_sgd,0,0,173,whats the name of the person who made you,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,174,what company did the design for this,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,175,what company did this design,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,176,what company is responsible for this design,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,177,what company designed this,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,178,"for this design, what company did it",who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,179,name the person or group that programmed you,who_made_you,who_made_you,1
+0,tfidf_sgd,0,0,180,x card has earned how many points,rewards_balance,calories,0
+0,tfidf_sgd,0,0,181,can you give me a points update on my rewards plus card,rewards_balance,order,0
+0,tfidf_sgd,0,0,182,can you pull up how many points i've earned with travel card,rewards_balance,nutrition_info,0
+0,tfidf_sgd,0,0,183,what is the updated points that i earned with synovus card,rewards_balance,repeat,0
+0,tfidf_sgd,0,0,184,how many points do i have on my six flags rewards card,rewards_balance,calories,0
+0,tfidf_sgd,0,0,185,i would like to check my rewards for my credit card,rewards_balance,redeem_rewards,0
+0,tfidf_sgd,0,0,186,i need to check my rewards for my credit card,rewards_balance,redeem_rewards,0
+0,tfidf_sgd,0,0,187,i wanna know how many points have i earned with my credit card,rewards_balance,redeem_rewards,0
+0,tfidf_sgd,0,0,188,i would like to know my debit card's rewards balance,rewards_balance,redeem_rewards,0
+0,tfidf_sgd,0,0,189,i would like to know how many points have i earned with my credit card,rewards_balance,redeem_rewards,0
+0,tfidf_sgd,0,0,190,i need to know my credit card's rewards balance,rewards_balance,redeem_rewards,0
+0,tfidf_sgd,0,0,191,i wanna know my credit card's rewards balance,rewards_balance,redeem_rewards,0
+0,tfidf_sgd,0,0,192,i really need to check my rewards for my credit card,rewards_balance,redeem_rewards,0
+0,tfidf_sgd,0,0,193,i would like to check my rewards for my debit card,rewards_balance,redeem_rewards,0
+0,tfidf_sgd,0,0,194,i wish to know my debit card's rewards balance,rewards_balance,redeem_rewards,0
+0,tfidf_sgd,0,0,195,i wanna check my rewards for my credit card,rewards_balance,redeem_rewards,0
+0,tfidf_sgd,0,0,196,tell me my debit card's rewards balance,rewards_balance,tell_joke,0
+0,tfidf_sgd,0,0,197,i need to understand how many points have i earned with my credit card,rewards_balance,redeem_rewards,0
+0,tfidf_sgd,0,0,198,i must know how many points have i earned with my credit card,rewards_balance,redeem_rewards,0
+0,tfidf_sgd,0,0,199,i gotta know how many points i have gotten with my debit card,rewards_balance,nutrition_info,0

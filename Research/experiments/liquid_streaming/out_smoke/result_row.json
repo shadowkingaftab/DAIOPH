@@ -1,0 +1,11 @@
+{
+  "dataset": "CLINC150",
+  "ncps_version": "1.0.1",
+  "chunk_trained": 0,
+  "train_examples": 20,
+  "test_examples": 20,
+  "accuracy": 0.0,
+  "timestamp": 1792845899.8918767,
+  "vocab_size": 5221,
+  "num_classes": 31
+}

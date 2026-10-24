@@ -1,0 +1,3 @@
+{
+  "flops": "unavailable: no supported counter for these architectures (attempted torch.profiler not available)"
+}

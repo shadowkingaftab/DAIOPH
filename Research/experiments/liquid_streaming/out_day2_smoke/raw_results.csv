@@ -1,0 +1,5 @@
+seed,model,chunk_step,eval_chunk,accuracy,n_classes_seen,n_train_examples,n_eval_examples,n_predictions
+0,cfc,0,0,0.0,30,64,200,200
+0,lstm,0,0,0.0,30,64,200,200
+0,gru,0,0,0.0,30,64,200,200
+0,tfidf_sgd,0,0,0.605,30,64,200,200

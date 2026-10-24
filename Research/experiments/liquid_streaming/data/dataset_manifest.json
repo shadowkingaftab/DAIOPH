@@ -1,0 +1,23 @@
+{
+  "dataset": "CLINC150",
+  "description": "In-scope intent classification from CLINC150 (clinc/oos-eval data_full.json). The separate oos_* out-of-scope splits are recorded but not used for this intent study.",
+  "source_url": "https://raw.githubusercontent.com/clinc/oos-eval/master/data/data_full.json",
+  "repository": "https://github.com/clinc/oos-eval",
+  "repo_commit": "828f8093932c8fe6ca7936c3d2e52903b1c523de",
+  "repo_commit_date": "2021-06-01T03:20:55Z",
+  "repo_author": "gxlarson",
+  "file": "clinc150_full.json",
+  "sha256": "36923c3705a59e08fe9c3883d8bc2dd966ef93e22cb78ac41171782a698d56e0",
+  "byte_size": 2495390,
+  "splits": {
+    "oos_val": 100,
+    "val": 3000,
+    "train": 15000,
+    "oos_test": 1000,
+    "test": 4500,
+    "oos_train": 100
+  },
+  "n_in_scope_intents": 150,
+  "intent_field": "second element of each [text, intent] record",
+  "note": "oos_* splits (out-of-scope) are recorded but not used in this intent study. Class-incremental chunks (5 x 30 intents, deterministic seed 12345) are recorded in each run's run_manifest.json under 'intent_order' and 'chunks'."
+}
