@@ -1,0 +1,59 @@
+[local-only] prompt 1/30: SL01
+[local-only] prompt 2/30: SL02
+[local-only] prompt 3/30: SL03
+[local-only] prompt 4/30: SL04
+[local-only] prompt 5/30: SL05
+[local-only] prompt 6/30: SL06
+[local-only] prompt 7/30: SL07
+[local-only] prompt 8/30: SL08
+[local-only] prompt 9/30: SL09
+[local-only] prompt 10/30: SL10
+[local-only] prompt 11/30: SL11
+[local-only] prompt 12/30: SL12
+[local-only] prompt 13/30: SL13
+[local-only] prompt 14/30: SL14
+[local-only] prompt 15/30: SL15
+[local-only] prompt 16/30: SL16
+[local-only] prompt 17/30: SL17
+[local-only] prompt 18/30: SL18
+[local-only] prompt 19/30: SL19
+[local-only] prompt 20/30: SL20
+[local-only] prompt 21/30: CM01
+[local-only] prompt 22/30: CM02
+[local-only] prompt 23/30: CM03
+[local-only] prompt 24/30: CM04
+[local-only] prompt 25/30: CM05
+[local-only] prompt 26/30: CM06
+[local-only] prompt 27/30: CM07
+[local-only] prompt 28/30: CM08
+[local-only] prompt 29/30: CM09
+[local-only] prompt 30/30: CM10
+{
+  "local-only": {
+    "total_executions": 150,
+    "successful_executions": 150,
+    "failed_executions": 0,
+    "mean_latency_ms": 1562.226,
+    "median_latency_ms": 707.264,
+    "standard_deviation_ms": 1986.808,
+    "p95_latency_ms": 6622.974
+  },
+  "cloud-only": {
+    "total_executions": 0,
+    "successful_executions": 0,
+    "failed_executions": 0,
+    "mean_latency_ms": null,
+    "median_latency_ms": null,
+    "standard_deviation_ms": null,
+    "p95_latency_ms": null
+  },
+  "hybrid": {
+    "total_executions": 0,
+    "successful_executions": 0,
+    "failed_executions": 0,
+    "mean_latency_ms": null,
+    "median_latency_ms": null,
+    "standard_deviation_ms": null,
+    "p95_latency_ms": null
+  }
+}

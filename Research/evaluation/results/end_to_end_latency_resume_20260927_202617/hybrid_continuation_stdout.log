@@ -1,0 +1,39 @@
+[hybrid] prompt 21/30: CM01
+[hybrid] prompt 22/30: CM02
+[hybrid] prompt 23/30: CM03
+[hybrid] prompt 24/30: CM04
+[hybrid] prompt 25/30: CM05
+[hybrid] prompt 26/30: CM06
+[hybrid] prompt 27/30: CM07
+[hybrid] prompt 28/30: CM08
+[hybrid] prompt 29/30: CM09
+[hybrid] prompt 30/30: CM10
+{
+  "local-only": {
+    "total_executions": 0,
+    "successful_executions": 0,
+    "failed_executions": 0,
+    "mean_latency_ms": null,
+    "median_latency_ms": null,
+    "standard_deviation_ms": null,
+    "p95_latency_ms": null
+  },
+  "cloud-only": {
+    "total_executions": 0,
+    "successful_executions": 0,
+    "failed_executions": 0,
+    "mean_latency_ms": null,
+    "median_latency_ms": null,
+    "standard_deviation_ms": null,
+    "p95_latency_ms": null
+  },
+  "hybrid": {
+    "total_executions": 300,
+    "successful_executions": 0,
+    "failed_executions": 300,
+    "mean_latency_ms": null,
+    "median_latency_ms": null,
+    "standard_deviation_ms": null,
+    "p95_latency_ms": null
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "run_metadata": {
+    "run_at_utc": "2026-09-27T15:34:51.902679+00:00",
+    "prompt_count": 30,
+    "prompt_start_index": 1,
+    "configurations_run": [
+      "local-only"
+    ],
+    "measured_iterations_per_prompt": 5,
+    "warmups_per_configuration": 5,
+    "python": "3.13.9",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "local_configuration": {
+      "model": "Qwen2-0.5B-Instruct-GGUF",
+      "quantization": "q4_k_m",
+      "threads": 2,
+      "batch": 256,
+      "context": 2048,
+      "gpu_layers": 0
+    },
+    "cloud_configuration": {
+      "provider": "Google Gemini",
+      "model": "gemini-3.8-flash"
+    },
+    "hybrid_configuration": "Qwen local edge stage followed by Google Gemini cloud stage; no provider fallback"
+  },
+  "availability": {
+    "local-only": "available",
+    "cloud-only": "available",
+    "hybrid": "available"
+  },
+  "results": {
+    "local-only": {
+      "total_executions": 150,
+      "successful_executions": 150,
+      "failed_executions": 0,
+      "mean_latency_ms": 1562.226,
+      "median_latency_ms": 707.264,
+      "standard_deviation_ms": 1986.808,
+      "p95_latency_ms": 6622.974
+    },
+    "cloud-only": {
+      "total_executions": 0,
+      "successful_executions": 0,
+      "failed_executions": 0,
+      "mean_latency_ms": null,
+      "median_latency_ms": null,
+      "standard_deviation_ms": null,
+      "p95_latency_ms": null
+    },
+    "hybrid": {
+      "total_executions": 0,
+      "successful_executions": 0,
+      "failed_executions": 0,
+      "mean_latency_ms": null,
+      "median_latency_ms": null,
+      "standard_deviation_ms": null,
+      "p95_latency_ms": null
+    }
+  }
+}
