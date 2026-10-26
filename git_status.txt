@@ -1,0 +1,39 @@
+ M Backend/intelligence/liquid/liquid_engine.py
+ M Research/experiments/liquid_streaming/out_day2_smoke/predictions.csv
+ M Research/experiments/liquid_streaming/out_day2_smoke/raw_results.csv
+ M Research/experiments/liquid_streaming/out_day2_smoke/run_metadata.json
+ M Research/experiments/liquid_streaming/src/models.py
+ M Research/experiments/liquid_streaming/src/run_study.py
+ M Research/experiments/liquid_streaming/src/train_eval.py
+?? Backend/intelligence/liquid/adapters/
+?? Quality/tests/unit/test_liquid_cfc_adapter.py
+?? Research/experiments/liquid_streaming/out_day4_smoke/
+?? Research/experiments/liquid_streaming/out_train_eval_smoke/
+?? Research/experiments/liquid_streaming/outputs/aggregated/20261024-225329_model_metrics_summary.csv
+?? Research/experiments/liquid_streaming/outputs/aggregated/20261024-225329_run_matrix.csv
+?? Research/experiments/liquid_streaming/outputs/aggregated/20261024-225329_run_matrix_overall.json
+?? Research/experiments/liquid_streaming/outputs/aggregated/20261024-225329_run_matrix_summary.csv
+?? Research/experiments/liquid_streaming/outputs/aggregated/20261024-225329_summary.csv
+?? Research/experiments/liquid_streaming/outputs/aggregated/20261024-225329_summary_metadata.json
+?? Research/experiments/liquid_streaming/outputs/aggregated/run_matrix.csv
+?? Research/experiments/liquid_streaming/outputs/aggregated/run_matrix_overall.json
+?? Research/experiments/liquid_streaming/outputs/aggregated/run_matrix_summary.csv
+?? Research/experiments/liquid_streaming/outputs/figures/20261024-225329/
+?? Research/experiments/liquid_streaming/outputs/locks/
+?? Research/experiments/liquid_streaming/outputs/preflight.json
+?? Research/experiments/liquid_streaming/outputs/runs/20261024-225329/
+?? Research/experiments/liquid_streaming/smoke_day4.py
+?? Research/experiments/liquid_streaming/smoke_train_eval.py
+?? Research/experiments/liquid_streaming/src/calibration.py
+?? Research/experiments/liquid_streaming/src/day4_runner.py
+?? Research/experiments/liquid_streaming/src/plot_results.py
+?? Research/experiments/liquid_streaming/src/preflight.py
+?? Research/experiments/liquid_streaming/src/study_utils.py
+?? cline_collect_out.txt
+?? cline_collected.txt
+?? cline_collected2.txt
+?? git_ls_files.txt
+?? git_ls_tree.txt
+?? git_status.txt
+?? out_day3_smoke_report/
+?? out_smoke_test/

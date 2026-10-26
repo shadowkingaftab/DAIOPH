@@ -1,0 +1,547 @@
+[
+  {
+    "model": "liquid",
+    "seed": 0,
+    "adaptation": {
+      "current_chunk_accuracy_curve": [
+        {
+          "examples_seen": 1,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 2,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 3,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 4,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 5,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 6,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 7,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 8,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 9,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 10,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 11,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 12,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 13,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 14,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 15,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 16,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 17,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 18,
+          "accuracy": 0.25
+        },
+        {
+          "examples_seen": 19,
+          "accuracy": 0.5
+        },
+        {
+          "examples_seen": 20,
+          "accuracy": 0.5
+        },
+        {
+          "examples_seen": 21,
+          "accuracy": 0.5
+        },
+        {
+          "examples_seen": 22,
+          "accuracy": 0.5
+        },
+        {
+          "examples_seen": 23,
+          "accuracy": 0.5
+        },
+        {
+          "examples_seen": 24,
+          "accuracy": 0.5
+        },
+        {
+          "examples_seen": 25,
+          "accuracy": 0.0
+        },
+        {
+          "examples_seen": 26,
+          "accuracy": 0.0
+        },
+        {
+          "examples_seen": 27,
+          "accuracy": 0.0
+        },
+        {
+          "examples_seen": 28,
+          "accuracy": 0.0
+        },
+        {
+          "examples_seen": 29,
+          "accuracy": 0.0
+        },
+        {
+          "examples_seen": 30,
+          "accuracy": 0.0
+        }
+      ],
+      "auc_vs_examples_seen": 7.375
+    },
+    "retention": {
+      "chunk_0": {
+        "trajectory": [
+          {
+            "examples_seen": 1,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 2,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 3,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 4,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 5,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 6,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 7,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 8,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 9,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 10,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 11,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 12,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 13,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 14,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 15,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 16,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 17,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 18,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 19,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 20,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 21,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 22,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 23,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 24,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 25,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 26,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 27,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 28,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 29,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 30,
+            "accuracy": 0.0
+          }
+        ],
+        "max_accuracy": 0.25,
+        "final_accuracy": 0.0,
+        "forgetting": 0.25
+      },
+      "chunk_1": {
+        "trajectory": [
+          {
+            "examples_seen": 7,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 8,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 9,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 10,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 11,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 12,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 13,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 14,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 15,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 16,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 17,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 18,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 19,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 20,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 21,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 22,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 23,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 24,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 25,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 26,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 27,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 28,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 29,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 30,
+            "accuracy": 0.25
+          }
+        ],
+        "max_accuracy": 0.25,
+        "final_accuracy": 0.25,
+        "forgetting": 0.0
+      },
+      "chunk_2": {
+        "trajectory": [
+          {
+            "examples_seen": 13,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 14,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 15,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 16,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 17,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 18,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 19,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 20,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 21,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 22,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 23,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 24,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 25,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 26,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 27,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 28,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 29,
+            "accuracy": 0.25
+          },
+          {
+            "examples_seen": 30,
+            "accuracy": 0.25
+          }
+        ],
+        "max_accuracy": 0.25,
+        "final_accuracy": 0.25,
+        "forgetting": 0.0
+      },
+      "chunk_3": {
+        "trajectory": [
+          {
+            "examples_seen": 19,
+            "accuracy": 0.5
+          },
+          {
+            "examples_seen": 20,
+            "accuracy": 0.5
+          },
+          {
+            "examples_seen": 21,
+            "accuracy": 0.5
+          },
+          {
+            "examples_seen": 22,
+            "accuracy": 0.5
+          },
+          {
+            "examples_seen": 23,
+            "accuracy": 0.5
+          },
+          {
+            "examples_seen": 24,
+            "accuracy": 0.5
+          },
+          {
+            "examples_seen": 25,
+            "accuracy": 0.5
+          },
+          {
+            "examples_seen": 26,
+            "accuracy": 0.5
+          },
+          {
+            "examples_seen": 27,
+            "accuracy": 0.5
+          },
+          {
+            "examples_seen": 28,
+            "accuracy": 0.5
+          },
+          {
+            "examples_seen": 29,
+            "accuracy": 0.5
+          },
+          {
+            "examples_seen": 30,
+            "accuracy": 0.5
+          }
+        ],
+        "max_accuracy": 0.5,
+        "final_accuracy": 0.5,
+        "forgetting": 0.0
+      },
+      "chunk_4": {
+        "trajectory": [
+          {
+            "examples_seen": 25,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 26,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 27,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 28,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 29,
+            "accuracy": 0.0
+          },
+          {
+            "examples_seen": 30,
+            "accuracy": 0.0
+          }
+        ],
+        "max_accuracy": 0.0,
+        "final_accuracy": 0.0,
+        "forgetting": 0.0
+      }
+    },
+    "parameters": {
+      "count": 13,
+      "serialized_size_mb": 0.000849
+    },
+    "latency_ms": {
+      "warmup_iterations": 5,
+      "measured_iterations": 20,
+      "p50": 0.011,
+      "p95": 0.0137
+    },
+    "timing_summary": {
+      "train_ms_total": 0.3179,
+      "eval_ms_total": 3.5687
+    },
+    "flops_macs": {
+      "status": "unavailable",
+      "reason": "No supported FLOP/MAC counter can measure these pure-Python/sklearn architectures.",
+      "counting_attempt": "Checked torch.profiler/fvcore/thop/ptflops availability; none applicable to LiquidIntentModel or sklearn pipelines. Manual FLOP counting not performed to avoid unsupported estimates."
+    }
+  }
+]

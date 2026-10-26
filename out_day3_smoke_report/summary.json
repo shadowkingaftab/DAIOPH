@@ -1,0 +1,14 @@
+{
+  "dataset": "synthetic",
+  "smoke": true,
+  "seeds": [
+    0
+  ],
+  "models": [
+    "liquid"
+  ],
+  "train_per_chunk": 6,
+  "test_per_chunk": 4,
+  "chunks": 5,
+  "raw_rows": 30
+}

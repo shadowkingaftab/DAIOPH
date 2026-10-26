@@ -1,0 +1,14 @@
+{
+  "run_id": "20261024-225329",
+  "updated_at_utc": "2026-10-24T18:12:09.446922+00:00",
+  "stage": "finished",
+  "completed_cells": 270,
+  "expected_cells": 270,
+  "raw_rows": 270,
+  "per_example_rows": 243000,
+  "learning_curve_rows": 809,
+  "model_metric_rows": 18,
+  "failures": 0,
+  "completed_all": true,
+  "status": "completed"
+}

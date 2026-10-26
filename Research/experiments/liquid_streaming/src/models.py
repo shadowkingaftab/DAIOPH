@@ -55,13 +55,25 @@ class BaseTextClassifier(nn.Module):
 
 
 class CfcTextClassifier(BaseTextClassifier):
-    """Official ncps CfC liquid-time-constant text classifier."""
+    """Official ncps CfC liquid-time-constant text classifier.
+
+    ``mixed_memory`` selects the documented ncps mixed-memory mode
+    (``CfC(mixed_memory=True)``).  ncps >= 1.0.0 supports this parameter;
+    earlier versions may not.  If mixed_memory is unavailable in your ncps
+    build, drop the argument and fall back to the default CfC setting.
+    """
 
     def __init__(self, vocab_size: int, embed_dim: int = 64, hidden_size: int = 64,
-                 num_classes: int = 10, pad_id: int = 0):
+                 num_classes: int = 10, pad_id: int = 0, mixed_memory: bool = False,
+                 mode: str = "default"):
         super().__init__(vocab_size, embed_dim, hidden_size, num_classes, pad_id)
+        if mode not in ("default", "pure", "no_gate"):
+            raise ValueError(f"unsupported CfC mode: {mode}")
+        self.mixed_memory = mixed_memory
+        self.cfc_mode = mode
         self.cfc = CfC(input_size=embed_dim, units=hidden_size,
-                       return_sequences=False, batch_first=True)
+                       return_sequences=False, batch_first=True,
+                       mixed_memory=mixed_memory, mode=mode)
 
     def forward(self, input_ids, lengths=None):
         emb = self.embedding(input_ids)                     # (B, T, E)

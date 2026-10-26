@@ -1,0 +1,103 @@
+{
+  "checked_at_utc": "2026-10-24T17:22:25.631456+00:00",
+  "environment": {
+    "timestamp_utc": "2026-10-24T17:22:25.484845+00:00",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "system": "Windows",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+    "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]",
+    "python_executable": "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\.venv\\Scripts\\python.exe",
+    "cpu_count": 12,
+    "disk": {
+      "free_gb": 53.703,
+      "total_gb": 447.207
+    },
+    "packages": {
+      "numpy": "2.3.5",
+      "pandas": "2.2.3",
+      "scipy": "1.17.1",
+      "scikit-learn": "1.8.0",
+      "torch": "2.11.0",
+      "ncps": "1.0.1",
+      "matplotlib": "3.9.2"
+    },
+    "cuda_available": false,
+    "torch_threads": 8,
+    "torch_deterministic_algorithms": false
+  },
+  "dataset_integrity": {
+    "data_dir": "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\data",
+    "manifest_path": "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\data\\dataset_manifest.json",
+    "manifest_present": true,
+    "ok": true,
+    "manifest": {
+      "dataset": "CLINC150",
+      "description": "In-scope intent classification from CLINC150 (clinc/oos-eval data_full.json). The separate oos_* out-of-scope splits are recorded but not used for this intent study.",
+      "source_url": "https://raw.githubusercontent.com/clinc/oos-eval/master/data/data_full.json",
+      "repository": "https://github.com/clinc/oos-eval",
+      "repo_commit": "828f8093932c8fe6ca7936c3d2e52903b1c523de",
+      "repo_commit_date": "2021-06-01T03:20:55Z",
+      "repo_author": "gxlarson",
+      "file": "clinc150_full.json",
+      "sha256": "36923c3705a59e08fe9c3883d8bc2dd966ef93e22cb78ac41171782a698d56e0",
+      "byte_size": 2495390,
+      "splits": {
+        "oos_val": 100,
+        "val": 3000,
+        "train": 15000,
+        "oos_test": 1000,
+        "test": 4500,
+        "oos_train": 100
+      },
+      "n_in_scope_intents": 150,
+      "intent_field": "second element of each [text, intent] record",
+      "note": "oos_* splits (out-of-scope) are recorded but not used in this intent study. Class-incremental chunks (5 x 30 intents, deterministic seed 12345) are recorded in each run's run_manifest.json under 'intent_order' and 'chunks'."
+    },
+    "file": "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\data\\clinc150_full.json",
+    "actual_sha256": "36923c3705a59e08fe9c3883d8bc2dd966ef93e22cb78ac41171782a698d56e0",
+    "actual_byte_size": 2495390,
+    "expected_sha256": "36923c3705a59e08fe9c3883d8bc2dd966ef93e22cb78ac41171782a698d56e0",
+    "expected_byte_size": 2495390,
+    "sha256_match": true,
+    "size_match": true
+  },
+  "plan": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "num_chunks": 5,
+    "max_epochs": 10,
+    "models": [
+      "cfc",
+      "cfc_ablation_pure",
+      "cfc_ablation_no_gate",
+      "lstm",
+      "gru",
+      "tfidf_sgd"
+    ]
+  },
+  "ok": true,
+  "benchmark": {
+    "seconds_per_one_epoch_on_chunk0": {
+      "cfc": 9.986,
+      "cfc_ablation_pure": 8.775,
+      "cfc_ablation_no_gate": 6.644,
+      "lstm": 1.351,
+      "gru": 2.606,
+      "tfidf_sgd": 1.927
+    },
+    "note": "chunk0 full-size training slice; one epoch includes one validation pass",
+    "estimated_seconds_optimistic_3_epochs": 1760.0,
+    "estimated_seconds_conservative_max_epochs": 5866.7,
+    "estimated_minutes_optimistic": 29.3,
+    "estimated_minutes_conservative": 97.8,
+    "overhead_factor": 1.25
+  },
+  "estimated_outputs": {
+    "per_example_rows": 243000,
+    "per_example_csv_mb_approx": 43.7
+  }
+}

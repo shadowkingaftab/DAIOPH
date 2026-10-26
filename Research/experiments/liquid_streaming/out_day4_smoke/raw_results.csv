@@ -1,0 +1,5 @@
+seed,model,ablation,variant,hidden_size,mixed_memory,chunk_step,eval_chunk,accuracy,n_classes_seen,n_train_examples,n_eval_examples,n_predictions,temperature
+0,cfc_h32,hidden_size,32,32,False,0,0,0.0,30,64,200,200,2.5017022980968138
+0,cfc_h64,hidden_size,64,64,False,0,0,0.0,30,64,200,200,1.412880818729317
+0,cfc_mm_on,mixed_memory,on,64,True,0,0,0.0,30,64,200,200,0.3112007951593259
+0,cfc_mm_off,mixed_memory,off,64,False,0,0,0.0,30,64,200,200,1.412880818729317

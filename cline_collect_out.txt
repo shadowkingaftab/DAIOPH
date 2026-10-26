@@ -1,0 +1,20 @@
+
+=================================== ERRORS ====================================
+_____ ERROR collecting Research/experiments/liquid_streaming/cfc_test.py ______
+Research\experiments\liquid_streaming\cfc_test.py:9: in <module>
+    rows, m = run_study(
+    ^^^^^^^
+E   ValueError: too many values to unpack (expected 2)
+------------------------------- Captured stdout -------------------------------
+study done: 6/6 raw cells -> C:\Users\AFTABA~1\AppData\Local\Temp\tmpd7rd0m0o\raw_results.csv
+elapsed: 1572.7s; failures: 0
+============================== warnings summary ===============================
+..\..\..\anaconda3\anaconda aftab\Lib\site-packages\torch\nn\modules\linear.py:124
+  C:\Users\AFTAB AHMAD SAYED\anaconda3\anaconda aftab\Lib\site-packages\torch\nn\modules\linear.py:124: UserWarning: Initializing zero-element tensors is a no-op
+    init.kaiming_uniform_(self.weight, a=math.sqrt(5))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR Research/experiments/liquid_streaming/cfc_test.py - ValueError: too man...
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+no tests collected, 1 error in 1590.77s (0:26:30)

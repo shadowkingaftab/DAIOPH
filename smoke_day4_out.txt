@@ -1,0 +1,15 @@
+
+=== Day 4 smoke rows ===
+   cfc_h32  eval_chunk=0  acc=0.0000  n_train=64  n_eval=200  T=2.502
+   cfc_h64  eval_chunk=0  acc=0.0000  n_train=64  n_eval=200  T=1.413
+ cfc_mm_on  eval_chunk=0  acc=0.0000  n_train=64  n_eval=200  T=0.311
+cfc_mm_off  eval_chunk=0  acc=0.0000  n_train=64  n_eval=200  T=1.413
+
+=== Calibration (chunk 0, eval chunk 0) ===
+   cfc_h32  ECE_uncal=0.0448  ECE_cal=0.0376  Brier_uncal=0.9663  Brier_cal=0.9664
+   cfc_h64  ECE_uncal=0.0397  ECE_cal=0.0377  Brier_uncal=0.9662  Brier_cal=0.9663
+ cfc_mm_on  ECE_uncal=0.0397  ECE_cal=0.0567  Brier_uncal=0.9677  Brier_cal=0.9737
+cfc_mm_off  ECE_uncal=0.0397  ECE_cal=0.0377  Brier_uncal=0.9662  Brier_cal=0.9663
+
+rows=4 predictions=800 calibration=4 bins=120
+outputs: C:\Users\AFTAB AHMAD SAYED\Downloads\DAIOPH-main\DAIOPH-main\Research\experiments\liquid_streaming\out_day4_smoke

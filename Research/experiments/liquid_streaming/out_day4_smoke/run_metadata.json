@@ -1,0 +1,278 @@
+{
+  "run_id": "20261026-180021",
+  "protocol": "Day 4 CfC ablations + calibration",
+  "seed": 0,
+  "environment": {
+    "python": "3.13.9",
+    "numpy": "2.3.5",
+    "torch": "2.11.0",
+    "scikit-learn": "1.8.0",
+    "ncps": "1.0.1"
+  },
+  "dataset": {
+    "name": "CLINC150",
+    "splits": {
+      "train": 15000,
+      "val": 3000,
+      "test": 4500
+    }
+  },
+  "tokenizer": {
+    "type": "SimpleTokenizer",
+    "fit_on": "train split text only",
+    "vocab_size": 5221,
+    "max_len": 64,
+    "pad_id": 0
+  },
+  "chunking": {
+    "num_chunks": 5,
+    "chunks_used": 1,
+    "chunk_seed": 12345,
+    "intent_order": [
+      "schedule_meeting",
+      "oil_change_how",
+      "schedule_maintenance",
+      "international_fees",
+      "redeem_rewards",
+      "fun_fact",
+      "calories",
+      "interest_rate",
+      "tell_joke",
+      "bill_due",
+      "card_declined",
+      "repeat",
+      "nutrition_info",
+      "jump_start",
+      "rewards_balance",
+      "change_volume",
+      "report_lost_card",
+      "travel_notification",
+      "transfer",
+      "order_status",
+      "order",
+      "who_made_you",
+      "car_rental",
+      "apr",
+      "definition",
+      "restaurant_reservation",
+      "date",
+      "order_checks",
+      "todo_list",
+      "international_visa",
+      "credit_limit",
+      "pto_request",
+      "travel_alert",
+      "oil_change_when",
+      "book_flight",
+      "meaning_of_life",
+      "lost_luggage",
+      "income",
+      "yes",
+      "direct_deposit",
+      "confirm_reservation",
+      "update_playlist",
+      "meeting_schedule",
+      "weather",
+      "expiration_date",
+      "insurance",
+      "thank_you",
+      "exchange_rate",
+      "credit_score",
+      "text",
+      "w2",
+      "smart_home",
+      "restaurant_reviews",
+      "restaurant_suggestion",
+      "play_music",
+      "freeze_account",
+      "mpg",
+      "spelling",
+      "greeting",
+      "calculator",
+      "timer",
+      "how_busy",
+      "change_user_name",
+      "book_hotel",
+      "ingredients_list",
+      "bill_balance",
+      "balance",
+      "taxes",
+      "tire_change",
+      "where_are_you_from",
+      "shopping_list_update",
+      "time",
+      "what_song",
+      "user_name",
+      "pto_used",
+      "traffic",
+      "account_blocked",
+      "do_you_have_pets",
+      "change_ai_name",
+      "recipe",
+      "cancel_reservation",
+      "vaccines",
+      "ingredient_substitution",
+      "next_song",
+      "damaged_card",
+      "reset_settings",
+      "pin_change",
+      "min_payment",
+      "cook_time",
+      "last_maintenance",
+      "cancel",
+      "replacement_card_duration",
+      "are_you_a_bot",
+      "translate",
+      "uber",
+      "who_do_you_work_for",
+      "meal_suggestion",
+      "credit_limit_change",
+      "todo_list_update",
+      "whisper_mode",
+      "travel_suggestion",
+      "new_card",
+      "plug_type",
+      "calendar_update",
+      "sync_device",
+      "pay_bill",
+      "calendar",
+      "directions",
+      "change_language",
+      "next_holiday",
+      "report_fraud",
+      "change_accent",
+      "what_is_your_name",
+      "payday",
+      "spending_history",
+      "accept_reservations",
+      "improve_credit_score",
+      "what_are_your_hobbies",
+      "pto_balance",
+      "make_call",
+      "timezone",
+      "tire_pressure",
+      "insurance_change",
+      "application_status",
+      "what_can_i_ask_you",
+      "flip_coin",
+      "routing",
+      "gas_type",
+      "carry_on",
+      "how_old_are_you",
+      "distance",
+      "flight_status",
+      "transactions",
+      "roll_dice",
+      "change_speed",
+      "pto_request_status",
+      "gas",
+      "food_last",
+      "maybe",
+      "share_location",
+      "current_location",
+      "reminder_update",
+      "find_phone",
+      "shopping_list",
+      "measurement_conversion",
+      "goodbye",
+      "reminder",
+      "no",
+      "alarm",
+      "rollover_401k"
+    ]
+  },
+  "ablations": {
+    "hidden_size": {
+      "variants": [
+        "cfc_h32",
+        "cfc_h64"
+      ],
+      "description": "CfC hidden size 32 vs 64"
+    },
+    "mixed_memory": {
+      "variants": [
+        "cfc_mm_on",
+        "cfc_mm_off"
+      ],
+      "description": "ncps CfC mixed_memory on vs off",
+      "supported": true,
+      "note": "ncps 0.0.2 CfC accepts mixed_memory; used directly."
+    }
+  },
+  "calibration": {
+    "method": "temperature_scaling",
+    "fit_on": "validation split of current chunk only",
+    "applied_to": "test logits",
+    "uses_test_data_for_fitting": false,
+    "ece_bins": 15
+  },
+  "update_budget": {
+    "cfc_h32": {
+      "chunks": [
+        {
+          "chunk_step": 0,
+          "epochs_completed": 1,
+          "parameter_updates": 2,
+          "examples_processed": 64,
+          "best_val_accuracy": null,
+          "temperature": 2.5017022980968138
+        }
+      ],
+      "total_parameter_updates": 2,
+      "total_examples_processed": 64,
+      "total_epochs_completed": 1
+    },
+    "cfc_h64": {
+      "chunks": [
+        {
+          "chunk_step": 0,
+          "epochs_completed": 1,
+          "parameter_updates": 2,
+          "examples_processed": 64,
+          "best_val_accuracy": null,
+          "temperature": 1.412880818729317
+        }
+      ],
+      "total_parameter_updates": 2,
+      "total_examples_processed": 64,
+      "total_epochs_completed": 1
+    },
+    "cfc_mm_on": {
+      "chunks": [
+        {
+          "chunk_step": 0,
+          "epochs_completed": 1,
+          "parameter_updates": 2,
+          "examples_processed": 64,
+          "best_val_accuracy": null,
+          "temperature": 0.3112007951593259
+        }
+      ],
+      "total_parameter_updates": 2,
+      "total_examples_processed": 64,
+      "total_epochs_completed": 1
+    },
+    "cfc_mm_off": {
+      "chunks": [
+        {
+          "chunk_step": 0,
+          "epochs_completed": 1,
+          "parameter_updates": 2,
+          "examples_processed": 64,
+          "best_val_accuracy": null,
+          "temperature": 1.412880818729317
+        }
+      ],
+      "total_parameter_updates": 2,
+      "total_examples_processed": 64,
+      "total_epochs_completed": 1
+    }
+  },
+  "results": {
+    "raw_rows": 4,
+    "prediction_rows": 800,
+    "calibration_rows": 4,
+    "reliability_bin_rows": 120
+  },
+  "elapsed_seconds": 3.389
+}
