@@ -1,0 +1,87 @@
+1ceef76 maybethefinalcommitofmylife
+ .../intelligence/liquid/adapters/cfc_adapter.py    |    350 +
+ Backend/intelligence/liquid/liquid_engine.py       |     74 +-
+ Quality/tests/unit/test_liquid_cfc_adapter.py      |    285 +
+ .../out_day2_smoke/predictions.csv                 |    542 +-
+ .../out_day2_smoke/raw_results.csv                 |      8 +-
+ .../out_day2_smoke/run_metadata.json               |     66 +-
+ .../out_day4_smoke/calibration_results.csv         |      5 +
+ .../out_day4_smoke/predictions.csv                 |    801 +
+ .../out_day4_smoke/raw_results.csv                 |      5 +
+ .../out_day4_smoke/reliability_bins.csv            |    121 +
+ .../out_day4_smoke/run_metadata.json               |    278 +
+ .../out_train_eval_smoke/calibration_results.csv   |      6 +
+ .../out_train_eval_smoke/per_example_preds.csv     |  27001 ++
+ .../out_train_eval_smoke/raw_results.csv           |      7 +
+ .../out_train_eval_smoke/reliability_bins.csv      |    151 +
+ .../out_train_eval_smoke/run_manifest.json         |    384 +
+ .../20261024-225329_model_metrics_summary.csv      |      7 +
+ .../aggregated/20261024-225329_run_matrix.csv      |    271 +
+ .../20261024-225329_run_matrix_overall.json        |     22 +
+ .../20261024-225329_run_matrix_summary.csv         |     19 +
+ .../outputs/aggregated/20261024-225329_summary.csv |     91 +
+ .../20261024-225329_summary_metadata.json          |     21 +
+ .../outputs/aggregated/run_matrix.csv              |    271 +
+ .../outputs/aggregated/run_matrix_overall.json     |     22 +
+ .../outputs/aggregated/run_matrix_summary.csv      |     19 +
+ .../20261024-225329/adaptation_current_chunk.png   |    Bin 0 -> 69988 bytes
+ .../adaptation_mean_seen_chunks.png                |    Bin 0 -> 105891 bytes
+ .../20261024-225329/calibration_ece_brier.png      |    Bin 0 -> 75066 bytes
+ .../20261024-225329/calibration_reliability.png    |    Bin 0 -> 107435 bytes
+ .../figures/20261024-225329/figure_manifest.json   |     58 +
+ .../forgetting_after_each_chunk.png                |    Bin 0 -> 93571 bytes
+ .../figures/20261024-225329/model_size_latency.png |    Bin 0 -> 65936 bytes
+ .../figures/20261024-225329/retention_by_model.png |    Bin 0 -> 125127 bytes
+ .../within_chunk_learning_curves.png               |    Bin 0 -> 212767 bytes
+ .../outputs/locks/20261024-225329.json             |    101 +
+ .../outputs/locks/20261024-225329.locked           |      2 +
+ .../liquid_streaming/outputs/preflight.json        |    103 +
+ .../outputs/runs/20261024-225329/RUN_REPORT.md     |    106 +
+ .../outputs/runs/20261024-225329/failures.csv      |      1 +
+ .../runs/20261024-225329/learning_curves.csv       |    810 +
+ .../outputs/runs/20261024-225329/model_metrics.csv |     19 +
+ .../20261024-225329/per_example_predictions.csv    | 243001 ++++++++++++++++++
+ .../outputs/runs/20261024-225329/raw_results.csv   |    271 +
+ .../outputs/runs/20261024-225329/run_manifest.json |    522 +
+ .../outputs/runs/20261024-225329/status.json       |     14 +
+ .../experiments/liquid_streaming/smoke_day4.py     |     63 +
+ .../liquid_streaming/smoke_train_eval.py           |     38 +
+ .../liquid_streaming/src/calibration.py            |    122 +
+ .../liquid_streaming/src/day4_runner.py            |    354 +
+ .../experiments/liquid_streaming/src/models.py     |     18 +-
+ .../liquid_streaming/src/plot_results.py           |    424 +
+ .../experiments/liquid_streaming/src/preflight.py  |    160 +
+ .../experiments/liquid_streaming/src/run_study.py  |    274 +-
+ .../liquid_streaming/src/study_utils.py            |    317 +
+ .../experiments/liquid_streaming/src/train_eval.py |    815 +-
+ cfctest2_out.txt                                   |      2 +
+ cfctest_out.txt                                    |      2 +
+ cfctest_trace.txt                                  |      2 +
+ cfg_collected.txt                                  |     20 +
+ cline_collect_out.txt                              |     20 +
+ cline_collected.txt                                |     20 +
+ cline_collected2.txt                               |     20 +
+ git_adaptation_head.txt                            |     86 +
+ git_engine_adapter_diff.txt                        |    114 +
+ git_engine_diff.txt                                |      3 +
+ git_engine_diff_full.txt                           |    128 +
+ git_liquid_init.txt                                |      1 +
+ git_liquid_tree.txt                                |      9 +
+ git_ls_files.txt                                   |     42 +
+ git_ls_tree.txt                                    |     42 +
+ git_status.txt                                     |     39 +
+ git_status2.txt                                    |     44 +
+ git_status3.txt                                    |     52 +
+ git_tree2.txt                                      |     42 +
+ out_day3_smoke_report/derived.json                 |    547 +
+ out_day3_smoke_report/raw_rows.csv                 |     31 +
+ out_day3_smoke_report/summary.json                 |     14 +
+ out_day3_smoke_report/timing.csv                   |     31 +
+ out_smoke_test/derived.json                        |    547 +
+ out_smoke_test/raw_rows.csv                        |     31 +
+ out_smoke_test/summary.json                        |     14 +
+ out_smoke_test/timing.csv                          |     31 +
+ smoke_day4_final_out.txt                           |     15 +
+ smoke_day4_out.txt                                 |     15 +
+ test_liquid_out.txt                                |      2 +
+ 85 files changed, 279908 insertions(+), 478 deletions(-)
