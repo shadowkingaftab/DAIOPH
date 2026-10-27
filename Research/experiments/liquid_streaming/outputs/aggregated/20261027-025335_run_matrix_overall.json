@@ -1,0 +1,22 @@
+{
+  "generated_at_utc": "2026-10-26T22:32:33.232031+00:00",
+  "models": [
+    "cfc",
+    "cfc_ablation_pure",
+    "cfc_ablation_no_gate",
+    "lstm",
+    "gru",
+    "tfidf_sgd"
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "num_chunks": 5,
+  "expected_cells": 270,
+  "completed_cells": 270,
+  "missing_cells": 0,
+  "status": "completed",
+  "definition": "one cell = model x seed x chunk_step x eval_chunk (eval_chunk <= chunk_step)"
+}

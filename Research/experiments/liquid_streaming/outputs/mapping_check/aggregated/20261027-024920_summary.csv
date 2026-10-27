@@ -1,0 +1,16 @@
+model,chunk_step,eval_chunk,n_seeds,seeds,accuracy_mean,accuracy_std,accuracy_ci95_low,accuracy_ci95_high,accuracy_n,ece_calibrated_mean,ece_calibrated_std,ece_calibrated_ci95_low,ece_calibrated_ci95_high,ece_calibrated_n,brier_calibrated_mean,brier_calibrated_std,brier_calibrated_ci95_low,brier_calibrated_ci95_high,brier_calibrated_n,ece_uncalibrated_mean,ece_uncalibrated_std,ece_uncalibrated_ci95_low,ece_uncalibrated_ci95_high,ece_uncalibrated_n,brier_uncalibrated_mean,brier_uncalibrated_std,brier_uncalibrated_ci95_low,brier_uncalibrated_ci95_high,brier_uncalibrated_n
+cfc,0,0,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,1,0,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,1,1,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,2,0,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,2,1,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,2,2,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,3,0,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,3,1,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,3,2,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,3,3,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,4,0,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,4,1,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,4,2,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,4,3,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1
+cfc,4,4,1,0,,,,,1,,,,,1,,,,,1,,,,,1,,,,,1

@@ -1,0 +1,1 @@
+run_id,seed,model,n_params,serialized_size_mb,latency_p50_ms,latency_p95_ms,latency_mean_ms,throughput_examples_per_sec,warmup_examples,measured_examples,latency_scope,batch_size,n_features

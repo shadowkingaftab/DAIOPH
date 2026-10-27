@@ -53,6 +53,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from calibration import apply_temperature, compute_ece, fit_temperature, softmax
 from chunks import create_class_incremental_chunks
+from class_mapping import append_new_classes
 from data import load_intent_dataset
 from models import (CfcTextClassifier, GRUTextClassifier, LSTMTextClassifier,
                     TfidfSgdClassifier)
@@ -329,7 +330,6 @@ def evaluate_sgd_detailed(clf, pairs, label_to_idx, temperature: float = 1.0,
         return {"accuracy": 0.0, "n": 0, "per_example": [],
                 "ece_calibrated": float("nan"), "brier_calibrated": float("nan"),
                 "ece_uncalibrated": float("nan"), "brier_uncalibrated": float("nan")}
-    idx_to_label = _label_index(label_to_idx)
     texts = [t for t, _ in pairs]
     true_strings = [l for _, l in pairs]
     X = clf.vectorizer.transform(texts)
@@ -346,9 +346,11 @@ def evaluate_sgd_detailed(clf, pairs, label_to_idx, temperature: float = 1.0,
         per_example.append({
             "example_idx": j,
             "true_label": true_s,
-            "true_label_idx": int(label_to_idx.get(true_s, -1)),
+            # SGD's output columns follow clf.classes_ (the fixed full-label
+            # space), not the neural models' append-only class mapping.
+            "true_label_idx": int(class_to_idx[true_s]),
             "pred_label": pred_s,
-            "pred_label_idx": int(label_to_idx.get(pred_s, -1)),
+            "pred_label_idx": int(class_to_idx[pred_s]),
             "correct": int(pred_s == true_s),
             "confidence_uncalibrated": float(probs_uncal[j].max()),
             "prob_true_uncalibrated": float(probs_uncal[j, true_clf_idx[j]]),
@@ -609,14 +611,20 @@ def run_study(data_dir: Path, run_dir: Path, seeds=(0, 1, 2, 3, 4),
             sgd_model._fit = True
             sgd_model.initialize_classes(full_label_list)
 
+        # Neural output-head rows are append-only.  Keep the label-to-index
+        # mapping append-only as well; re-sorting the seen labels at every
+        # stream step silently assigns old labels to different head rows.
         classes_seen: List[str] = []
+        label_to_idx: Dict[str, int] = {}
         disabled: Dict[str, str] = {}
 
         for chunk_id in range(num_chunks):
             chunk = chunks[chunk_id]
             chunk_labels = sorted(chunk["labels"])
-            classes_seen = sorted(set(classes_seen) | set(chunk_labels))
-            label_to_idx = {lab: i for i, lab in enumerate(classes_seen)}
+            # Pass a snapshot so later chunks cannot mutate this step's
+            # mapping while a model is training/evaluating.
+            label_to_idx = append_new_classes(classes_seen, label_to_idx,
+                                              chunk_labels)
             n_classes = len(classes_seen)
             train_pairs = chunk["train"]
             val_pairs = [(t, l) for t, l in val_by_chunk[chunk_id]

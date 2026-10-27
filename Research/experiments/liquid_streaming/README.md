@@ -13,7 +13,7 @@ This package contains the class-incremental streaming experiment for CfC (Closed
 - **Seeds**: 0,1,2 (3 seeds). CI: 95% t-interval across seeds (df=n-1).
 - **Update budgets**: Train on arriving chunk only per step (class-incremental). Neural: batch_size=32, lr=0.001, max_epochs=10, patience=2, embed_dim=64, hidden_size=64, max_len=64. SGD: 5 epochs per chunk, max_features=50000.
 - **Metrics**: Accuracy per (model,seed,chunk_step,eval_chunk); learning curves (train/val loss/acc per epoch within chunk); calibration (ECE/Brier, temperature scaling fitted on current-chunk val only); model size (serialized params/bytes), single-example end-to-end CPU latency (p50/p95/mean) incl. tokenization/vectorization, batch_size=1.
-- **Hardware (completed run 20261024-225329)**: Windows-11-10.0.26200, Intel64 Family 6 Model 186 Stepping 2 (12 cores), Python 3.13.9, no CUDA, torch threads 8. See `outputs/runs/20261024-225329/run_manifest.json` for full env.
+- **Hardware (completed run 20261027-025335)**: Windows-11-10.0.26200, Intel64 Family 6 Model 186 Stepping 2 (12 cores), Python 3.13.9, no CUDA, torch threads 8. See `outputs/runs/20261027-025335/run_manifest.json` for full env.
 - **Known limitations**: No persistent model checkpoints written by study (metrics/size/latency measured in-process); CfC API availability depends on ncps==1.0.1; CPU-only; t-CI requires ≥2 seeds; ECE/Brier computed per model's own output space (SGD full 150-class); latency is single-example CPU only; no claim of CfC superiority.
 
 ## Exact reproducibility commands (PowerShell)
@@ -32,11 +32,11 @@ If execution policy blocks: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -
 ```powershell
 # From Research/experiments/liquid_streaming/
 .\.venv\Scripts\Activate.ps1
-python src/plot_results.py --run-id 20261024-225329
+python src/plot_results.py --run-id 20261027-025335
 # Or regenerate all aggregates/figures from outputs/runs/*
 python -m src.preflight  # optional validation
 ```
-Figures are generated from saved CSVs only (see `outputs/figures/20261024-225329/figure_manifest.json`).
+Figures are generated from saved CSVs only (see `outputs/figures/20261027-025335/figure_manifest.json`).
 
 **3) Rerun training (separate command)**
 ```powershell
@@ -47,12 +47,16 @@ python src/run_study.py --seeds 0,1,2 --num-chunks 5 --max-epochs 10 --patience 
 Smokes: `python smoke.py`, `python smoke_train_eval.py`, `python smoke_day4.py`. Test: `python cfc_test.py`.
 
 ## Result files (saved)
-- Run: `outputs/runs/20261024-225329/` (raw_results.csv, per_example_predictions.csv, learning_curves.csv, model_metrics.csv, failures.csv, run_manifest.json, RUN_REPORT.md, status.json)
-- Aggregates: `outputs/aggregated/` (20261024-225329_*, run_matrix*, summaries)
-- Figures: `outputs/figures/20261024-225329/` (10 PNGs + figure_manifest.json)
-- Other runs present: `outputs/runs/20261024-203310/` (raw_results.csv, run_manifest.json only - incomplete)
+- Run: `outputs/runs/20261027-025335/` (raw_results.csv, per_example_predictions.csv, learning_curves.csv, model_metrics.csv, failures.csv, run_manifest.json, RUN_REPORT.md, status.json)
+- Aggregates: `outputs/aggregated/` (`20261027-025335_*` summaries and run matrix)
+- Figures: `outputs/figures/20261027-025335/` (8 PNGs + figure_manifest.json)
+- Superseded historical run: `outputs/runs/20261024-225329/` (invalid old-class mapping; do not report its metrics). Incomplete: `outputs/runs/20261024-203310/`. Aborted: `outputs/runs/20261027-025256/` (zero completed cells). Focused mapping diagnostic: `outputs/mapping_check/` (not a full study).
+
+## Corrected results
+- Definitive run: `20261027-025335`; 270/270 cells, 0 failures, 3 seeds. Every raw accuracy/correct count was reconciled against per-example predictions; all 22 locked artifacts passed SHA-256 and byte-size verification. See [RESULTS_REPORT.md](RESULTS_REPORT.md) for observed final-step metrics and limitations.
+- A class-index remapping bug in the earlier run was fixed with append-only stable indices and regression-covered by `test_class_mapping.py`.
 
 ## Traceability
-- All reported metrics in `outputs/aggregated/*` trace to `outputs/runs/*/raw_results.csv` rows (protocol in run_manifest).
-- Figures generated from saved CSVs only (confirmed by `figure_manifest.json` note).
+- Metrics reported for this study trace to `outputs/runs/20261027-025335/raw_results.csv` and its per-example predictions (protocol in that run's manifest).
+- Figures generated from saved CSVs only (confirmed by the run-specific `figure_manifest.json`).
 - Dataset integrity verified (SHA256/size match in run_manifest).

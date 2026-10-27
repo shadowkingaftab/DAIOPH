@@ -1,0 +1,93 @@
+{
+  "locked": true,
+  "locked_at_utc": "2026-10-26T21:22:13.510182+00:00",
+  "run_dir": "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\mapping_check\\runs\\20261027-024920",
+  "files": {
+    "failures.csv": {
+      "sha256": "d4e552915d2c40c4ecf570de8b70cd3601c281988668941e40c97cdab293fd19",
+      "byte_size": 52
+    },
+    "learning_curves.csv": {
+      "sha256": "81db90ad471cbef51c88e9d010dd04ae4937142f21049242f191cf780ffc6233",
+      "byte_size": 1524
+    },
+    "model_metrics.csv": {
+      "sha256": "b447528f908ac48173052eaaebd42755c8da7cbd1111ee38138d85c3c0cce1a7",
+      "byte_size": 412
+    },
+    "raw_results.csv": {
+      "sha256": "fd0cc80d793f690dfb3a969786a7ea63b8aee0fb1c62c96da6ffe38cb5f63362",
+      "byte_size": 2731
+    },
+    "run_manifest.json": {
+      "sha256": "4823699e017d08caee77ae3347c1fbc01aaf2996a5da7c77dbd8dac67183606f",
+      "byte_size": 16075
+    },
+    "RUN_REPORT.md": {
+      "sha256": "96ec68df2048d0145aebc5b3b031dfd33b1aea6aba19a75b0323679cbd578fee",
+      "byte_size": 4435
+    },
+    "status.json": {
+      "sha256": "98b29236ce5f1093ecd07404ea7cf005fb0c1269583ca256020f5100b24d2c7e",
+      "byte_size": 339
+    },
+    "outputs\\mapping_check\\aggregated\\20261027-024920_summary.csv": {
+      "sha256": "52a40b5d1b012d033a802191c715eee314f52ee1e20fb694ff7dd99bb18ad1c7",
+      "byte_size": 1223
+    },
+    "outputs\\mapping_check\\aggregated\\20261027-024920_model_metrics_summary.csv": {
+      "sha256": "8a57cb1d8c8c5a6666d05e6514c020e46038d63c896e1654c22a0c3b75457854",
+      "byte_size": 622
+    },
+    "outputs\\mapping_check\\aggregated\\20261027-024920_run_matrix.csv": {
+      "sha256": "79dcecbe584ad3f4555c36b7c4f4ce89f9ec127d03d7cf4966d30a9953f9f8c7",
+      "byte_size": 1318
+    },
+    "outputs\\mapping_check\\aggregated\\20261027-024920_run_matrix_summary.csv": {
+      "sha256": "c9d455caa663a399c3c42491126b2a859d5dd03f7a60208a79b1c5bf82219b8d",
+      "byte_size": 602
+    },
+    "outputs\\mapping_check\\aggregated\\20261027-024920_run_matrix_overall.json": {
+      "sha256": "9ad438d3edc06e15adf8859fe538ccaba9750dc38cc068ee2ca64bad99a72205",
+      "byte_size": 338
+    },
+    "outputs\\mapping_check\\figures\\20261027-024920\\adaptation_current_chunk.png": {
+      "sha256": "fe184a083ff6dad6556b93c734992a34f75e1e0868a84653d8fd5a5d7c42b570",
+      "byte_size": 40805
+    },
+    "outputs\\mapping_check\\figures\\20261027-024920\\adaptation_mean_seen_chunks.png": {
+      "sha256": "6259983c36b4a0069937b74e8d83982e7a420bbdf15dd8165aa5c8ab67822b04",
+      "byte_size": 48448
+    },
+    "outputs\\mapping_check\\figures\\20261027-024920\\retention_by_model.png": {
+      "sha256": "a610d1ff23e92241e27bdc06d08c301e96e558e98816c0c29f2643d68f1be167",
+      "byte_size": 53160
+    },
+    "outputs\\mapping_check\\figures\\20261027-024920\\forgetting_after_each_chunk.png": {
+      "sha256": "30946a0658d3a31040fbac9aabd1d0ea48c86df74e02e443d6400467e2cf8636",
+      "byte_size": 81332
+    },
+    "outputs\\mapping_check\\figures\\20261027-024920\\model_size_latency.png": {
+      "sha256": "979f2d94645c837df6b049376b6133974de30190bf651eac4f069964f015196b",
+      "byte_size": 53446
+    },
+    "outputs\\mapping_check\\figures\\20261027-024920\\calibration_ece_brier.png": {
+      "sha256": "a97fe5bfdd3dde6b9d47fec5ed080b4aa465840329d629e0541dcb96a4dcebe6",
+      "byte_size": 57087
+    },
+    "outputs\\mapping_check\\figures\\20261027-024920\\within_chunk_learning_curves.png": {
+      "sha256": "904f7450971c32021c1909306809d48e6cfbc2f112182f3313d8c36f8f54e1fd",
+      "byte_size": 57183
+    },
+    "outputs\\mapping_check\\figures\\20261027-024920\\figure_manifest.json": {
+      "sha256": "3abf76f27df1e0aaede5975108c0d20de7ff27e19840b8dff8da596ceda523b2",
+      "byte_size": 2076
+    }
+  },
+  "note": "Hashes pin the exact CSV/JSON/PNG files produced by this run.",
+  "run_id": "20261027-024920",
+  "command": "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\.venv\\Scripts\\python.exe src\\run_study.py --seeds 0 --num-chunks 5 --models cfc --out outputs\\mapping_check --no-per-example --no-calibrate --max-epochs 4 --patience 2 --latency-examples 10 --latency-warmup 1",
+  "status": "completed",
+  "dataset_sha256": "36923c3705a59e08fe9c3883d8bc2dd966ef93e22cb78ac41171782a698d56e0",
+  "git_head": "7f566faacc6daf42efa640a489282ca894cdc0c4"
+}

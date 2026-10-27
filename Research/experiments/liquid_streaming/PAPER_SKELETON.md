@@ -4,7 +4,7 @@
 Liquid Streaming: Closed-form Continuous-time Networks for Class-Incremental Intent Classification on CLINC150
 
 ## Abstract (placeholder)
-**Pending.** To be filled using only actual saved results from `outputs/runs/20261024-225329/`. No speculative claims.
+**Pending.** To be filled using only actual saved results from `outputs/runs/20261027-025335/`. No speculative claims.
 
 ## Introduction (placeholder)
 **Pending.** Frame class-incremental streaming (train on arriving chunk only, test on all seen). Cite CLINC150. State evaluation scope (150 intents, 5×30 chunks). Do not claim SOTA without evidence.
@@ -25,30 +25,28 @@ Liquid Streaming: Closed-form Continuous-time Networks for Class-Incremental Int
 - Seeds: 0,1,2. Batch 32, lr 1e-3, max_epochs 10, patience 2, max_len 64, embed/hidden 64. SGD 5 epochs/chunk, max_features 50000. Metrics/size/latency computed in-process.
 
 ## Experimental Protocol (from run manifest)
-- Run: `20261024-225329` (seeds 0,1,2, num_chunks 5). Command/argv recorded. Environment (Python 3.13.9, torch 2.11.0, ncps 1.0.1, sklearn 1.8.0, pandas 2.2.3, numpy 2.3.5, matplotlib 3.9.2), CPU-only. Test used for evaluation only.
-- Cells: 270/270 completed, 0 failures. Per-example 243000, learning curves 809, model metrics 18.
+- Run: `20261027-025335` (seeds 0,1,2, num_chunks 5). Command/argv recorded. Environment (Python 3.13.9, torch 2.11.0, ncps 1.0.1, sklearn 1.8.0, pandas 2.2.3, numpy 2.3.5, matplotlib 3.9.2), CPU-only. Test used for evaluation only.
+- Cells: 270/270 completed, 0 failures. Per-example 243000, learning curves 795, model metrics 18.
 
 ## Results
 
-### Tables (use actual values; mark pending if not present)
-**Table 1: Final accuracy (eval on all seen chunks, last chunk_step)** — *pending extraction from raw_results.csv/aggregates*
-**Table 2: Accuracy matrix summary by chunk_step** — *pending* (see `outputs/aggregated/20261024-225329_run_matrix_summary.csv`)
-**Table 3: Forgetting/retention** — *pending* (figure references below)
-**Table 4: Calibration (ECE/Brier)** — *pending* (see raw_results.csv columns ece_calibrated/brier_calibrated)
-**Table 5: Model size and latency (CPU, single-example)** — *pending* (see `model_metrics.csv`)
+### Tables (paper assembly still required)
+**Table 1: Final accuracy (eval on all seen chunks, last chunk_step)** — extract and format from `outputs/aggregated/20261027-025335_run_matrix_summary.csv`; verified headline values are in `RESULTS_REPORT.md`.
+**Table 2: Accuracy matrix summary by chunk_step** — extract from `outputs/aggregated/20261027-025335_run_matrix_summary.csv`.
+**Table 3: Forgetting/retention** — compute explicit forgetting metrics from the run matrix; current figures are descriptive only.
+**Table 4: Calibration (ECE/Brier)** — summarize `ece_calibrated`/`brier_calibrated` from the corrected raw results, with the output-space caveat.
+**Table 5: Model size and latency (CPU, single-example)** — summarize `model_metrics.csv`.
 
 ### Figure references (regenerated from saved CSVs)
-- `outputs/figures/20261024-225329/accuracy_by_chunk_step.png`
-- `outputs/figures/20261024-225329/accuracy_heatmap.png`
-- `outputs/figures/20261024-225329/retention_by_model.png`
-- `outputs/figures/20261024-225329/forgetting_after_each_chunk.png`
-- `outputs/figures/20261024-225329/within_chunk_learning_curves.png`
-- `outputs/figures/20261024-225329/model_size_latency.png`
-- `outputs/figures/20261024-225329/calibration_reliability.png`
-- `outputs/figures/20261024-225329/calibration_ece_brier.png`
-- Plus 2 additional figures in `outputs/figures/20261024-225329/` (see figure_manifest.json)
-
-All figures generated from saved CSVs only (figure_manifest.json).
+- `outputs/figures/20261027-025335/adaptation_current_chunk.png`
+- `outputs/figures/20261027-025335/adaptation_mean_seen_chunks.png`
+- `outputs/figures/20261027-025335/retention_by_model.png`
+- `outputs/figures/20261027-025335/forgetting_after_each_chunk.png`
+- `outputs/figures/20261027-025335/within_chunk_learning_curves.png`
+- `outputs/figures/20261027-025335/model_size_latency.png`
+- `outputs/figures/20261027-025335/calibration_reliability.png`
+- `outputs/figures/20261027-025335/calibration_ece_brier.png`
+All eight figures were generated from saved CSVs only (figure_manifest.json).
 
 ## Limitations
 - CPU-only, small model sizes (embed/hidden 64), limited epochs (10) with patience 2.
@@ -56,7 +54,7 @@ All figures generated from saved CSVs only (figure_manifest.json).
 - No persistent checkpoints saved by study pipeline.
 - Calibration/metrics computed per model's own output space (caveat for cross-model ECE/Brier).
 - Latency single-example CPU only.
-- 3 seeds only; CI reported as t-interval.
+- 3 seeds only; report descriptive uncertainty and avoid strong significance claims.
 - **Do not claim** end-to-end engine improvement from this standalone benchmark; adapter integration is separate and optional.
 
 ## Citations

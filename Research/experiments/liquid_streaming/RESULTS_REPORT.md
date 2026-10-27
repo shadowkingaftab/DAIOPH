@@ -1,90 +1,43 @@
-# Class-Incremental Intent Classification Study: CfC vs LSTM vs GRU vs TF-IDF+SGD
+# Liquid Streaming Study: Validated Results
 
-## Experiment Overview
+## Run and validation
 
-**Goal:** Standalone class-incremental study comparing ncps CfC vs LSTM, GRU, and TF-IDF+SGD on CLINC150 intent chunks.
+The definitive corrected run is `20261027-025335`: 3 seeds, 5 chunks, 6 models, 270/270 cells completed, zero failures. Dataset SHA-256: `36923c3705a59e08fe9c3883d8bc2dd966ef93e22cb78ac41171782a698d56e0`.
 
-**Dataset:** CLINC150 (in-scope intents only) from `clinc/oos-eval` (commit `828f809`), SHA-256 verified.
+Validation performed after the run:
 
-| Split | Examples |
-|-------|----------|
-| Train | 15,000 |
-| Val   | 3,000 |
-| Test  | 4,500 |
+- Every one of the 270 accuracy records exactly matches the corresponding grouped per-example predictions and correct-count totals.
+- All 22 artifacts listed in the lock file match their recorded SHA-256 hashes and byte sizes.
+- `failures.csv` contains its header only; `status.json` reports completed.
+- Stable append-only class indices are covered by `test_class_mapping.py`.
 
-**Protocol (sequential class-incremental):**
-- 150 intents split into 5 fixed chunks (30 intents each), deterministic seed 12345
-- At chunk step `i`, model trains ONLY on chunk `i`'s training data (arriving stream)
-- After training, evaluated on TEST data of every seen chunk `0..i`
-- Validation used for early stopping only; test never used for training/tuning
-- Vocabulary built from training text only (no label/test leakage)
-- TF-IDF vectorizer fit once on full train corpus (unsupervised); SGD head updated per chunk via `partial_fit`
+Run report: `outputs/runs/20261027-025335/RUN_REPORT.md`. Exact command, environment, configuration, and data provenance are in `outputs/runs/20261027-025335/run_manifest.json`; the full lock is `outputs/locks/20261027-025335.json`.
 
-## Configuration
+## Observed final-step accuracy
 
-| Setting | Value |
-|---------|-------|
-| Num chunks | 5 |
-| Intents per chunk | 30 |
-| Seeds | 0, 1 (reduced from planned 5 due to CfC CPU slowness) |
-| Chunk seed | 12345 |
-| Embed dim | 64 |
-| Hidden size | 64 |
-| Batch size | 32 |
-| Learning rate | 1e-3 (Adam) |
-| Max epochs | 5 |
-| Early stopping patience | 2 |
-| Max seq len | 64 |
-| SGD epochs per chunk | 5 |
-| SGD max features | 50,000 |
-| SGD loss | log_loss |
+Mean ± standard deviation across 3 seeds. Rows are evaluation chunks after training through chunk 4; chunk 4 is the newly arriving chunk.
 
-**Models evaluated:** LSTM, GRU, TF-IDF+SGD. CfC was tested minimally (1 seed × 1 chunk × 3 epochs) because ncps CfC is extremely slow on CPU (~40+ minutes per seed-chunk without producing output).
+| Model | Chunk 0 | Chunk 1 | Chunk 2 | Chunk 3 | New chunk 4 |
+|---|---:|---:|---:|---:|---:|
+| CfC (default) | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.0033 ± 0.0058 | 0.7774 ± 0.0316 |
+| CfC (no gate) | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.0030 ± 0.0017 | 0.7600 ± 0.0366 |
+| CfC (pure) | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.5970 ± 0.0061 |
+| GRU | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.0004 ± 0.0006 | 0.0385 ± 0.0084 | 0.8952 ± 0.0093 |
+| LSTM | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.0000 ± 0.0000 | 0.0141 ± 0.0045 | 0.8819 ± 0.0124 |
+| TF-IDF + SGD | 0.1352 ± 0.0023 | 0.4678 ± 0.0029 | 0.7159 ± 0.0006 | 0.8315 ± 0.0006 | 0.9207 ± 0.0006 |
 
-**Key implementation fix:** Left-padding instead of right-padding for neural model input sequences. This ensures the LSTM/GRU final hidden state (`h[-1]`) captures the last real token rather than padding, which dramatically improved neural model accuracy (from ~0.7% to ~74-89% on chunk 0).
+The neural models learn the newest chunk, then have near-zero accuracy on most earlier chunks after sequential training without replay or regularization. CfC does not outperform the GRU, LSTM, or TF-IDF + SGD on the newest chunk. TF-IDF + SGD uses a fixed full-label output space; neural heads grow as classes arrive, so this is not a fully matched output-space comparison. Treat these as protocol-specific descriptive results, not evidence of general model superiority.
 
-## Key Findings
+## Interpretation limits
 
-### 1. Adaptation (Learning New Chunks)
-**TF-IDF+SGD > LSTM ≈ GRU > CfC**
-- TF-IDF+SGD achieves the highest adaptation accuracy on every chunk (91.9%–96.6%)
-- LSTM and GRU achieve solid adaptation (82.7%–88.8%) but slightly below TF-IDF+SGD
-- CfC (minimal test) underperforms at 48.5% on chunk 0
+- Three seeds are too few for strong inferential claims. Report means and spread descriptively; do not present the intervals as robust significance evidence.
+- Calibration scores are computed over each model's own output space and are not directly comparable across different output spaces.
+- Latency is single-example, end-to-end CPU latency including tokenization/vectorization; it does not establish production throughput.
+- This standalone study does not demonstrate improvement to the wider DAIOPH engine.
+- No replay, distillation, or continual-learning regularizer is used. Severe forgetting is the observed outcome under this protocol.
 
-### 2. Retention (Remembering Previous Chunks)
-**TF-IDF+SGD ≫ LSTM ≈ GRU (catastrophic forgetting)**
-- **TF-IDF+SGD** retains meaningful accuracy on earlier chunks: 72.4% on chunk 1 after learning chunk 2, declining gracefully to 21.9% on chunk 0 after learning all 5 chunks
-- **LSTM and GRU** suffer **complete catastrophic forgetting**: 0.0% accuracy on all previously seen chunks after learning a new one. They only perform well on the most recently trained chunk.
-- This is expected for class-incremental learning without replay, regularization, or architectural isolation mechanisms
+## Superseded artifacts
 
-### 3. Overall Comparison
-TF-IDF+SGD is the clear winner on both adaptation and retention metrics. The neural models (LSTM, GRU) can learn each new chunk reasonably well (~84-89%) but completely forget everything previously learned (0% on earlier chunks). CfC was not fully evaluable due to CPU performance limitations.
+Run `20261024-225329` predates the stable append-only class-index correction. Growing the neural head could reorder old class labels while leaving existing head rows in place, invalidating old-class predictions. Do not use that run's metrics or figures as the study result. Its files remain as historical artifacts; corrected code and locked results are in run `20261027-025335`.
 
-## Limitations
-
-1. **CfC not fully evaluated:** ncps CfC is too slow on CPU for a full 5-seed × 5-chunk experiment. Results are from a minimal 1-seed × 1-chunk × 3-epoch test only.
-2. **Reduced seeds:** Only 2 seeds (0, 1) instead of the planned 5, due to time constraints. Std estimates are therefore less reliable.
-3. **No regularization/replay:** Neural models use plain fine-tuning with no experience replay, distillation, or regularization — catastrophic forgetting is expected.
-4. **CPU-only:** All experiments ran on CPU. GPU would significantly speed up CfC and neural model training.
-
-## Output Files
-
-| File | Description |
-|------|-------------|
-| `outputs/runs/20261024-203310/raw_results.csv` | Per-seed, per-model, per-chunk-step, per-eval-chunk accuracy (90 rows) |
-| `outputs/runs/20261024-203310/run_manifest.json` | Full run configuration and dataset metadata |
-| `outputs/aggregated/20261024-203316_summary.csv` | Mean ± std across seeds, grouped by model/chunk_step/eval_chunk |
-| `outputs/figures/accuracy_vs_chunk.png` | Adaptation (newest chunk) and retention (all seen chunks) over chunk steps |
-| `outputs/figures/final_step_accuracy.png` | Bar chart of final-step accuracy by model with seed std |
-
-## Source Files (under `src/`)
-
-| File | Description |
-|------|-------------|
-| `data.py` | CLINC150 dataset loading (pre-existing) |
-| `tokenizer.py` | Simple word-level vocabulary built from training text (pre-existing) |
-| `chunks.py` | Deterministic class-incremental chunk creation (pre-existing) |
-| `models.py` | Model wrappers: LSTMTextClassifier, GRUTextClassifier, TfidfSgdClassifier with head growth via `expand_linear` |
-| `train_eval.py` | Train/eval loop: TextDataset, collate_fn, set_seed, evaluate_nn, train_chunk_nn (early stop on val, restore best), eval_sgd, run_study |
-| `run_study.py` | CLI entry point: writes raw CSV, manifest, aggregated summary, calls plots.py |
-| `plots.py` | `accuracy_vs_chunk.png` (adaptation + retention) and `final_step_accuracy.png` (bar chart with std) |
+Run `20261024-203310` is incomplete and is not a result. Run `20261027-025256` was an aborted zero-cell attempt. `outputs/mapping_check/` is a focused diagnostic, not a full study run.

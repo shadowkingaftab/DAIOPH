@@ -1,0 +1,58 @@
+{
+  "generated_at_utc": "2026-10-26T22:32:42.191093+00:00",
+  "run_dir": "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\runs\\20261027-025335",
+  "out_dir": "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\figures\\20261027-025335",
+  "inputs": {
+    "raw_results.csv": {
+      "sha256": "889f582b64f664a7f47cb1edb784e6b2126a26ca9c80cfcb6991721c99e86538",
+      "byte_size": 48752
+    },
+    "per_example_predictions.csv": {
+      "sha256": "a59ec93e4cb51603b88fe39d33e5f07a28c33c7b5dc6925f44e51d2475bad939",
+      "byte_size": 43554746
+    },
+    "model_metrics.csv": {
+      "sha256": "5170ed81a39a9078e36d7134a84a01ab2effcec96f79232cf9222b14d6b25478",
+      "byte_size": 4340
+    },
+    "learning_curves.csv": {
+      "sha256": "3952d700680f306db250c595cfef7da7024ccccd9ec2732536f44161b2fa7196",
+      "byte_size": 60966
+    }
+  },
+  "figures": {
+    "adaptation_current_chunk.png": {
+      "sha256": "0cb65ec3007f040d11fa6c04b02f3b772272929334ee3f8a60a8a7b64e732e91",
+      "byte_size": 70647
+    },
+    "adaptation_mean_seen_chunks.png": {
+      "sha256": "1be0682833e36ac5ceaaa3d2ef6e47b0b8707039637c9b1c5cb2cf81d15c7369",
+      "byte_size": 106598
+    },
+    "retention_by_model.png": {
+      "sha256": "15f436603bc745a548a79936ec5c72556302d40dbe01b92f760712803b401034",
+      "byte_size": 130576
+    },
+    "forgetting_after_each_chunk.png": {
+      "sha256": "99d81ffbeb7d83f903ecd9f9f8a30fbe83c10ce3864d2297e7f44a2f917091a4",
+      "byte_size": 97391
+    },
+    "model_size_latency.png": {
+      "sha256": "6fe04dce8da73b48d5b7af907436f1e4fe4c7c26a128828518137ed8a622bf9d",
+      "byte_size": 68857
+    },
+    "calibration_reliability.png": {
+      "sha256": "9dfa52fcfe116225725fced2adcb56947e4469815e18de453d46ce458cf14081",
+      "byte_size": 107113
+    },
+    "calibration_ece_brier.png": {
+      "sha256": "291ecf626fcb895283e1f9795b702f8624f37a650aa34204d58a55949244ec30",
+      "byte_size": 75661
+    },
+    "within_chunk_learning_curves.png": {
+      "sha256": "c97cd84eb0970fffab9dc9fc71e8809c760297a2078644861e8e6ccfa75afce9",
+      "byte_size": 204508
+    }
+  },
+  "note": "All figures were generated from saved CSVs only; no training was performed."
+}

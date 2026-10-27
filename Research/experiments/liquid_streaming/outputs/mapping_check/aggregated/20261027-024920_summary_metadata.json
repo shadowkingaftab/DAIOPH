@@ -1,0 +1,21 @@
+{
+  "generated_at_utc": "2026-10-26T21:22:08.223764+00:00",
+  "source": "per-seed raw_results.csv",
+  "grouping": [
+    "model",
+    "chunk_step",
+    "eval_chunk"
+  ],
+  "metrics": [
+    "accuracy",
+    "ece_calibrated",
+    "brier_calibrated",
+    "ece_uncalibrated",
+    "brier_uncalibrated"
+  ],
+  "mean": "arithmetic mean over seeds",
+  "std": "sample standard deviation over seeds (pandas ddof=1)",
+  "ci95": "two-sided t-distribution CI: mean +/- t(0.975, df=n-1) * std/sqrt(n)",
+  "ci_requires": "at least 2 independent seeds; otherwise CI fields are NaN",
+  "n_seeds": "number of distinct seeds contributing to the cell"
+}

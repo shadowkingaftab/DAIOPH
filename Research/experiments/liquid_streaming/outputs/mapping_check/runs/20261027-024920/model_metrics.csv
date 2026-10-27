@@ -1,0 +1,2 @@
+run_id,seed,model,n_params,serialized_size_mb,latency_p50_ms,latency_p95_ms,latency_mean_ms,throughput_examples_per_sec,warmup_examples,measured_examples,latency_scope,batch_size,n_features
+20261027-024920,0,cfc,393430,1.578044,18.96019995911047,26.18406505207531,19.672250002622604,50.83302621035647,1,10,single-example end-to-end text->prediction on CPU; tokenization/vectorization included; batch_size=1,1,

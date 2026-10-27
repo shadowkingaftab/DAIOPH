@@ -1,0 +1,13 @@
+{
+  "run_id": "20261027-025256",
+  "updated_at_utc": "2026-10-26T21:22:57.041755+00:00",
+  "stage": "initialised",
+  "completed_cells": 0,
+  "expected_cells": 270,
+  "raw_rows": 0,
+  "per_example_rows": 0,
+  "learning_curve_rows": 0,
+  "model_metric_rows": 0,
+  "failures": 0,
+  "completed_all": false
+}

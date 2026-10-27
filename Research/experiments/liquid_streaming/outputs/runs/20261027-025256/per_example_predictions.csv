@@ -1,0 +1,1 @@
+run_id,seed,model,chunk_step,eval_chunk,example_idx,true_label,true_label_idx,pred_label,pred_label_idx,correct,confidence_uncalibrated,prob_true_uncalibrated,confidence_calibrated,prob_true_calibrated,calibrated,temperature,model_output_classes

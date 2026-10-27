@@ -1,0 +1,1 @@
+run_id,seed,model,model_family,cfc_mode,chunk_step,eval_chunk,accuracy,n_eval_correct,n_classes_seen,model_output_classes,n_train_examples,n_eval_examples,temperature,calibration_applied,ece_calibrated,brier_calibrated,ece_uncalibrated,brier_uncalibrated,n_calibration_bins,sgd_epochs_completed

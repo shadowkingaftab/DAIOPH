@@ -1,0 +1,101 @@
+{
+  "locked": true,
+  "locked_at_utc": "2026-10-26T22:32:42.850419+00:00",
+  "run_dir": "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\runs\\20261027-025335",
+  "files": {
+    "failures.csv": {
+      "sha256": "d4e552915d2c40c4ecf570de8b70cd3601c281988668941e40c97cdab293fd19",
+      "byte_size": 52
+    },
+    "learning_curves.csv": {
+      "sha256": "3952d700680f306db250c595cfef7da7024ccccd9ec2732536f44161b2fa7196",
+      "byte_size": 60966
+    },
+    "model_metrics.csv": {
+      "sha256": "5170ed81a39a9078e36d7134a84a01ab2effcec96f79232cf9222b14d6b25478",
+      "byte_size": 4340
+    },
+    "per_example_predictions.csv": {
+      "sha256": "a59ec93e4cb51603b88fe39d33e5f07a28c33c7b5dc6925f44e51d2475bad939",
+      "byte_size": 43554746
+    },
+    "raw_results.csv": {
+      "sha256": "889f582b64f664a7f47cb1edb784e6b2126a26ca9c80cfcb6991721c99e86538",
+      "byte_size": 48752
+    },
+    "run_manifest.json": {
+      "sha256": "635c16a7dacb7b7711c2bde437443eeae29f688db39e8f3da7343d25d3467e40",
+      "byte_size": 16786
+    },
+    "RUN_REPORT.md": {
+      "sha256": "6729dbd61c63f05e290476737716d98196cb2b87cb6f16e703c3425b22070362",
+      "byte_size": 9927
+    },
+    "status.json": {
+      "sha256": "581549702c18eab357d650c28c4922c4179aae6968e897d5626715db4b2c03c2",
+      "byte_size": 349
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\aggregated\\20261027-025335_summary.csv": {
+      "sha256": "e85ee61e080f7f1dc56de655e899bcd6236707337184988dff112936bbecb1d3",
+      "byte_size": 36953
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\aggregated\\20261027-025335_model_metrics_summary.csv": {
+      "sha256": "23d8bc88d8b752f1cc6769b4948219b76623975a1c1b8ac75bb249c189d0aa48",
+      "byte_size": 2886
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\aggregated\\20261027-025335_run_matrix.csv": {
+      "sha256": "908a2ece0b4c046b473e837900787afd12f093e162d9921bf60572d1550ea846",
+      "byte_size": 27793
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\aggregated\\20261027-025335_run_matrix_summary.csv": {
+      "sha256": "443d2908f176e695c1044e76b3dc290664d55b9ee8bf719b2ceff6f2d4821fc6",
+      "byte_size": 9607
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\aggregated\\20261027-025335_run_matrix_overall.json": {
+      "sha256": "12c0536a27e99db223db21909bf6d788c25f90b17ee5b7728f12aa1ae8d93e18",
+      "byte_size": 454
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\figures\\20261027-025335\\adaptation_current_chunk.png": {
+      "sha256": "0cb65ec3007f040d11fa6c04b02f3b772272929334ee3f8a60a8a7b64e732e91",
+      "byte_size": 70647
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\figures\\20261027-025335\\adaptation_mean_seen_chunks.png": {
+      "sha256": "1be0682833e36ac5ceaaa3d2ef6e47b0b8707039637c9b1c5cb2cf81d15c7369",
+      "byte_size": 106598
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\figures\\20261027-025335\\retention_by_model.png": {
+      "sha256": "15f436603bc745a548a79936ec5c72556302d40dbe01b92f760712803b401034",
+      "byte_size": 130576
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\figures\\20261027-025335\\forgetting_after_each_chunk.png": {
+      "sha256": "99d81ffbeb7d83f903ecd9f9f8a30fbe83c10ce3864d2297e7f44a2f917091a4",
+      "byte_size": 97391
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\figures\\20261027-025335\\model_size_latency.png": {
+      "sha256": "6fe04dce8da73b48d5b7af907436f1e4fe4c7c26a128828518137ed8a622bf9d",
+      "byte_size": 68857
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\figures\\20261027-025335\\calibration_reliability.png": {
+      "sha256": "9dfa52fcfe116225725fced2adcb56947e4469815e18de453d46ce458cf14081",
+      "byte_size": 107113
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\figures\\20261027-025335\\calibration_ece_brier.png": {
+      "sha256": "291ecf626fcb895283e1f9795b702f8624f37a650aa34204d58a55949244ec30",
+      "byte_size": 75661
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\figures\\20261027-025335\\within_chunk_learning_curves.png": {
+      "sha256": "c97cd84eb0970fffab9dc9fc71e8809c760297a2078644861e8e6ccfa75afce9",
+      "byte_size": 204508
+    },
+    "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\outputs\\figures\\20261027-025335\\figure_manifest.json": {
+      "sha256": "c7878360723825ed04f7bfa7caac907ae2c20d8e08852a735fd91bbf10c999ed",
+      "byte_size": 2370
+    }
+  },
+  "note": "Hashes pin the exact CSV/JSON/PNG files produced by this run.",
+  "run_id": "20261027-025335",
+  "command": "C:\\Users\\AFTAB AHMAD SAYED\\Downloads\\DAIOPH-main\\DAIOPH-main\\Research\\experiments\\liquid_streaming\\.venv\\Scripts\\python.exe src\\run_study.py --seeds 0,1,2 --num-chunks 5 --max-epochs 10 --patience 2 --batch-size 32 --calibrate --latency-examples 100 --latency-warmup 5",
+  "status": "completed",
+  "dataset_sha256": "36923c3705a59e08fe9c3883d8bc2dd966ef93e22cb78ac41171782a698d56e0",
+  "git_head": "7f566faacc6daf42efa640a489282ca894cdc0c4"
+}
