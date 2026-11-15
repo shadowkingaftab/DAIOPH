@@ -110,7 +110,7 @@ class GrokClient:
             except Exception as e:
                 last_error = str(e)
 
-        return f"⚠️ Grok API error: {last_error}"
+        return "⚠️ Grok API error. Retry the request or check your Grok API configuration."
 
     def update_key(self, new_key: str):
         """Hot-swap the API key without recreating the client."""

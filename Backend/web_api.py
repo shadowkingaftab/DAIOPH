@@ -80,10 +80,7 @@ def _run_hybrid_translation(prompt: str) -> tuple[str, int] | None:
 
     translation = run_grok(translation_prompt).strip()
     if not translation or translation.startswith(("⚠", "❌", "Grok API Error")):
-        if "credit" in translation.casefold() or "spending limit" in translation.casefold():
-            failure = "The Grok account has no available credits or has reached its spending limit."
-        else:
-            failure = "Check the Grok API configuration, account limits, and network access."
+        failure = classify_grok_failure(translation)
         raise HTTPException(
             status_code=503,
             detail=(
@@ -96,6 +93,33 @@ def _run_hybrid_translation(prompt: str) -> tuple[str, int] | None:
 
 
 @app.get("/api/health")
+
+def classify_grok_failure(translation: str) -> str:
+    """Return a user-facing Grok failure message without raw provider details.
+
+    The raw error text from Grok (model names, HTTP status codes, error
+    codes, credit/spending-limit reasons, etc.) must never reach the UI.
+    """
+    lowered = translation.casefold()
+
+    # Explicit credit/spending-limit signal from the provider.
+    if "credit" in lowered or "spending limit" in lowered:
+        return "The Grok account has no available credits or has reached its spending limit."
+
+    # Auth / unauthorized means credentials or account permissions are wrong.
+    if "401" in lowered or "403" in lowered or "permission" in lowered:
+        return "Grok authentication failed. Verify your Grok API key and account permissions."
+
+    # Rate limiting / capacity signals.
+    if "429" in lowered or "rate limit" in lowered or "capacity" in lowered:
+        return "Grok is currently unavailable due to rate limiting or insufficient capacity."
+
+    # Connection/timeouts should be surfaced as a clear infrastructure problem.
+    if "timeout" in lowered or "connection" in lowered or "network" in lowered:
+        return "Grok could not be reached. Check your network connection and Grok service status."
+
+    # Catch-all: keep the message helpful but generic.
+    return "Grok translation failed. Retry the request or check your Grok API configuration."
 def health() -> dict:
     return {"status": "ok", "version": app.version, "uptime": int(time.time() - STARTED_AT)}
 

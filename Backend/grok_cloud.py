@@ -92,7 +92,7 @@ def run_grok(
         except Exception as e:
             last_error = str(e)
 
-    return f"❌ Grok API Error (tried {models_to_try}): {last_error}"
+    return f"❌ Grok API Error (tried {models_to_try}). Retry the request or check your Grok API configuration."
 
 
 def run_grok_with_fallback(
