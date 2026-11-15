@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import platform
+import re
 import time
 import uuid
 from typing import Literal
@@ -35,6 +36,65 @@ class ChatRequest(BaseModel):
     route: Literal["ODA", "Hybrid", "Cloud"] = "Hybrid"
 
 
+_HYBRID_TRANSLATION = re.compile(
+    r"\b(?:(?:and\s+)?then\s+|and\s+)?translate\b.{0,120}?"
+    r"\b(?:into|to)\s+"
+    r"(?P<language>[A-Za-z]+(?:[- ][A-Za-z]+)*?)"
+    r"(?=\s+(?:and|then|for|while|but|please)\b|[.,!?;:]|$)",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _run_hybrid_translation(prompt: str) -> tuple[str, int] | None:
+    match = _HYBRID_TRANSLATION.search(prompt)
+    if match is None:
+        return None
+
+    language = match.group("language").strip()
+    writing_request = prompt[:match.start()].strip(" \t\r\n,;:")
+    if not writing_request:
+        writing_request = prompt
+
+    from qwen_oda import run_qwen
+
+    draft_prompt = (
+        "Complete only the source-language writing part of this request. "
+        "Do not translate or explain it. Return only the requested text.\n\n"
+        f"Writing request: {writing_request}"
+    )
+    draft = run_qwen(draft_prompt).strip()
+    if not draft or draft.startswith(("⚠", "❌", "Qwen inference error:")):
+        raise HTTPException(
+            status_code=503,
+            detail=f"Hybrid local ODA drafting failed: {draft or 'empty response'}",
+        )
+
+    translation_prompt = (
+        f"Translate the following text into {language}. Preserve its meaning, "
+        "tone, and placeholders. Return only the translation.\n\n"
+        f"{draft}"
+    )
+    translation_prompt, redactions = redact_sensitive_text(translation_prompt)
+
+    from grok_cloud import run_grok
+
+    translation = run_grok(translation_prompt).strip()
+    if not translation or translation.startswith(("⚠", "❌", "Grok API Error")):
+        if "credit" in translation.casefold() or "spending limit" in translation.casefold():
+            failure = "The Grok account has no available credits or has reached its spending limit."
+        else:
+            failure = "Check the Grok API configuration, account limits, and network access."
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Hybrid cloud translation failed after the local draft was "
+                f"created. {failure}"
+            ),
+        )
+
+    return f"{draft}\n\n{language} translation:\n{translation}", redactions
+
+
 @app.get("/api/health")
 def health() -> dict:
     return {"status": "ok", "version": app.version, "uptime": int(time.time() - STARTED_AT)}
@@ -63,12 +123,18 @@ def chat(request: ChatRequest) -> dict:
         if answer.startswith(("⚠", "❌")):
             raise HTTPException(status_code=503, detail=answer)
     else:
-        from grok_cloud import run_grok
-        answer = run_grok(prompt) if os.getenv("GROK_API_KEY", "").strip() else ""
-        source = "Cloud" if answer and not answer.startswith(("⚠", "❌")) else "ODA"
-        if source == "ODA":
-            from qwen_oda import run_qwen
-            answer = run_qwen(prompt)
+        hybrid_result = _run_hybrid_translation(prompt)
+        if hybrid_result is not None:
+            answer, translation_redactions = hybrid_result
+            redactions += translation_redactions
+            source = "Hybrid"
+        else:
+            from grok_cloud import run_grok
+            answer = run_grok(prompt) if os.getenv("GROK_API_KEY", "").strip() else ""
+            source = "Cloud" if answer and not answer.startswith(("⚠", "❌")) else "ODA"
+            if source == "ODA":
+                from qwen_oda import run_qwen
+                answer = run_qwen(prompt)
 
     response = {
         "id": str(uuid.uuid4()), "role": "assistant", "content": answer,

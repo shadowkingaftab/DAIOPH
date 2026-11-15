@@ -1,7 +1,23 @@
+import axios from "axios";
 import { useState } from "react";
 import { useAppStore } from "../state";
 import { chatApi } from "../api";
 import type { ChatMessage } from "../types";
+
+function getErrorMessage(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    const data: unknown = error.response?.data;
+    if (
+      typeof data === "object" &&
+      data !== null &&
+      "detail" in data &&
+      typeof data.detail === "string"
+    ) {
+      return data.detail;
+    }
+  }
+  return error instanceof Error ? error.message : "Failed to send message";
+}
 
 export default function Chat() {
   const { messages, addMessage, setLoading, loading, error, setError } = useAppStore();
@@ -29,7 +45,7 @@ export default function Chat() {
       const response = await chatApi.sendMessage(content, route);
       addMessage(response);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send message");
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

@@ -112,6 +112,8 @@ npm run dev
 
 Open `http://localhost:3000`. The web app uses the local API; configure `GROK_API_KEY` in the root `.env` file for cloud inference. Cloud prompts are redacted at the provider boundary before submission. The built-in redactor covers common email, phone, payment-card, SSN, and credential patterns; review prompts for other identifying details before using a hosted model.
 
+For Hybrid requests that ask to write content and translate it, ODA drafts the source text locally and Grok translates that draft. The response includes both versions; if either model stage fails, the API reports an error instead of returning a partial result.
+
 <details>
 <summary><strong>Explore the codebase</strong></summary>
 
