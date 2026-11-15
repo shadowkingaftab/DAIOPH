@@ -1,0 +1,159 @@
+"""HTTP API for the React web application."""
+
+from __future__ import annotations
+
+import os
+import platform
+import time
+import uuid
+from typing import Literal
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from dotenv import load_dotenv
+
+try:
+    from privacy import redact_sensitive_text
+except ImportError:
+    from Backend.privacy import redact_sensitive_text
+
+load_dotenv()
+app = FastAPI(title="DAIOPH API", version="0.1.0")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_methods=["GET", "POST", "DELETE"],
+    allow_headers=["Content-Type"],
+)
+STARTED_AT = time.time()
+HISTORY: list[dict] = []
+
+
+class ChatRequest(BaseModel):
+    message: str = Field(min_length=1, max_length=8000)
+    route: Literal["ODA", "Hybrid", "Cloud"] = "Hybrid"
+
+
+@app.get("/api/health")
+def health() -> dict:
+    return {"status": "ok", "version": app.version, "uptime": int(time.time() - STARTED_AT)}
+
+
+@app.post("/api/chat")
+def chat(request: ChatRequest) -> dict:
+    original = request.message.strip()
+    if not original:
+        raise HTTPException(status_code=422, detail="Message cannot be blank")
+
+    route = request.route
+    prompt = original
+    redactions = 0
+    if route in ("Cloud", "Hybrid"):
+        prompt, redactions = redact_sensitive_text(prompt)
+
+    if route == "ODA":
+        from qwen_oda import run_qwen
+        answer = run_qwen(prompt)
+        source = "ODA"
+    elif route == "Cloud":
+        from grok_cloud import run_grok
+        answer = run_grok(prompt)
+        source = "Cloud"
+        if answer.startswith(("⚠", "❌")):
+            raise HTTPException(status_code=503, detail=answer)
+    else:
+        from grok_cloud import run_grok
+        answer = run_grok(prompt) if os.getenv("GROK_API_KEY", "").strip() else ""
+        source = "Cloud" if answer and not answer.startswith(("⚠", "❌")) else "ODA"
+        if source == "ODA":
+            from qwen_oda import run_qwen
+            answer = run_qwen(prompt)
+
+    response = {
+        "id": str(uuid.uuid4()), "role": "assistant", "content": answer,
+        "timestamp": int(time.time() * 1000), "route": source,
+        "redacted_count": redactions,
+    }
+    HISTORY.extend([
+        {"id": str(uuid.uuid4()), "role": "user", "content": original,
+         "timestamp": int(time.time() * 1000), "route": route},
+        response,
+    ])
+    del HISTORY[:-200]
+    return response
+
+
+@app.get("/api/chat/history")
+def chat_history() -> list[dict]:
+    return HISTORY[-100:]
+
+
+@app.get("/api/device/status")
+def device_status() -> dict:
+    try:
+        import psutil
+        memory = psutil.virtual_memory()
+        total, used = round(memory.total / 1024**2, 1), round(memory.used / 1024**2, 1)
+        cores = psutil.cpu_count() or os.cpu_count() or 1
+        cpu = platform.processor() or platform.machine()
+    except ImportError:
+        total = used = 0
+        cores = os.cpu_count() or 1
+        cpu = platform.processor() or platform.machine()
+    return {
+        "status": "ok", "version": app.version,
+        "uptime": int(time.time() - STARTED_AT), "models": [],
+        "device": {"cpu": cpu, "cores": cores,
+                   "ram": {"total": total, "used": used, "free": max(0, total-used)},
+                   "platform": platform.platform(), "python": platform.python_version(),
+                   "uptime": int(time.time() - STARTED_AT)},
+    }
+
+
+@app.get("/api/models")
+def models() -> list[dict]:
+    try:
+        from qwen_oda import is_model_downloaded, is_model_loaded
+        downloaded = is_model_downloaded()
+        loaded = is_model_loaded()
+    except Exception:
+        downloaded = loaded = False
+    return [
+        {"id": "qwen-local", "name": "Qwen local model", "type": "local",
+         "status": "loaded" if loaded else ("unloaded" if downloaded else "error"), "size": "GGUF"},
+        {"id": "grok-cloud", "name": "Grok cloud", "type": "remote",
+         "status": "loaded" if bool(os.getenv("GROK_API_KEY", "").strip()) else "unloaded"},
+    ]
+
+
+@app.post("/api/models/{model_id}/load")
+def load_model(model_id: str) -> dict:
+    if model_id != "qwen-local":
+        raise HTTPException(status_code=400, detail="Only the local Qwen model can be loaded here")
+    from qwen_oda import is_model_downloaded, run_qwen
+    if not is_model_downloaded():
+        raise HTTPException(status_code=409, detail="Download the Qwen GGUF model before loading it")
+    result = run_qwen("Reply with ready.", max_new_tokens=1, temperature=0)
+    if result.startswith("Qwen inference error:"):
+        raise HTTPException(status_code=503, detail=result)
+    return {"status": "loaded", "model": model_id}
+
+
+@app.post("/api/models/{model_id}/unload")
+def unload_model(model_id: str) -> dict:
+    if model_id != "qwen-local":
+        raise HTTPException(status_code=400, detail="Only the local Qwen model can be unloaded here")
+    from qwen_oda import reload_model
+    reload_model()
+    return {"status": "unloaded", "model": model_id}
+
+
+@app.get("/api/memory")
+def memory() -> list:
+    return []
+
+
+@app.get("/api/settings")
+def settings() -> dict:
+    return {"cloud_redaction": True, "cloud_key_configured": bool(os.getenv("GROK_API_KEY", "").strip())}

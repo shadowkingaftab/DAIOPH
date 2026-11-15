@@ -192,6 +192,11 @@ class LLMOrchestrator:
 
     def _execute_cloud_task(self, task: Dict) -> str:
         """Execute task on cloud Grok with automatic failover"""
+        try:
+            from privacy import redact_sensitive_text
+        except ImportError:
+            from Backend.privacy import redact_sensitive_text
+        safe_task, _ = redact_sensitive_text(task["task"])
         url = "https://api.x.ai/v1/chat/completions"
         headers = {
             "Authorization": f"Bearer {self.grok_api_key}",
@@ -203,7 +208,7 @@ class LLMOrchestrator:
 
         for model in models_to_try:
             data = {
-                "messages": [{"role": "user", "content": task["task"]}],
+                "messages": [{"role": "user", "content": safe_task}],
                 "model": model,
                 "max_tokens": 512
             }

@@ -10,6 +10,10 @@ Memory-efficient Grok API client using:
 
 import requests
 import json
+try:
+    from privacy import redact_sensitive_text
+except ImportError:
+    from Backend.privacy import redact_sensitive_text
 
 
 class GrokClient:
@@ -71,6 +75,7 @@ class GrokClient:
         if not self.api_key or not self.api_key.strip():
             return "⚠️ GROK_API_KEY not set. Add it in the sidebar or .env file."
 
+        prompt, _ = redact_sensitive_text(prompt)
         models_to_try = [model] if model else self.models
         last_error    = "Unknown error"
 

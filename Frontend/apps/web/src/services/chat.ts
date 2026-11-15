@@ -18,6 +18,5 @@ export async function sendChatMessage(request: ChatRequest): Promise<ChatRespons
 }
 
 export async function getChatHistory(): Promise<ChatMessage[]> {
-  // Placeholder: fetch from API when endpoint exists
-  return [];
+  return chatApi.history();
 }

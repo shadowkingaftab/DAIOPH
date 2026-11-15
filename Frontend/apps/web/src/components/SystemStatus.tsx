@@ -15,11 +15,7 @@ export default function SystemStatus() {
         <span className="status-dot" />
         <span className="status-label">{systemStatus.status.toUpperCase()}</span>
       </div>
-      <div className="status-details">
-        <span>Version: {systemStatus.version}</span>
-        <span>Uptime: {Math.floor(systemStatus.uptime / 60)}m</span>
-        <span>Models: {systemStatus.models.length} loaded</span>
-      </div>
+      <div className="status-details"><span>API v{systemStatus.version}</span><span>Online · {Math.floor(systemStatus.uptime / 60)}m uptime</span></div>
     </div>
   );
 }

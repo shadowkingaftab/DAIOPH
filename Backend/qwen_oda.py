@@ -175,6 +175,11 @@ def is_model_downloaded() -> bool:
     return os.path.exists(MODEL_PATH)
 
 
+def is_model_loaded() -> bool:
+    """Return whether the local inference model is currently in memory."""
+    return _llm is not None
+
+
 def get_model_size_mb() -> float:
     if not os.path.exists(MODEL_PATH):
         return 0.0

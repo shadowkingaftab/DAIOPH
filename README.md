@@ -95,6 +95,23 @@ streamlit run Frontend/streamlit_app.py
 
 Other orchestration apps can be started with `streamlit run <entry-point>`. Docker files are provided in `Dockerfile` and `docker-compose.yml`.
 
+### React web app
+
+Install the Python requirements above and the web dependencies in `Frontend/apps/web` (`npm install`). Start the API from the repository root in one terminal:
+
+```bash
+uvicorn web_api:app --app-dir Backend --host 127.0.0.1 --port 8000
+```
+
+Then start the frontend in a second terminal:
+
+```bash
+cd Frontend/apps/web
+npm run dev
+```
+
+Open `http://localhost:3000`. The web app uses the local API; configure `GROK_API_KEY` in the root `.env` file for cloud inference. Cloud prompts are redacted at the provider boundary before submission. The built-in redactor covers common email, phone, payment-card, SSN, and credential patterns; review prompts for other identifying details before using a hosted model.
+
 <details>
 <summary><strong>Explore the codebase</strong></summary>
 

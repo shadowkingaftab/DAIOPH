@@ -1,9 +1,8 @@
 import { useState } from "react";
 
 export default function Settings() {
-  const [route, setRoute] = useState("Hybrid");
-  const [apiKey, setApiKey] = useState("");
-  const [notifications, setNotifications] = useState(true);
+  const [route, setRoute] = useState(() => localStorage.getItem("daiph-default-route") || "Hybrid");
+  const [saved, setSaved] = useState(false);
 
   return (
     <div className="page">
@@ -20,28 +19,10 @@ export default function Settings() {
           </select>
         </div>
 
-        <div className="settings-group">
-          <label>Grok API Key</label>
-          <input
-            type="password"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            placeholder="Paste your xAI Grok API key"
-          />
-        </div>
-
-        <div className="settings-group">
-          <label>
-            <input
-              type="checkbox"
-              checked={notifications}
-              onChange={(e) => setNotifications(e.target.checked)}
-            />
-            Enable notifications
-          </label>
-        </div>
-
-        <button className="save-button">Save Settings</button>
+        <p className="settings-note">Cloud credentials stay on the server. Set <code>GROK_API_KEY</code> in your local <code>.env</code> file; never paste it into this browser.</p>
+        <p className="settings-note">Cloud and hybrid messages are automatically screened for common personal identifiers and credentials before they leave this machine.</p>
+        <button className="save-button" onClick={() => { localStorage.setItem("daiph-default-route", route); setSaved(true); }}>Save default route</button>
+        {saved && <p className="success-note">Default route saved on this device.</p>}
       </div>
     </div>
   );

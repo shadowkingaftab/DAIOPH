@@ -1,6 +1,10 @@
 import json
 from typing import List, Dict, Optional
 from openai import OpenAI  # Or use Bartender SDK if available
+try:
+    from privacy import redact_sensitive_text
+except ImportError:
+    from Backend.privacy import redact_sensitive_text
 
 class SmartPromptDecomposer:
     def __init__(self, api_key: str, model: str = "bartender"):
@@ -51,6 +55,7 @@ class SmartPromptDecomposer:
 
     def decompose(self, prompt: str) -> Optional[Dict]:
         try:
+            prompt, _ = redact_sensitive_text(prompt)
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[

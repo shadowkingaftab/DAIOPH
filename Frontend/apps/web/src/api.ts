@@ -11,6 +11,10 @@ export const chatApi = {
     const { data } = await api.post("/chat", { message, route });
     return data;
   },
+  async history(): Promise<ChatMessage[]> {
+    const { data } = await api.get("/chat/history");
+    return data;
+  },
 };
 
 export const memoryApi = {
@@ -19,11 +23,11 @@ export const memoryApi = {
     return data;
   },
   async get(id: string): Promise<MemoryEntry> {
-    const { data } = await api.get(`/Backend/memory/${id}`);
+    const { data } = await api.get(`/memory/${id}`);
     return data;
   },
   async delete(id: string): Promise<void> {
-    await api.delete(`/Backend/memory/${id}`);
+    await api.delete(`/memory/${id}`);
   },
 };
 
@@ -33,10 +37,10 @@ export const modelsApi = {
     return data;
   },
   async load(id: string): Promise<void> {
-    await api.post(`/Backend/models/${id}/load`);
+    await api.post(`/models/${id}/load`);
   },
   async unload(id: string): Promise<void> {
-    await api.post(`/Backend/models/${id}/unload`);
+    await api.post(`/models/${id}/unload`);
   },
 };
 

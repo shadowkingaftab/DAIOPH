@@ -8,6 +8,7 @@ export interface ChatMessage {
   route?: "ODA" | "Hybrid" | "Cloud";
   dag?: unknown;
   results?: Record<string, unknown>;
+  redacted_count?: number;
 }
 
 export interface MemoryEntry {

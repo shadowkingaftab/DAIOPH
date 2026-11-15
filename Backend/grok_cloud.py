@@ -15,6 +15,10 @@ import requests
 import os
 import sys
 from dotenv import load_dotenv
+try:
+    from privacy import redact_sensitive_text
+except ImportError:
+    from Backend.privacy import redact_sensitive_text
 
 load_dotenv()
 
@@ -57,6 +61,7 @@ def run_grok(
     if not api_key:
         return "⚠️ GROK_API_KEY not set."
 
+    prompt, _ = redact_sensitive_text(prompt)
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type":  "application/json",
